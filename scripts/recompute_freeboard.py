@@ -4,6 +4,7 @@ Owner: Member 1 (PurinatWanthanathanya)
 
 Corrects min_bank_msl and diff_wl_bank_m in existing S3 / Local JSON files
 based on verified station.min_bank (fixed from ground_level).
+Only updates files where values actually changed (idempotent patch).
 
 Usage:
   python scripts/recompute_freeboard.py           # Dry-run
@@ -65,22 +66,35 @@ def main():
                         records_skipped += 1
                         continue
 
-                    r["min_bank_msl"] = bank[sid]
-                    r["diff_source"] = "derived"
-
+                    target_bank = bank[sid]
                     wl = r.get("waterlevel_msl")
+                    expected_diff = None
+                    wl_float = None
+
                     if wl not in (None, ""):
                         try:
                             wl_float = float(wl)
-                            r["waterlevel_msl"] = wl_float
-                            r["diff_wl_bank_m"] = round(bank[sid] - wl_float, 3)
+                            expected_diff = round(target_bank - wl_float, 3)
                         except (ValueError, TypeError):
-                            r["diff_wl_bank_m"] = None
-                    else:
-                        r["waterlevel_msl"] = None
-                        r["diff_wl_bank_m"] = None
+                            expected_diff = None
 
-                    touched += 1
+                    # Check if update is genuinely needed
+                    curr_bank = r.get("min_bank_msl")
+                    curr_diff = r.get("diff_wl_bank_m")
+                    curr_source = r.get("diff_source")
+
+                    is_changed = (
+                        curr_bank != target_bank
+                        or curr_diff != expected_diff
+                        or curr_source != "derived"
+                    )
+
+                    if is_changed:
+                        r["waterlevel_msl"] = wl_float
+                        r["min_bank_msl"] = target_bank
+                        r["diff_wl_bank_m"] = expected_diff
+                        r["diff_source"] = "derived"
+                        touched += 1
 
                 if touched:
                     files_count += 1
@@ -98,9 +112,9 @@ def main():
     status_str = "APPLIED CHANGES TO S3" if args.apply else "DRY-RUN (Pass --apply to write to S3)"
     print("\n" + "=" * 60)
     print(f"[{status_str}]")
-    print(f"  Files inspected & updated: {files_count}")
-    print(f"  Records fixed:             {records_fixed}")
-    print(f"  Records skipped:           {records_skipped}")
+    print(f"  Files genuinely modified: {files_count}")
+    print(f"  Records updated:          {records_fixed}")
+    print(f"  Records skipped (no st):  {records_skipped}")
     print("=" * 60)
 
 
