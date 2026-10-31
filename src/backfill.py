@@ -1,33 +1,38 @@
 """
-Historical Backfill Script for ThaiWater Data (From 2022 to Present)
-Owner: Member 1 (ThaiWater Ingestion)
+Historical Backfill Engine for ThaiWater Data (From 2022 to Present)
+Owner: Member 1 (PurinatWanthanathanya)
 
-Success Criteria 1:
-- Backfill waterlevel for 8 stations & monthly rain from 2022 (2565) to S3/Local.
-- Running the same batch again must be idempotent and not cause duplicate records.
+Strict Requirements:
+- Full coverage: Loops months from 2022-01 (ปี 2565) to present.
+- Real API calls only: Raises on failure, no silent mocks.
+- Empty/Failed tasks are NOT marked as completed in checkpoint.
+- S3 & Local dual-mode support via STORAGE_BACKEND.
+- Robust retry with exponential backoff & rate limiting.
+- Summarizes Succeeded, Skipped (Idempotent), and Failed tasks.
 """
 
 import argparse
+import calendar
 import json
 import sys
 import time
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any, Dict, List, Optional, Tuple
 
-# Ensure project root is in sys.path
+# Ensure project root in sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from typing import Any, Dict, List, Optional
-from config.config import CHECKPOINT_FILE, WATERLEVEL_PREFIX, RAIN_PREFIX
+from config.config import CHECKPOINT_FILE, RAIN_PREFIX, WATERLEVEL_PREFIX
 from src.storage import get_storage
-from src.thaiwater_client import ThaiWaterClient
-from src.utils.logger import setup_logger, log_ingestion_metric
+from src.thaiwater_client import ThaiWaterAPIError, ThaiWaterClient
+from src.utils.logger import log_ingestion_metric, setup_logger
 
 logger = setup_logger("backfill_thaiwater")
 
 
 class BackfillManager:
-    """Manages idempotent historical backfill with progress checkpointing."""
+    """Manages full idempotent historical backfill with progress checkpointing."""
 
     def __init__(self, backend: Optional[str] = None):
         self.storage = get_storage(backend)
@@ -42,68 +47,72 @@ class BackfillManager:
                     return json.load(f)
             except Exception:
                 pass
-        return {"completed_tasks": {}, "last_updated": None}
+        return {"completed_tasks": {}, "failed_tasks": {}, "last_updated": None}
 
-    def _save_checkpoint(self, task_key: str, metadata: Dict[str, Any]):
+    def _save_checkpoint(self, task_key: str, metadata: Dict[str, Any], is_success: bool = True):
         self.checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
-        self.checkpoints["completed_tasks"][task_key] = metadata
+        if is_success:
+            self.checkpoints["completed_tasks"][task_key] = metadata
+            if task_key in self.checkpoints.get("failed_tasks", {}):
+                del self.checkpoints["failed_tasks"][task_key]
+        else:
+            self.checkpoints["failed_tasks"][task_key] = metadata
+
         self.checkpoints["last_updated"] = datetime.now(timezone.utc).isoformat()
         with open(self.checkpoint_path, "w", encoding="utf-8") as f:
             json.dump(self.checkpoints, f, ensure_ascii=False, indent=2)
 
     def is_task_completed(self, task_key: str, dest_key: str) -> bool:
-        """Verifies if task was previously marked complete AND file exists."""
+        """Verifies if task was previously marked complete AND file exists in storage."""
         return task_key in self.checkpoints.get("completed_tasks", {}) and self.storage.exists(dest_key)
 
-    def backfill_waterlevel_monthly(self, station_id: str, year: int, month: int,
-                                    force: bool = False, use_mock: bool = False) -> Dict[str, Any]:
+    def backfill_waterlevel_monthly(self, api_station_id: int, year: int, month: int,
+                                    force: bool = False) -> Dict[str, Any]:
         """
-        Backfills 10-minute historical water levels for a specific station and month.
-        Deterministically stored under:
-          raw/thaiwater/waterlevel/dt=YYYY-MM-01/waterlevel_hist_{station_id}_{year}_{month:02d}.json
+        Backfills 10-minute historical water levels for a whole month.
+        Storage key: raw/thaiwater/waterlevel/dt=YYYY-MM-01/waterlevel_hist_{station_id}_{year}_{month:02d}.json
         """
-        task_key = f"wl_{station_id}_{year}_{month:02d}"
+        task_key = f"wl_st{api_station_id}_{year}_{month:02d}"
         partition_dt = f"{year:04d}-{month:02d}-01"
-        dest_key = f"{WATERLEVEL_PREFIX}/dt={partition_dt}/waterlevel_hist_{station_id}_{year}_{month:02d}.json"
+        dest_key = f"{WATERLEVEL_PREFIX}/dt={partition_dt}/waterlevel_hist_st{api_station_id}_{year}_{month:02d}.json"
 
         if not force and self.is_task_completed(task_key, dest_key):
             logger.info(f"[SKIP] Task {task_key} already completed at {dest_key}. Idempotency guaranteed.")
             return {"status": "SKIPPED", "task_key": task_key, "destination": dest_key}
 
         start_time = time.time()
-        # Fetch data for the month
-        date_str = f"{year:04d}-{month:02d}-15"
-        fetch_res = self.client.fetch_historical_waterlevel(station_id, date_str)
-        raw_items = fetch_res.get("data") or fetch_res.get("raw_response", {}).get("data", [])
+        last_day = calendar.monthrange(year, month)[1]
+        start_date = f"{year:04d}-{month:02d}-01"
+        end_date = f"{year:04d}-{month:02d}-{last_day:02d}"
 
-        # Enrich with min_bank to compute freeboard
-        water_meta = next((s for s in self.client.get_water_stations() if s["station_id"] == station_id), None)
-        min_bank = water_meta["min_bank_msl"] if water_meta else 2.0
+        try:
+            fetch_res = self.client.fetch_historical_waterlevel(api_station_id, start_date, end_date)
+            records = fetch_res.get("records", [])
+        except ThaiWaterAPIError as e:
+            logger.error(f"[FAILED] Task {task_key} API error: {e}")
+            self._save_checkpoint(task_key, {"error": str(e), "failed_at": datetime.now(timezone.utc).isoformat()}, is_success=False)
+            return {"status": "FAILED", "task_key": task_key, "error": str(e)}
 
-        records = []
-        for it in raw_items:
-            wl = it.get("waterlevel_msl") or it.get("waterlevel_m")
-            records.append({
-                "station_id": station_id,
-                "datetime": it.get("datetime") or it.get("waterlevel_datetime"),
-                "waterlevel_msl": wl,
-                "min_bank_msl": min_bank,
-                "diff_wl_bank_m": round(min_bank - wl, 3) if wl is not None else None,
-            })
+        if not records:
+            logger.warning(f"[EMPTY] Task {task_key} returned 0 records. Not marking as completed.")
+            return {"status": "EMPTY", "task_key": task_key, "record_count": 0}
 
         envelope = {
             "envelope_version": "1.0",
             "batch_type": "historical_backfill",
             "data_type": "waterlevel",
-            "station_id": station_id,
+            "is_mock": False,
+            "api_station_id": api_station_id,
             "year": year,
             "month": month,
+            "start_date": start_date,
+            "end_date": end_date,
             "record_count": len(records),
             "created_at_utc": datetime.now(timezone.utc).isoformat(),
             "data": records,
         }
 
-        # Save deterministically (Overwrites identical key if force/re-run, no duplicate records)
+        # Deterministic write to raw zone only
         dest_uri = self.storage.save_json(dest_key, envelope, overwrite=True)
         duration = time.time() - start_time
 
@@ -111,7 +120,7 @@ class BackfillManager:
             "completed_at": datetime.now(timezone.utc).isoformat(),
             "record_count": len(records),
             "dest_key": dest_key,
-        })
+        }, is_success=True)
 
         log_ingestion_metric(
             logger=logger,
@@ -130,30 +139,39 @@ class BackfillManager:
             "destination": dest_uri,
         }
 
-    def backfill_rain_monthly(self, station_id: str, year: int, month: int,
-                              force: bool = False, use_mock: bool = False) -> Dict[str, Any]:
+    def backfill_rain_monthly(self, api_station_id: int, year: int, month: int,
+                              force: bool = False) -> Dict[str, Any]:
         """
         Backfills monthly daily rain records for a specific station and month.
-        Deterministically stored under:
-          raw/thaiwater/rain/dt=YYYY-MM-01/rain_monthly_{station_id}_{year}_{month:02d}.json
+        Storage key: raw/thaiwater/rain/dt=YYYY-MM-01/rain_monthly_st{station_id}_{year}_{month:02d}.json
         """
-        task_key = f"rain_{station_id}_{year}_{month:02d}"
+        task_key = f"rain_st{api_station_id}_{year}_{month:02d}"
         partition_dt = f"{year:04d}-{month:02d}-01"
-        dest_key = f"{RAIN_PREFIX}/dt={partition_dt}/rain_monthly_{station_id}_{year}_{month:02d}.json"
+        dest_key = f"{RAIN_PREFIX}/dt={partition_dt}/rain_monthly_st{api_station_id}_{year}_{month:02d}.json"
 
         if not force and self.is_task_completed(task_key, dest_key):
             logger.info(f"[SKIP] Task {task_key} already completed at {dest_key}. Idempotency guaranteed.")
             return {"status": "SKIPPED", "task_key": task_key, "destination": dest_key}
 
         start_time = time.time()
-        fetch_res = self.client.fetch_monthly_rain(station_id, year, month)
-        records = fetch_res.get("records") or fetch_res.get("raw_response", {}).get("data", [])
+        try:
+            fetch_res = self.client.fetch_monthly_rain(api_station_id, year, month)
+            records = fetch_res.get("records", [])
+        except ThaiWaterAPIError as e:
+            logger.error(f"[FAILED] Task {task_key} API error: {e}")
+            self._save_checkpoint(task_key, {"error": str(e), "failed_at": datetime.now(timezone.utc).isoformat()}, is_success=False)
+            return {"status": "FAILED", "task_key": task_key, "error": str(e)}
+
+        if not records:
+            logger.warning(f"[EMPTY] Task {task_key} returned 0 records.")
+            return {"status": "EMPTY", "task_key": task_key, "record_count": 0}
 
         envelope = {
             "envelope_version": "1.0",
             "batch_type": "historical_backfill",
             "data_type": "rain_monthly",
-            "station_id": station_id,
+            "is_mock": False,
+            "api_station_id": api_station_id,
             "year": year,
             "month": month,
             "record_count": len(records),
@@ -168,7 +186,7 @@ class BackfillManager:
             "completed_at": datetime.now(timezone.utc).isoformat(),
             "record_count": len(records),
             "dest_key": dest_key,
-        })
+        }, is_success=True)
 
         log_ingestion_metric(
             logger=logger,
@@ -187,64 +205,119 @@ class BackfillManager:
             "destination": dest_uri,
         }
 
-    def run_case_study_backfill(self, force: bool = False, use_mock: bool = False) -> List[Dict[str, Any]]:
-        """
-        Runs backfill specifically focused on the Proposal Case Study period (Sep-Oct 2026 / target floods)
-        covering all 8 water stations and key rain stations.
-        """
-        results = []
-        logger.info("Executing focused case-study backfill (Sep - Oct 2026)...")
+    def generate_month_list(self, start_year: int = 2022, start_month: int = 1,
+                            end_year: Optional[int] = None, end_month: Optional[int] = None) -> List[Tuple[int, int]]:
+        """Generates (year, month) tuples from start to end date."""
+        now = datetime.now()
+        end_y = end_year or now.year
+        end_m = end_month or now.month
 
-        # 1. 8 Water Stations
+        months = []
+        cur_y, cur_m = start_year, start_month
+        while (cur_y < end_y) or (cur_y == end_y and cur_m <= end_m):
+            months.append((cur_y, cur_m))
+            cur_m += 1
+            if cur_m > 12:
+                cur_m = 1
+                cur_y += 1
+        return months
+
+    def run_full_backfill(self, start_year: int = 2022, start_month: int = 1,
+                          end_year: Optional[int] = None, end_month: Optional[int] = None,
+                          force: bool = False, delay_sec: float = 0.2) -> List[Dict[str, Any]]:
+        """
+        Executes full historical backfill from 2022 (2565) to present.
+        Covers all 8 canal waterlevel stations and nearest rainfall stations.
+        """
+        months = self.generate_month_list(start_year, start_month, end_year, end_month)
         water_stations = self.client.get_water_stations()
-        for st in water_stations:
-            st_id = st["station_id"]
-            res = self.backfill_waterlevel_monthly(st_id, year=2026, month=9, force=force, use_mock=use_mock)
-            results.append(res)
-            time.sleep(0.05)  # Rate limiting sleep
-
-        # 2. Key Rain Stations
         rain_stations = self.client.get_rain_stations()
-        for st in rain_stations[:15]:  # Focus on key representative stations
-            st_id = st["station_id"]
-            res = self.backfill_rain_monthly(st_id, year=2026, month=9, force=force, use_mock=use_mock)
-            results.append(res)
-            time.sleep(0.05)
+
+        total_tasks = len(months) * (len(water_stations) + len(rain_stations))
+        logger.info(f"Starting FULL historical backfill: {len(months)} months across {len(water_stations)} water + {len(rain_stations)} rain stations (Total ~{total_tasks} tasks)...")
+
+        results = []
+        # 1. Backfill 8 Water Stations
+        for y, m in months:
+            for st in water_stations:
+                st_id = st["api_station_id"]
+                res = self.backfill_waterlevel_monthly(st_id, y, m, force=force)
+                results.append(res)
+                time.sleep(delay_sec)
+
+        # 2. Backfill Rainfall Stations
+        for y, m in months:
+            for st in rain_stations:
+                st_id = st["api_station_id"]
+                res = self.backfill_rain_monthly(st_id, y, m, force=force)
+                results.append(res)
+                time.sleep(delay_sec)
 
         return results
 
+    def run_case_study_backfill(self, force: bool = False, delay_sec: float = 0.2) -> List[Dict[str, Any]]:
+        """
+        Executes backfill focused specifically on the proposal case study storm period (Sep - Oct 2026).
+        """
+        return self.run_full_backfill(start_year=2026, start_month=9, end_year=2026, end_month=10, force=force, delay_sec=delay_sec)
+
 
 def main():
-    parser = argparse.ArgumentParser(description="ThaiWater Historical Backfill Runner")
-    parser.add_argument("--type", choices=["case_study", "waterlevel", "rain", "full"], default="case_study")
-    parser.add_argument("--year", type=int, default=2026)
-    parser.add_argument("--month", type=int, default=9)
-    parser.add_argument("--force", action="store_true", help="Force re-fetch even if task was marked completed")
-    parser.add_argument("--mock", action="store_true", help="Use mock historical data for sandbox/offline test")
+    parser = argparse.ArgumentParser(description="ThaiWater Historical Backfill Runner (Real Data)")
+    parser.add_argument("--type", choices=["full", "case_study", "waterlevel", "rain"], default="case_study",
+                        help="'full' runs 2022 to present; 'case_study' runs Sep-Oct 2026")
+    parser.add_argument("--start-year", type=int, default=2022)
+    parser.add_argument("--start-month", type=int, default=1)
+    parser.add_argument("--end-year", type=int, default=None)
+    parser.add_argument("--end-month", type=int, default=None)
+    parser.add_argument("--force", action="store_true", help="Force re-fetch completed tasks")
     parser.add_argument("--backend", choices=["local", "s3"], default=None)
+    parser.add_argument("--delay", type=float, default=0.15, help="Polite delay between API calls (seconds)")
 
     args = parser.parse_args()
     manager = BackfillManager(backend=args.backend)
 
-    if args.type == "case_study":
-        results = manager.run_case_study_backfill(force=args.force, use_mock=args.mock)
+    if args.type == "full":
+        results = manager.run_full_backfill(
+            start_year=args.start_year, start_month=args.start_month,
+            end_year=args.end_year, end_month=args.end_month,
+            force=args.force, delay_sec=args.delay
+        )
+    elif args.type == "case_study":
+        results = manager.run_case_study_backfill(force=args.force, delay_sec=args.delay)
     elif args.type == "waterlevel":
+        months = manager.generate_month_list(args.start_year, args.start_month, args.end_year, args.end_month)
         results = []
-        for st in manager.client.get_water_stations():
-            res = manager.backfill_waterlevel_monthly(st["station_id"], args.year, args.month, force=args.force, use_mock=args.mock)
-            results.append(res)
+        for y, m in months:
+            for st in manager.client.get_water_stations():
+                res = manager.backfill_waterlevel_monthly(st["api_station_id"], y, m, force=args.force)
+                results.append(res)
+                time.sleep(args.delay)
     elif args.type == "rain":
+        months = manager.generate_month_list(args.start_year, args.start_month, args.end_year, args.end_month)
         results = []
-        for st in manager.client.get_rain_stations()[:15]:
-            res = manager.backfill_rain_monthly(st["station_id"], args.year, args.month, force=args.force, use_mock=args.mock)
-            results.append(res)
-    else:
-        results = manager.run_case_study_backfill(force=args.force, use_mock=args.mock)
+        for y, m in months:
+            for st in manager.client.get_rain_stations():
+                res = manager.backfill_rain_monthly(st["api_station_id"], y, m, force=args.force)
+                results.append(res)
+                time.sleep(args.delay)
 
-    print("\n--- Backfill Execution Results ---")
-    completed = sum(1 for r in results if r["status"] == "SUCCESS")
-    skipped = sum(1 for r in results if r["status"] == "SKIPPED")
-    print(f"Total tasks: {len(results)} | Succeeded: {completed} | Skipped (Idempotent): {skipped}")
+    print("\n" + "=" * 60)
+    print(">>> Backfill Execution Summary")
+    print("=" * 60)
+    succeeded = [r for r in results if r["status"] == "SUCCESS"]
+    skipped = [r for r in results if r["status"] == "SKIPPED"]
+    failed = [r for r in results if r["status"] in ("FAILED", "EMPTY")]
+
+    print(f"Total tasks processed: {len(results)}")
+    print(f"  [SUCCESS] Succeeded: {len(succeeded)}")
+    print(f"  [SKIPPED] Skipped (Idempotent): {len(skipped)}")
+    print(f"  [FAILED]  Failed / Empty: {len(failed)}")
+
+    if failed:
+        print("\nFailed task list:")
+        for f in failed[:10]:
+            print(f"  - {f.get('task_key')}: {f.get('error', 'empty')}")
 
 
 if __name__ == "__main__":

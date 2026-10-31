@@ -1,0 +1,164 @@
+{
+  "envelope_version": "1.0",
+  "batch_id": "tw-ra-20261031-232117-b03c8b",
+  "data_type": "rain",
+  "is_mock": false,
+  "source_endpoint": "rain_24h_graph",
+  "ingested_at_utc": "2026-10-31T16:21:17.568732+00:00",
+  "ingested_at_bkk": "2026-10-31T23:21:17.568732+07:00",
+  "station_count": 15,
+  "record_count": 15,
+  "data": [
+    {
+      "api_station_id": 1,
+      "station_name_th": "สถานีวัดน้ำ/ฝนคลองลาดพร้าว (วัดบางบัว)",
+      "latitude": 13.85402,
+      "longitude": 100.58746,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 0.4,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 2,
+      "station_name_th": "สถานีวัดฝนกรุงเทพฯ 2",
+      "latitude": 13.72,
+      "longitude": 100.51,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 0.0,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 3,
+      "station_name_th": "สถานีวัดน้ำ/ฝนคลองลำปลาทิว (ลาดกระบัง)",
+      "latitude": 13.7407,
+      "longitude": 100.79468,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 4.0,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 4,
+      "station_name_th": "สถานีวัดน้ำ/ฝนสะพานกรุงเทพ",
+      "latitude": 13.700301,
+      "longitude": 100.49277,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 0.0,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 5,
+      "station_name_th": "สถานีวัดน้ำ/ฝนคลองมหาสวัสดิ์",
+      "latitude": 13.79965,
+      "longitude": 100.43863,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 0.2,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 8,
+      "station_name_th": "สถานีวัดน้ำ/ฝนคลองหกวา (ปากคลอง 2 ใต้)",
+      "latitude": 13.93183,
+      "longitude": 100.63952,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 0.0,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 10,
+      "station_name_th": "สถานีวัดน้ำ/ฝนคลองภาษีเจริญ (เพชรเกษม 69)",
+      "latitude": 13.69158,
+      "longitude": 100.38127,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 0.8,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 20,
+      "station_name_th": "สถานีวัดฝนเขตคลองเตย",
+      "latitude": 13.7153,
+      "longitude": 100.5694,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 26.8,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 23,
+      "station_name_th": "สถานีวัดฝนเขตบางใหญ่/ทวีวัฒนา",
+      "latitude": 13.82,
+      "longitude": 100.4,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 20.6,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "latitude": 13.9136,
+      "longitude": 100.5906,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 9.0,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 25,
+      "station_name_th": "สถานีวัดฝนเขตบางเขน",
+      "latitude": 13.8732,
+      "longitude": 100.5971,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 8.2,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 26,
+      "station_name_th": "สถานีวัดฝนเขตจตุจักร",
+      "latitude": 13.8285,
+      "longitude": 100.5598,
+      "rainfall_datetime": "2026-10-31 19:00",
+      "rain_24h_mm": 5.2,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 28,
+      "station_name_th": "สถานีวัดฝนเขตบางกะปิ",
+      "latitude": 13.7658,
+      "longitude": 100.6477,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 0.0,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 29,
+      "station_name_th": "สถานีวัดฝนเขตมีนบุรี",
+      "latitude": 13.8138,
+      "longitude": 100.7483,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 0.0,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    },
+    {
+      "api_station_id": 37,
+      "station_name_th": "สถานีวัดฝนคลองหกวา (ลำลูกกา)",
+      "latitude": 13.93,
+      "longitude": 100.68,
+      "rainfall_datetime": "2026-10-31 23:00",
+      "rain_24h_mm": 0.0,
+      "rain_latest_mm": 0.0,
+      "data_points": 48
+    }
+  ],
+  "raw_response": {}
+}

@@ -1,33 +1,49 @@
 """
-ThaiWater API Client
-Communicates with ThaiWater public endpoints with fallback and station mapping.
+ThaiWater API Client (Real Data Production Engine)
+Owner: Member 1 (PurinatWanthanathanya)
+
+Principles:
+- Strict Fail-Fast: Never silently inject mock data into production/S3 pipelines.
+- Accurate parsing of real ThaiWater API schemas.
+- Safe type conversions (string to float, preserving 0.0, handling nulls).
+- Preserves original measurement timestamps from telemetry sensors.
 """
 
 import json
-import urllib.request
+import logging
+import time
 import urllib.error
-from datetime import datetime, timezone, timedelta
+import urllib.parse
+import urllib.request
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 from typing import Any, Dict, List, Optional
 from config.config import (
-    WATERLEVEL_LOAD_ENDPOINT,
-    WATERLEVEL_GRAPH_ENDPOINT,
-    RAIN_MONTHLY_GRAPH_ENDPOINT,
     RAIN_24H_GRAPH_ENDPOINT,
-    WATER_STATIONS_FILE,
+    RAIN_MONTHLY_GRAPH_ENDPOINT,
     RAIN_STATIONS_FILE,
+    WATER_STATIONS_FILE,
+    WATERLEVEL_GRAPH_ENDPOINT,
+    WATERLEVEL_LOAD_ENDPOINT,
 )
 
 BKK_TZ = timezone(timedelta(hours=7))
+logger = logging.getLogger("thaiwater_client")
+
+
+class ThaiWaterAPIError(Exception):
+    """Raised when ThaiWater API request fails or returns invalid response."""
+    pass
 
 
 class ThaiWaterClient:
-    """Client for ThaiWater public REST APIs."""
+    """Production client for ThaiWater public REST APIs."""
 
-    def __init__(self, timeout: int = 15):
+    def __init__(self, timeout: int = 20):
         self.timeout = timeout
         self.headers = {
-            "User-Agent": "CS341-TuamYang-Pipeline/1.0 (Academic Research; Chulalongkorn University)",
-            "Accept": "application/json",
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) CS341-TuamYang-Pipeline/1.0",
+            "Accept": "application/json, text/plain, */*",
         }
         self._water_stations = self._load_water_stations()
         self._rain_stations = self._load_rain_stations()
@@ -50,263 +66,241 @@ class ThaiWaterClient:
     def get_rain_stations(self) -> List[Dict[str, Any]]:
         return self._rain_stations
 
-    def _request_json(self, url: str) -> Dict[str, Any]:
-        """Makes an HTTP GET request and returns parsed JSON."""
-        req = urllib.request.Request(url, headers=self.headers)
-        with urllib.request.urlopen(req, timeout=self.timeout) as resp:
-            content = resp.read().decode("utf-8")
-            return json.loads(content)
+    def _request_json(self, url: str, retries: int = 3) -> Dict[str, Any]:
+        """Makes an HTTP GET request with exponential backoff retry. Raises on failure."""
+        last_error = None
+        for attempt in range(retries):
+            try:
+                req = urllib.request.Request(url, headers=self.headers)
+                with urllib.request.urlopen(req, timeout=self.timeout) as resp:
+                    raw_bytes = resp.read()
+                    return json.loads(raw_bytes.decode("utf-8"))
+            except Exception as e:
+                last_error = e
+                wait_sec = 2 ** attempt
+                logger.warning(f"GET {url} failed (attempt {attempt + 1}/{retries}): {e}. Retrying in {wait_sec}s...")
+                time.sleep(wait_sec)
 
-    def fetch_current_waterlevel(self, use_offline_mock: bool = False) -> Dict[str, Any]:
+        raise ThaiWaterAPIError(f"Failed to fetch {url} after {retries} retries: {last_error}")
+
+    def fetch_current_waterlevel(self) -> Dict[str, Any]:
         """
         Fetches current waterlevel data from /waterlevel_load.
         Maps the 8 target Bangkok canal stations with bank height.
         """
-        if use_offline_mock:
-            return {
-                "source": WATERLEVEL_LOAD_ENDPOINT,
-                "status": "mock_success",
-                "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
-                "fetched_at_bkk": datetime.now(BKK_TZ).isoformat(),
-                "records": self._generate_mock_waterlevel_records(),
-                "raw_response": {},
-            }
+        url = WATERLEVEL_LOAD_ENDPOINT
+        raw_data = self._request_json(url)
 
-        try:
-            raw_data = self._request_json(WATERLEVEL_LOAD_ENDPOINT)
-            records = self._parse_waterlevel_load(raw_data)
-            return {
-                "source": WATERLEVEL_LOAD_ENDPOINT,
-                "status": "success",
-                "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
-                "fetched_at_bkk": datetime.now(BKK_TZ).isoformat(),
-                "records": records,
-                "raw_response": raw_data,
-            }
-        except Exception as e:
-            # If network error or sandbox blocked, return mock fallback if requested
-            return {
-                "source": WATERLEVEL_LOAD_ENDPOINT,
-                "status": "error",
-                "error_message": str(e),
-                "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
-                "records": self._generate_mock_waterlevel_records(),
-            }
+        # Real ThaiWater response schema: {'waterlevel_data': {'data': [...]}}
+        wl_container = raw_data.get("waterlevel_data", {})
+        items = wl_container.get("data", []) if isinstance(wl_container, dict) else []
 
-    def _parse_waterlevel_load(self, raw_data: Dict[str, Any]) -> List[Dict[str, Any]]:
-        """Parses API response into standardized record structure."""
-        results = []
-        api_items = raw_data.get("data", []) if isinstance(raw_data, dict) else raw_data
+        if not items:
+            raise ThaiWaterAPIError(f"Endpoint {url} returned empty waterlevel_data")
 
-        # Map target stations
-        station_map = {s["station_code"]: s for s in self._water_stations}
-        station_id_map = {s["station_id"]: s for s in self._water_stations}
-
+        records = self._parse_waterlevel_load(items)
+        now_utc = datetime.now(timezone.utc)
         now_bkk = datetime.now(BKK_TZ)
 
-        for item in api_items:
-            station_info = item.get("station", {})
-            st_code = station_info.get("tele_station_oldcode") or str(item.get("station_id"))
-            matched_meta = station_map.get(st_code) or station_id_map.get(st_code)
+        return {
+            "source": url,
+            "status": "success",
+            "is_mock": False,
+            "fetched_at_utc": now_utc.isoformat(),
+            "fetched_at_bkk": now_bkk.isoformat(),
+            "records": records,
+        }
 
-            if matched_meta:
-                wl_msl = item.get("waterlevel_msl") or item.get("waterlevel_m")
-                min_bank = matched_meta["min_bank_msl"]
-                diff_bank = round(min_bank - wl_msl, 3) if wl_msl is not None else None
-
-                results.append({
-                    "station_id": matched_meta["station_id"],
-                    "station_code": matched_meta["station_code"],
-                    "station_name_th": matched_meta["station_name_th"],
-                    "waterway": matched_meta["waterway"],
-                    "latitude": matched_meta["latitude"],
-                    "longitude": matched_meta["longitude"],
-                    "timestamp_bkk": item.get("waterlevel_datetime") or now_bkk.strftime("%Y-%m-%d %H:%M:%S"),
-                    "timestamp_iso": now_bkk.isoformat(),
-                    "timestamp_epoch": int(now_bkk.timestamp()),
-                    "waterlevel_msl": wl_msl,
-                    "min_bank_msl": min_bank,
-                    "diff_wl_bank_m": diff_bank,
-                })
-
-        # If API returned no matches (or structure differed), return default metadata records
-        if not results:
-            return self._generate_mock_waterlevel_records()
-        return results
-
-    def fetch_historical_waterlevel(self, station_id: str, date_str: str) -> Dict[str, Any]:
-        """
-        Fetches historical 10-minute waterlevel data from /waterlevel_graph.
-        """
-        url = f"{WATERLEVEL_GRAPH_ENDPOINT}?station_id={station_id}&date={date_str}"
-        try:
-            raw_data = self._request_json(url)
-            return {
-                "source": url,
-                "status": "success",
-                "station_id": station_id,
-                "date": date_str,
-                "raw_response": raw_data,
-            }
-        except Exception as e:
-            return {
-                "source": url,
-                "status": "error",
-                "station_id": station_id,
-                "date": date_str,
-                "error": str(e),
-                "data": self._generate_mock_historical_wl(station_id, date_str),
-            }
-
-    def fetch_24h_rain(self) -> Dict[str, Any]:
-        """
-        Fetches 24-hour latest rainfall from /rain_24h_graph.
-        """
-        try:
-            raw_data = self._request_json(RAIN_24H_GRAPH_ENDPOINT)
-            return {
-                "source": RAIN_24H_GRAPH_ENDPOINT,
-                "status": "success",
-                "fetched_at_utc": datetime.now(timezone.utc).isoformat(),
-                "records": self._parse_rain_records(raw_data),
-                "raw_response": raw_data,
-            }
-        except Exception as e:
-            return {
-                "source": RAIN_24H_GRAPH_ENDPOINT,
-                "status": "error",
-                "error": str(e),
-                "records": self._generate_mock_rain_records(),
-            }
-
-    def fetch_monthly_rain(self, station_id: str, year: int, month: int) -> Dict[str, Any]:
-        """
-        Fetches monthly daily rainfall from /rain_monthly_graph.
-        """
-        url = f"{RAIN_MONTHLY_GRAPH_ENDPOINT}?station_id={station_id}&year={year}&month={month}"
-        try:
-            raw_data = self._request_json(url)
-            return {
-                "source": url,
-                "status": "success",
-                "station_id": station_id,
-                "year": year,
-                "month": month,
-                "raw_response": raw_data,
-            }
-        except Exception as e:
-            return {
-                "source": url,
-                "status": "error",
-                "station_id": station_id,
-                "year": year,
-                "month": month,
-                "error": str(e),
-                "records": self._generate_mock_monthly_rain(station_id, year, month),
-            }
-
-    def _parse_rain_records(self, raw_data: Any) -> List[Dict[str, Any]]:
+    def _parse_waterlevel_load(self, items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """Parses real API response into standardized record structure."""
         results = []
-        items = raw_data.get("data", []) if isinstance(raw_data, dict) else raw_data
-        now_bkk = datetime.now(BKK_TZ)
-        rain_map = {s["station_id"]: s for s in self._rain_stations}
+        # Station maps by numeric ID and old code
+        station_id_map = {s["api_station_id"]: s for s in self._water_stations}
+        station_code_map = {s["tele_station_oldcode"]: s for s in self._water_stations if s.get("tele_station_oldcode")}
 
         for item in items:
-            st_id = str(item.get("station_id") or item.get("tele_station_id"))
-            meta = rain_map.get(st_id)
-            if meta:
-                results.append({
-                    "station_id": st_id,
-                    "station_name_th": meta.get("station_name_th", ""),
-                    "district": meta.get("district", ""),
-                    "latitude": meta.get("latitude"),
-                    "longitude": meta.get("longitude"),
-                    "timestamp_bkk": item.get("rainfall_datetime") or now_bkk.strftime("%Y-%m-%d %H:%M:%S"),
-                    "rain_24h_mm": float(item.get("rainfall_24h") or item.get("rain_24h", 0.0)),
-                    "rain_1h_mm": float(item.get("rainfall_1h") or 0.0),
-                })
-        return results if results else self._generate_mock_rain_records()
+            st = item.get("station") or {}
+            st_id = st.get("id")
+            old_code = st.get("tele_station_oldcode")
 
-    # --- Offline Mocks for Sandboxed / Test verification ---
-    def _generate_mock_waterlevel_records(self) -> List[Dict[str, Any]]:
+            meta = station_id_map.get(st_id) or station_code_map.get(old_code)
+            if not meta:
+                continue
+
+            # Safe float parsing
+            wl_raw = item.get("waterlevel_msl")
+            if wl_raw is None:
+                wl_raw = item.get("waterlevel_m")
+
+            wl_msl = None
+            if wl_raw is not None:
+                try:
+                    wl_msl = float(wl_raw)
+                except (ValueError, TypeError):
+                    wl_msl = None
+
+            min_bank = meta.get("min_bank_msl")
+            diff_bank = round(min_bank - wl_msl, 3) if (min_bank is not None and wl_msl is not None) else None
+
+            # Actual measurement timestamp from sensor
+            dt_raw = item.get("waterlevel_datetime") or datetime.now(BKK_TZ).strftime("%Y-%m-%d %H:%M:%S")
+            try:
+                # ThaiWater format is typically "YYYY-MM-DD HH:MM" or "YYYY-MM-DD HH:MM:SS"
+                if len(dt_raw) == 16:
+                    parsed_dt = datetime.strptime(dt_raw, "%Y-%m-%d %H:%M").replace(tzinfo=BKK_TZ)
+                else:
+                    parsed_dt = datetime.strptime(dt_raw[:19], "%Y-%m-%d %H:%M:%S").replace(tzinfo=BKK_TZ)
+                iso_time = parsed_dt.isoformat()
+                epoch_time = int(parsed_dt.timestamp())
+            except Exception:
+                parsed_dt = datetime.now(BKK_TZ)
+                iso_time = parsed_dt.isoformat()
+                epoch_time = int(parsed_dt.timestamp())
+
+            results.append({
+                "api_station_id": meta["api_station_id"],
+                "tele_station_oldcode": meta.get("tele_station_oldcode", ""),
+                "station_name_th": meta.get("station_name_th", ""),
+                "river_name_th": meta.get("river_name_th", ""),
+                "latitude": meta.get("latitude"),
+                "longitude": meta.get("longitude"),
+                "waterlevel_datetime": dt_raw,
+                "timestamp_iso": iso_time,
+                "timestamp_epoch": epoch_time,
+                "waterlevel_msl": wl_msl,
+                "min_bank_msl": min_bank,
+                "diff_wl_bank_m": diff_bank,
+            })
+
+        return results
+
+    def fetch_historical_waterlevel(self, api_station_id: int, start_date: str, end_date: str) -> Dict[str, Any]:
+        """
+        Fetches historical 10-minute waterlevel data from /waterlevel_graph.
+        Query params: station_id, start_date, end_date
+        """
+        params = {"station_id": api_station_id, "start_date": start_date, "end_date": end_date}
+        query_str = urllib.parse.urlencode(params)
+        url = f"{WATERLEVEL_GRAPH_ENDPOINT}?{query_str}"
+
+        raw_data = self._request_json(url)
+        graph_data = raw_data.get("data", {})
+        raw_items = graph_data.get("graph_data", []) if isinstance(graph_data, dict) else []
+
+        # Find min_bank from metadata
+        meta = next((s for s in self._water_stations if s["api_station_id"] == api_station_id), None)
+        min_bank = meta.get("min_bank_msl") if meta else None
+
         records = []
-        now_bkk = datetime.now(BKK_TZ)
-        # Predefined realistic readings based on proposal observations
-        mock_readings = {
-            "BKK001": 1.95,  # Chao Phraya (Pak Khlong Talat) min_bank=2.80 -> freeboard = 0.85
-            "BKK002": 1.80,  # Chao Phraya (Bang Na) min_bank=2.50 -> freeboard = 0.70
-            "BKK003": 1.65,  # Khlong Maha Sawat min_bank=2.20 -> freeboard = 0.55
-            "BKK004": 1.25,  # Khlong Lam Pla Thio min_bank=1.60 -> freeboard = 0.35 (critical)
-            "BKK005": 1.70,  # Khlong Hok Wa min_bank=2.10 -> freeboard = 0.40
-            "BKK006": 1.45,  # Khlong Bang Bua min_bank=1.85 -> freeboard = 0.40
-            "BKK007": 1.50,  # Khlong Saen Saep min_bank=1.70 -> freeboard = 0.20 (critical warning)
-            "BKK008": -5.42, # Khlong Phasi Charoen min_bank=2.00 -> freeboard = 7.42 (outlier anomaly)
+        for it in raw_items:
+            dt_str = it.get("datetime")
+            val_raw = it.get("value")
+            wl_msl = None
+            if val_raw is not None:
+                try:
+                    wl_msl = float(val_raw)
+                except (ValueError, TypeError):
+                    wl_msl = None
+
+            diff_bank = round(min_bank - wl_msl, 3) if (min_bank is not None and wl_msl is not None) else None
+
+            records.append({
+                "api_station_id": api_station_id,
+                "datetime": dt_str,
+                "waterlevel_msl": wl_msl,
+                "min_bank_msl": min_bank,
+                "diff_wl_bank_m": diff_bank,
+            })
+
+        return {
+            "source": url,
+            "status": "success",
+            "is_mock": False,
+            "api_station_id": api_station_id,
+            "start_date": start_date,
+            "end_date": end_date,
+            "record_count": len(records),
+            "records": records,
         }
-        for st in self._water_stations:
-            wl = mock_readings.get(st["station_id"], round(st["min_bank_msl"] - 0.5, 2))
-            diff = round(st["min_bank_msl"] - wl, 3)
-            records.append({
-                "station_id": st["station_id"],
-                "station_code": st["station_code"],
-                "station_name_th": st["station_name_th"],
-                "waterway": st["waterway"],
-                "latitude": st["latitude"],
-                "longitude": st["longitude"],
-                "timestamp_bkk": now_bkk.strftime("%Y-%m-%d %H:%M:%S"),
-                "timestamp_iso": now_bkk.isoformat(),
-                "timestamp_epoch": int(now_bkk.timestamp()),
-                "waterlevel_msl": wl,
-                "min_bank_msl": st["min_bank_msl"],
-                "diff_wl_bank_m": diff,
-            })
-        return records
 
-    def _generate_mock_rain_records(self) -> List[Dict[str, Any]]:
-        now_bkk = datetime.now(BKK_TZ)
+    def fetch_monthly_rain(self, api_station_id: int, year: int, month: int) -> Dict[str, Any]:
+        """
+        Fetches monthly daily rainfall from /rain_monthly_graph.
+        Query params: station_id, year, month
+        """
+        params = {"station_id": api_station_id, "year": year, "month": month}
+        query_str = urllib.parse.urlencode(params)
+        url = f"{RAIN_MONTHLY_GRAPH_ENDPOINT}?{query_str}"
+
+        raw_data = self._request_json(url)
+        items = raw_data.get("data", []) if isinstance(raw_data, dict) else []
+
+        meta = next((s for s in self._rain_stations if s["api_station_id"] == api_station_id), None)
+        station_name = meta.get("station_name_th", "") if meta else ""
+
         records = []
-        for i, st in enumerate(self._rain_stations):
-            rain_24h = round(25.0 + (i * 3.5) % 80, 1)
+        for it in items:
+            dt_str = it.get("rainfall_datetime")
+            val_raw = it.get("rainfall_value")
+            rain_mm = None
+            if val_raw is not None:
+                try:
+                    rain_mm = float(val_raw)
+                except (ValueError, TypeError):
+                    rain_mm = None
+
             records.append({
-                "station_id": st["station_id"],
-                "station_name_th": st["station_name_th"],
-                "district": st["district"],
-                "latitude": st["latitude"],
-                "longitude": st["longitude"],
-                "timestamp_bkk": now_bkk.strftime("%Y-%m-%d %H:%M:%S"),
-                "rain_24h_mm": rain_24h,
-                "rain_1h_mm": round(rain_24h * 0.15, 1),
+                "api_station_id": api_station_id,
+                "station_name_th": station_name,
+                "date": dt_str,
+                "rainfall_daily_mm": rain_mm,
             })
-        return records
 
-    def _generate_mock_historical_wl(self, station_id: str, date_str: str) -> List[Dict[str, Any]]:
-        data = []
-        st_meta = next((s for s in self._water_stations if s["station_id"] == station_id), None)
-        min_bank = st_meta["min_bank_msl"] if st_meta else 2.0
-        # Generate 144 readings (every 10 min in 24 hours)
-        for h in range(24):
-            for m in range(0, 60, 10):
-                time_str = f"{date_str} {h:02d}:{m:02d}:00"
-                wl = round(min_bank - 0.6 + (h * 0.02), 2)
-                data.append({
-                    "datetime": time_str,
-                    "waterlevel_msl": wl,
-                    "min_bank_msl": min_bank,
-                    "diff_wl_bank_m": round(min_bank - wl, 2),
-                })
-        return data
+        return {
+            "source": url,
+            "status": "success",
+            "is_mock": False,
+            "api_station_id": api_station_id,
+            "year": year,
+            "month": month,
+            "record_count": len(records),
+            "records": records,
+        }
 
-    def _generate_mock_monthly_rain(self, station_id: str, year: int, month: int) -> List[Dict[str, Any]]:
-        days_in_month = 30
-        data = []
-        for day in range(1, days_in_month + 1):
-            date_str = f"{year:04d}-{month:02d}-{day:02d}"
-            # Case study dates: 2026-09-24 to 2026-09-26 heavy rain
-            if month == 9 and day in [24, 25, 26]:
-                rain_mm = round(120.0 + (day - 24) * 25.0, 1)
-            else:
-                rain_mm = round((day * 3.7) % 20, 1)
-            data.append({
-                "date": date_str,
-                "rainfall_daily_mm": rain_mm
-            })
-        return data
+    def fetch_24h_rain_station(self, api_station_id: int) -> Dict[str, Any]:
+        """
+        Fetches 24-hour latest rainfall for a specific station from /rain_24h_graph.
+        """
+        params = {"station_id": api_station_id}
+        url = f"{RAIN_24H_GRAPH_ENDPOINT}?{urllib.parse.urlencode(params)}"
+        raw_data = self._request_json(url)
+        items = raw_data.get("data", []) if isinstance(raw_data, dict) else []
+
+        meta = next((s for s in self._rain_stations if s["api_station_id"] == api_station_id), None)
+
+        # Sum total rainfall in 24 hours
+        total_24h = 0.0
+        latest_val = 0.0
+        latest_dt = ""
+
+        for it in items:
+            val = it.get("rainfall_value")
+            if val is not None:
+                try:
+                    v = float(val)
+                    total_24h += v
+                    latest_val = v
+                    latest_dt = it.get("rainfall_datetime", "")
+                except (ValueError, TypeError):
+                    pass
+
+        return {
+            "api_station_id": api_station_id,
+            "station_name_th": meta.get("station_name_th", "") if meta else "",
+            "latitude": meta.get("latitude") if meta else None,
+            "longitude": meta.get("longitude") if meta else None,
+            "rainfall_datetime": latest_dt,
+            "rain_24h_mm": round(total_24h, 1),
+            "rain_latest_mm": round(latest_val, 1),
+            "data_points": len(items),
+        }

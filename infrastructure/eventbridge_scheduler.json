@@ -1,6 +1,6 @@
 {
   "AWSTemplateFormatVersion": "2010-09-09",
-  "Description": "CS341-TuamYang EventBridge Scheduler & Ingestion Lambda Template (Member 1)",
+  "Description": "CS341-TuamYang EventBridge Scheduler & Ingestion Lambda Template (AWS Academy Learner Lab Compatible)",
   "Parameters": {
     "S3BucketName": {
       "Type": "String",
@@ -11,7 +11,20 @@
       "Type": "String",
       "Default": "ingest_thaiwater",
       "Description": "Name of the ThaiWater Ingestion Lambda Function"
+    },
+    "CodeS3Bucket": {
+      "Type": "String",
+      "Default": "",
+      "Description": "Optional S3 bucket containing the deployment package zip (leave empty if deploying via AWS CLI zip update)"
+    },
+    "CodeS3Key": {
+      "Type": "String",
+      "Default": "deployments/ingest_thaiwater.zip",
+      "Description": "S3 Key of the deployment zip file"
     }
+  },
+  "Conditions": {
+    "HasCodeS3Bucket": { "Fn::Not": [{ "Fn::Equals": [{ "Ref": "CodeS3Bucket" }, ""] }] }
   },
   "Resources": {
     "IngestThaiWaterFunction": {
@@ -20,9 +33,9 @@
         "FunctionName": { "Ref": "LambdaFunctionName" },
         "Runtime": "python3.12",
         "Handler": "src.ingest_thaiwater.lambda_handler",
-        "Timeout": 60,
+        "Timeout": 300,
         "MemorySize": 256,
-        "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"] },
+        "Role": { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/LabRole" },
         "Environment": {
           "Variables": {
             "STORAGE_BACKEND": "s3",
@@ -31,27 +44,17 @@
           }
         },
         "Code": {
-          "ZipFile": "# Code deployed via deployment zip or container"
-        }
-      }
-    },
-    "LambdaExecutionRole": {
-      "Type": "AWS::IAM::Role",
-      "Properties": {
-        "AssumeRolePolicyDocument": {
-          "Version": "2012-10-17",
-          "Statement": [
+          "Fn::If": [
+            "HasCodeS3Bucket",
             {
-              "Effect": "Allow",
-              "Principal": { "Service": ["lambda.amazonaws.com"] },
-              "Action": ["sts:AssumeRole"]
+              "S3Bucket": { "Ref": "CodeS3Bucket" },
+              "S3Key": { "Ref": "CodeS3Key" }
+            },
+            {
+              "ZipFile": "# Initial placeholder. Update code using deploy_learner_lab.ps1\ndef lambda_handler(event, context):\n    from src.ingest_thaiwater import lambda_handler as real_handler\n    return real_handler(event, context)\n"
             }
           ]
-        },
-        "ManagedPolicyArns": [
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-          "arn:aws:iam::aws:policy/AmazonS3FullAccess"
-        ]
+        }
       }
     },
     "WaterLevelScheduleRule": {
@@ -83,7 +86,7 @@
       "Type": "AWS::Events::Rule",
       "Properties": {
         "Name": "tuamyang-thaiwater-rain-1hr",
-        "Description": "Trigger ingest_thaiwater for 134 rainfall stations every 1 hour",
+        "Description": "Trigger ingest_thaiwater for rainfall stations every 1 hour",
         "ScheduleExpression": "rate(1 hour)",
         "State": "ENABLED",
         "Targets": [
@@ -120,4 +123,3 @@
     }
   }
 }
-

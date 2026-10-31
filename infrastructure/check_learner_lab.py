@@ -96,3 +96,4 @@ if __name__ == "__main__":
     parser.add_argument("--max-gap-minutes", type=int, default=30)
     args = parser.parse_args()
     verify_session_continuity(backend=args.backend, max_gap_minutes=args.max_gap_minutes)
+

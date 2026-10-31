@@ -1,120 +1,233 @@
 {
   "completed_tasks": {
-    "wl_BKK001_2026_09": {
-      "completed_at": "2026-10-31T15:19:56.939651+00:00",
-      "record_count": 144,
-      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_BKK001_2026_09.json"
+    "wl_st1_2026_09": {
+      "completed_at": "2026-10-31T16:23:44.018480+00:00",
+      "record_count": 2880,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_st1_2026_09.json"
     },
-    "wl_BKK002_2026_09": {
-      "completed_at": "2026-10-31T15:19:56.995018+00:00",
-      "record_count": 144,
-      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_BKK002_2026_09.json"
+    "wl_st3_2026_09": {
+      "completed_at": "2026-10-31T16:23:44.435668+00:00",
+      "record_count": 2880,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_st3_2026_09.json"
     },
-    "wl_BKK003_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.052387+00:00",
-      "record_count": 144,
-      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_BKK003_2026_09.json"
+    "wl_st4_2026_09": {
+      "completed_at": "2026-10-31T16:23:44.766175+00:00",
+      "record_count": 2880,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_st4_2026_09.json"
     },
-    "wl_BKK004_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.108104+00:00",
-      "record_count": 144,
-      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_BKK004_2026_09.json"
+    "wl_st5_2026_09": {
+      "completed_at": "2026-10-31T16:23:45.134855+00:00",
+      "record_count": 2880,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_st5_2026_09.json"
     },
-    "wl_BKK005_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.163552+00:00",
-      "record_count": 144,
-      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_BKK005_2026_09.json"
+    "wl_st8_2026_09": {
+      "completed_at": "2026-10-31T16:23:45.499177+00:00",
+      "record_count": 2880,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_st8_2026_09.json"
     },
-    "wl_BKK006_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.217548+00:00",
-      "record_count": 144,
-      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_BKK006_2026_09.json"
+    "wl_st10_2026_09": {
+      "completed_at": "2026-10-31T16:23:45.886892+00:00",
+      "record_count": 2880,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_st10_2026_09.json"
     },
-    "wl_BKK007_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.273604+00:00",
-      "record_count": 144,
-      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_BKK007_2026_09.json"
+    "wl_st1_2026_10": {
+      "completed_at": "2026-10-31T16:24:01.191525+00:00",
+      "record_count": 2974,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-10-01/waterlevel_hist_st1_2026_10.json"
     },
-    "wl_BKK008_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.327491+00:00",
-      "record_count": 144,
-      "dest_key": "raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_BKK008_2026_09.json"
+    "wl_st3_2026_10": {
+      "completed_at": "2026-10-31T16:24:01.518291+00:00",
+      "record_count": 2974,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-10-01/waterlevel_hist_st3_2026_10.json"
     },
-    "rain_RAIN_BKK_001_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.381347+00:00",
+    "wl_st4_2026_10": {
+      "completed_at": "2026-10-31T16:24:01.862169+00:00",
+      "record_count": 2974,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-10-01/waterlevel_hist_st4_2026_10.json"
+    },
+    "wl_st5_2026_10": {
+      "completed_at": "2026-10-31T16:24:02.201494+00:00",
+      "record_count": 2974,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-10-01/waterlevel_hist_st5_2026_10.json"
+    },
+    "wl_st8_2026_10": {
+      "completed_at": "2026-10-31T16:24:02.594869+00:00",
+      "record_count": 2974,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-10-01/waterlevel_hist_st8_2026_10.json"
+    },
+    "wl_st10_2026_10": {
+      "completed_at": "2026-10-31T16:24:02.961081+00:00",
+      "record_count": 2974,
+      "dest_key": "raw/thaiwater/waterlevel/dt=2026-10-01/waterlevel_hist_st10_2026_10.json"
+    },
+    "rain_st1_2026_09": {
+      "completed_at": "2026-10-31T16:24:18.052163+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_001_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st1_2026_09.json"
     },
-    "rain_RAIN_BKK_002_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.434644+00:00",
+    "rain_st2_2026_09": {
+      "completed_at": "2026-10-31T16:24:18.284330+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_002_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st2_2026_09.json"
     },
-    "rain_RAIN_BKK_003_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.489591+00:00",
+    "rain_st3_2026_09": {
+      "completed_at": "2026-10-31T16:24:18.516443+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_003_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st3_2026_09.json"
     },
-    "rain_RAIN_BKK_004_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.543070+00:00",
+    "rain_st4_2026_09": {
+      "completed_at": "2026-10-31T16:24:18.744828+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_004_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st4_2026_09.json"
     },
-    "rain_RAIN_BKK_005_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.598251+00:00",
+    "rain_st5_2026_09": {
+      "completed_at": "2026-10-31T16:24:18.952216+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_005_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st5_2026_09.json"
     },
-    "rain_RAIN_BKK_006_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.655461+00:00",
+    "rain_st8_2026_09": {
+      "completed_at": "2026-10-31T16:24:19.179476+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_006_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st8_2026_09.json"
     },
-    "rain_RAIN_BKK_007_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.709486+00:00",
+    "rain_st10_2026_09": {
+      "completed_at": "2026-10-31T16:24:19.405800+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_007_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st10_2026_09.json"
     },
-    "rain_RAIN_BKK_008_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.763246+00:00",
+    "rain_st20_2026_09": {
+      "completed_at": "2026-10-31T16:24:19.628459+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_008_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st20_2026_09.json"
     },
-    "rain_RAIN_BKK_009_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.819297+00:00",
+    "rain_st23_2026_09": {
+      "completed_at": "2026-10-31T16:24:19.853890+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_009_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st23_2026_09.json"
     },
-    "rain_RAIN_BKK_010_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.874896+00:00",
+    "rain_st24_2026_09": {
+      "completed_at": "2026-10-31T16:24:20.060112+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_010_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st24_2026_09.json"
     },
-    "rain_RAIN_BKK_011_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.928521+00:00",
+    "rain_st25_2026_09": {
+      "completed_at": "2026-10-31T16:24:20.291476+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_011_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st25_2026_09.json"
     },
-    "rain_RAIN_BKK_012_2026_09": {
-      "completed_at": "2026-10-31T15:19:57.981745+00:00",
+    "rain_st26_2026_09": {
+      "completed_at": "2026-10-31T16:24:20.518020+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_012_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st26_2026_09.json"
     },
-    "rain_RAIN_BKK_013_2026_09": {
-      "completed_at": "2026-10-31T15:19:58.036647+00:00",
+    "rain_st28_2026_09": {
+      "completed_at": "2026-10-31T16:24:20.718498+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_013_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st28_2026_09.json"
     },
-    "rain_RAIN_BKK_014_2026_09": {
-      "completed_at": "2026-10-31T15:19:58.090301+00:00",
+    "rain_st29_2026_09": {
+      "completed_at": "2026-10-31T16:24:20.934222+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_014_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st29_2026_09.json"
     },
-    "rain_RAIN_BKK_015_2026_09": {
-      "completed_at": "2026-10-31T15:19:58.143330+00:00",
+    "rain_st37_2026_09": {
+      "completed_at": "2026-10-31T16:24:21.161284+00:00",
       "record_count": 30,
-      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_RAIN_BKK_015_2026_09.json"
+      "dest_key": "raw/thaiwater/rain/dt=2026-09-01/rain_monthly_st37_2026_09.json"
+    },
+    "rain_st1_2026_10": {
+      "completed_at": "2026-10-31T16:24:21.368117+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st1_2026_10.json"
+    },
+    "rain_st2_2026_10": {
+      "completed_at": "2026-10-31T16:24:21.573209+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st2_2026_10.json"
+    },
+    "rain_st3_2026_10": {
+      "completed_at": "2026-10-31T16:24:21.798935+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st3_2026_10.json"
+    },
+    "rain_st4_2026_10": {
+      "completed_at": "2026-10-31T16:24:22.041647+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st4_2026_10.json"
+    },
+    "rain_st5_2026_10": {
+      "completed_at": "2026-10-31T16:24:22.273017+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st5_2026_10.json"
+    },
+    "rain_st8_2026_10": {
+      "completed_at": "2026-10-31T16:24:22.474484+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st8_2026_10.json"
+    },
+    "rain_st10_2026_10": {
+      "completed_at": "2026-10-31T16:24:22.698307+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st10_2026_10.json"
+    },
+    "rain_st20_2026_10": {
+      "completed_at": "2026-10-31T16:24:22.916251+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st20_2026_10.json"
+    },
+    "rain_st23_2026_10": {
+      "completed_at": "2026-10-31T16:24:23.156835+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st23_2026_10.json"
+    },
+    "rain_st24_2026_10": {
+      "completed_at": "2026-10-31T16:24:23.366318+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st24_2026_10.json"
+    },
+    "rain_st25_2026_10": {
+      "completed_at": "2026-10-31T16:24:23.594486+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st25_2026_10.json"
+    },
+    "rain_st26_2026_10": {
+      "completed_at": "2026-10-31T16:24:23.829155+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st26_2026_10.json"
+    },
+    "rain_st28_2026_10": {
+      "completed_at": "2026-10-31T16:24:24.043366+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st28_2026_10.json"
+    },
+    "rain_st29_2026_10": {
+      "completed_at": "2026-10-31T16:24:24.260828+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st29_2026_10.json"
+    },
+    "rain_st37_2026_10": {
+      "completed_at": "2026-10-31T16:24:24.502944+00:00",
+      "record_count": 31,
+      "dest_key": "raw/thaiwater/rain/dt=2026-10-01/rain_monthly_st37_2026_10.json"
     }
   },
-  "last_updated": "2026-10-31T15:19:58.143330+00:00"
+  "failed_tasks": {
+    "wl_st2599_2026_09": {
+      "error": "Failed to fetch https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_graph?station_id=2599&start_date=2026-09-01&end_date=2026-09-30 after 3 retries: <urlopen error [Errno 11001] getaddrinfo failed>",
+      "failed_at": "2026-10-31T16:25:03.189676+00:00"
+    },
+    "wl_st852087_2026_09": {
+      "error": "Failed to fetch https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_graph?station_id=852087&start_date=2026-09-01&end_date=2026-09-30 after 3 retries: <urlopen error [Errno 11001] getaddrinfo failed>",
+      "failed_at": "2026-10-31T16:25:10.348365+00:00"
+    },
+    "wl_st2599_2026_10": {
+      "error": "Failed to fetch https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_graph?station_id=2599&start_date=2026-10-01&end_date=2026-10-31 after 3 retries: HTTP Error 500: Internal Server Error",
+      "failed_at": "2026-10-31T16:24:10.424169+00:00"
+    },
+    "wl_st852087_2026_10": {
+      "error": "Failed to fetch https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_graph?station_id=852087&start_date=2026-10-01&end_date=2026-10-31 after 3 retries: HTTP Error 500: Internal Server Error",
+      "failed_at": "2026-10-31T16:24:17.846558+00:00"
+    }
+  },
+  "last_updated": "2026-10-31T16:25:10.349420+00:00"
 }

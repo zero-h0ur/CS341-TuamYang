@@ -1,123 +1,137 @@
 [
   {
-    "station_id": "RAIN_BKK_001",
-    "station_name_th": "สถานีสูบน้ำพระโขนง",
-    "district": "Phra Khanong",
-    "latitude": 13.7082,
-    "longitude": 100.5986,
-    "agency": "BMA"
+    "api_station_id": 1,
+    "tele_station_oldcode": "BKK021",
+    "station_name_th": "สถานีวัดน้ำ/ฝนคลองลาดพร้าว (วัดบางบัว)",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 1,
+    "latitude": 13.85402,
+    "longitude": 100.58746
   },
   {
-    "station_id": "RAIN_BKK_002",
-    "station_name_th": "สถานีวัดฝนเขตบางเขน",
-    "district": "Bang Khen",
-    "latitude": 13.8732,
-    "longitude": 100.5971,
-    "agency": "BMA"
+    "api_station_id": 2,
+    "tele_station_oldcode": "BKK002",
+    "station_name_th": "สถานีวัดฝนกรุงเทพฯ 2",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 4,
+    "latitude": 13.7200,
+    "longitude": 100.5100
   },
   {
-    "station_id": "RAIN_BKK_003",
-    "station_name_th": "สถานีวัดฝนเขตดอนเมือง",
-    "district": "Don Mueang",
-    "latitude": 13.9136,
-    "longitude": 100.5906,
-    "agency": "TMD"
+    "api_station_id": 3,
+    "tele_station_oldcode": "BKK009",
+    "station_name_th": "สถานีวัดน้ำ/ฝนคลองลำปลาทิว (ลาดกระบัง)",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 3,
+    "latitude": 13.7407,
+    "longitude": 100.79468
   },
   {
-    "station_id": "RAIN_BKK_004",
-    "station_name_th": "สถานีวัดฝนเขตจตุจักร",
-    "district": "Chatuchak",
-    "latitude": 13.8285,
-    "longitude": 100.5598,
-    "agency": "BMA"
+    "api_station_id": 4,
+    "tele_station_oldcode": "CPY015",
+    "station_name_th": "สถานีวัดน้ำ/ฝนสะพานกรุงเทพ",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 4,
+    "latitude": 13.700301,
+    "longitude": 100.49277
   },
   {
-    "station_id": "RAIN_BKK_005",
+    "api_station_id": 5,
+    "tele_station_oldcode": "BKK003",
+    "station_name_th": "สถานีวัดน้ำ/ฝนคลองมหาสวัสดิ์",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 5,
+    "latitude": 13.79965,
+    "longitude": 100.43863
+  },
+  {
+    "api_station_id": 8,
+    "tele_station_oldcode": "BKK020",
+    "station_name_th": "สถานีวัดน้ำ/ฝนคลองหกวา (ปากคลอง 2 ใต้)",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 8,
+    "latitude": 13.93183,
+    "longitude": 100.63952
+  },
+  {
+    "api_station_id": 10,
+    "tele_station_oldcode": "BKK005",
+    "station_name_th": "สถานีวัดน้ำ/ฝนคลองภาษีเจริญ (เพชรเกษม 69)",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 10,
+    "latitude": 13.69158,
+    "longitude": 100.38127
+  },
+  {
+    "api_station_id": 20,
+    "tele_station_oldcode": "BKK011",
     "station_name_th": "สถานีวัดฝนเขตคลองเตย",
-    "district": "Khlong Toei",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 4,
     "latitude": 13.7153,
-    "longitude": 100.5694,
-    "agency": "TMD"
+    "longitude": 100.5694
   },
   {
-    "station_id": "RAIN_BKK_006",
-    "station_name_th": "สถานีวัดฝนเขตลาดกระบัง",
-    "district": "Lat Krabang",
-    "latitude": 13.7234,
-    "longitude": 100.7828,
-    "agency": "BMA"
+    "api_station_id": 23,
+    "tele_station_oldcode": "BKK007",
+    "station_name_th": "สถานีวัดฝนเขตบางใหญ่/ทวีวัฒนา",
+    "province_th": "นนทบุรี/กรุงเทพฯ",
+    "paired_water_station_id": 5,
+    "latitude": 13.8200,
+    "longitude": 100.4000
   },
   {
-    "station_id": "RAIN_BKK_007",
+    "api_station_id": 24,
+    "tele_station_oldcode": "BKK014",
+    "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 8,
+    "latitude": 13.9136,
+    "longitude": 100.5906
+  },
+  {
+    "api_station_id": 25,
+    "tele_station_oldcode": "BKK016",
+    "station_name_th": "สถานีวัดฝนเขตบางเขน",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 1,
+    "latitude": 13.8732,
+    "longitude": 100.5971
+  },
+  {
+    "api_station_id": 26,
+    "tele_station_oldcode": "BKK017",
+    "station_name_th": "สถานีวัดฝนเขตจตุจักร",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 1,
+    "latitude": 13.8285,
+    "longitude": 100.5598
+  },
+  {
+    "api_station_id": 28,
+    "tele_station_oldcode": "BKK018",
     "station_name_th": "สถานีวัดฝนเขตบางกะปิ",
-    "district": "Bang Kapi",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 852087,
     "latitude": 13.7658,
-    "longitude": 100.6477,
-    "agency": "BMA"
+    "longitude": 100.6477
   },
   {
-    "station_id": "RAIN_BKK_008",
-    "station_name_th": "สถานีวัดฝนเขตสายไหม",
-    "district": "Sai Mai",
-    "latitude": 13.9189,
-    "longitude": 100.6658,
-    "agency": "BMA"
-  },
-  {
-    "station_id": "RAIN_BKK_009",
-    "station_name_th": "สถานีวัดฝนเขตภาษีเจริญ",
-    "district": "Phasi Charoen",
-    "latitude": 13.7142,
-    "longitude": 100.4355,
-    "agency": "BMA"
-  },
-  {
-    "station_id": "RAIN_BKK_010",
-    "station_name_th": "สถานีวัดฝนเขตทวีวัฒนา",
-    "district": "Thawi Watthana",
-    "latitude": 13.7884,
-    "longitude": 100.3541,
-    "agency": "BMA"
-  },
-  {
-    "station_id": "RAIN_BKK_011",
-    "station_name_th": "สถานีวัดฝนเขตบางซื่อ",
-    "district": "Bang Sue",
-    "latitude": 13.8122,
-    "longitude": 100.5289,
-    "agency": "BMA"
-  },
-  {
-    "station_id": "RAIN_BKK_012",
-    "station_name_th": "สถานีวัดฝนเขตดินแดง",
-    "district": "Din Daeng",
-    "latitude": 13.7699,
-    "longitude": 100.5532,
-    "agency": "BMA"
-  },
-  {
-    "station_id": "RAIN_BKK_013",
-    "station_name_th": "สถานีวัดฝนเขตหนองจอก",
-    "district": "Nong Chok",
-    "latitude": 13.8561,
-    "longitude": 100.8625,
-    "agency": "BMA"
-  },
-  {
-    "station_id": "RAIN_BKK_014",
-    "station_name_th": "สถานีวัดฝนเขตบางขุนเทียน",
-    "district": "Bang Khun Thian",
-    "latitude": 13.6264,
-    "longitude": 100.4344,
-    "agency": "BMA"
-  },
-  {
-    "station_id": "RAIN_BKK_015",
+    "api_station_id": 29,
+    "tele_station_oldcode": "BKK019",
     "station_name_th": "สถานีวัดฝนเขตมีนบุรี",
-    "district": "Min Buri",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 852087,
     "latitude": 13.8138,
-    "longitude": 100.7483,
-    "agency": "BMA"
+    "longitude": 100.7483
+  },
+  {
+    "api_station_id": 37,
+    "tele_station_oldcode": "BKK015",
+    "station_name_th": "สถานีวัดฝนคลองหกวา (ลำลูกกา)",
+    "province_th": "ปทุมธานี/กรุงเทพฯ",
+    "paired_water_station_id": 8,
+    "latitude": 13.9300,
+    "longitude": 100.6800
   }
 ]
-

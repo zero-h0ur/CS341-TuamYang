@@ -1,0 +1,129 @@
+{
+  "result": "OK",
+  "data": [
+    {
+      "rainfall_datetime": "2026-10-01",
+      "rainfall_value": 27.2
+    },
+    {
+      "rainfall_datetime": "2026-10-02",
+      "rainfall_value": 1
+    },
+    {
+      "rainfall_datetime": "2026-10-03",
+      "rainfall_value": 14.6
+    },
+    {
+      "rainfall_datetime": "2026-10-04",
+      "rainfall_value": 5.4
+    },
+    {
+      "rainfall_datetime": "2026-10-05",
+      "rainfall_value": 6.4
+    },
+    {
+      "rainfall_datetime": "2026-10-06",
+      "rainfall_value": 4.8
+    },
+    {
+      "rainfall_datetime": "2026-10-07",
+      "rainfall_value": 5.2
+    },
+    {
+      "rainfall_datetime": "2026-10-08",
+      "rainfall_value": 4.4
+    },
+    {
+      "rainfall_datetime": "2026-10-09",
+      "rainfall_value": 3.6
+    },
+    {
+      "rainfall_datetime": "2026-10-10",
+      "rainfall_value": 3.4
+    },
+    {
+      "rainfall_datetime": "2026-10-11",
+      "rainfall_value": 2.4
+    },
+    {
+      "rainfall_datetime": "2026-10-12",
+      "rainfall_value": 1.2
+    },
+    {
+      "rainfall_datetime": "2026-10-13",
+      "rainfall_value": 0
+    },
+    {
+      "rainfall_datetime": "2026-10-14",
+      "rainfall_value": 2
+    },
+    {
+      "rainfall_datetime": "2026-10-15",
+      "rainfall_value": 4.4
+    },
+    {
+      "rainfall_datetime": "2026-10-16",
+      "rainfall_value": 1.6
+    },
+    {
+      "rainfall_datetime": "2026-10-17",
+      "rainfall_value": 1.6
+    },
+    {
+      "rainfall_datetime": "2026-10-18",
+      "rainfall_value": 1.4
+    },
+    {
+      "rainfall_datetime": "2026-10-19",
+      "rainfall_value": 1.2
+    },
+    {
+      "rainfall_datetime": "2026-10-20",
+      "rainfall_value": 0.6
+    },
+    {
+      "rainfall_datetime": "2026-10-21",
+      "rainfall_value": 0.4
+    },
+    {
+      "rainfall_datetime": "2026-10-22",
+      "rainfall_value": 2.2
+    },
+    {
+      "rainfall_datetime": "2026-10-23",
+      "rainfall_value": 1
+    },
+    {
+      "rainfall_datetime": "2026-10-24",
+      "rainfall_value": 0.4
+    },
+    {
+      "rainfall_datetime": "2026-10-25",
+      "rainfall_value": 0.6
+    },
+    {
+      "rainfall_datetime": "2026-10-26",
+      "rainfall_value": 0
+    },
+    {
+      "rainfall_datetime": "2026-10-27",
+      "rainfall_value": 0.6
+    },
+    {
+      "rainfall_datetime": "2026-10-28",
+      "rainfall_value": 0.2
+    },
+    {
+      "rainfall_datetime": "2026-10-29",
+      "rainfall_value": 0
+    },
+    {
+      "rainfall_datetime": "2026-10-30",
+      "rainfall_value": 0.4
+    },
+    {
+      "rainfall_datetime": "2026-10-31",
+      "rainfall_value": null
+    }
+  ]
+}
