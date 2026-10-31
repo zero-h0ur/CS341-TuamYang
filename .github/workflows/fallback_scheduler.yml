@@ -1,0 +1,30 @@
+name: Fallback ThaiWater Scheduler (Backup for Learner Lab)
+
+on:
+  schedule:
+    # Run every 15 minutes to pull water level and hourly rain
+    - cron: '*/15 * * * *'
+  workflow_dispatch: # Allows manual trigger from GitHub UI
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Run ThaiWater Ingestion
+        env:
+          STORAGE_BACKEND: local
+        run: |
+          python -m src.ingest_thaiwater --type all
+
+      - name: Verify Ingestion Output
+        run: |
+          ls -la data/incoming/thaiwater/ || true
+          ls -la data/raw/thaiwater/ || true

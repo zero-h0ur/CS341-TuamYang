@@ -1,0 +1,163 @@
+{
+  "envelope_version": "1.0",
+  "batch_id": "tw-ra-20261031-223705-750d65",
+  "data_type": "rain",
+  "source_endpoint": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/rain_24h_graph",
+  "ingested_at_utc": "2026-10-31T15:37:05.517171+00:00",
+  "ingested_at_bkk": "2026-10-31T22:37:05.517171+07:00",
+  "station_count": 15,
+  "record_count": 15,
+  "data": [
+    {
+      "station_id": "RAIN_BKK_001",
+      "station_name_th": "สถานีสูบน้ำพระโขนง",
+      "district": "Phra Khanong",
+      "latitude": 13.7082,
+      "longitude": 100.5986,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 25.0,
+      "rain_1h_mm": 3.8
+    },
+    {
+      "station_id": "RAIN_BKK_002",
+      "station_name_th": "สถานีวัดฝนเขตบางเขน",
+      "district": "Bang Khen",
+      "latitude": 13.8732,
+      "longitude": 100.5971,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 28.5,
+      "rain_1h_mm": 4.3
+    },
+    {
+      "station_id": "RAIN_BKK_003",
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง",
+      "district": "Don Mueang",
+      "latitude": 13.9136,
+      "longitude": 100.5906,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 32.0,
+      "rain_1h_mm": 4.8
+    },
+    {
+      "station_id": "RAIN_BKK_004",
+      "station_name_th": "สถานีวัดฝนเขตจตุจักร",
+      "district": "Chatuchak",
+      "latitude": 13.8285,
+      "longitude": 100.5598,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 35.5,
+      "rain_1h_mm": 5.3
+    },
+    {
+      "station_id": "RAIN_BKK_005",
+      "station_name_th": "สถานีวัดฝนเขตคลองเตย",
+      "district": "Khlong Toei",
+      "latitude": 13.7153,
+      "longitude": 100.5694,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 39.0,
+      "rain_1h_mm": 5.8
+    },
+    {
+      "station_id": "RAIN_BKK_006",
+      "station_name_th": "สถานีวัดฝนเขตลาดกระบัง",
+      "district": "Lat Krabang",
+      "latitude": 13.7234,
+      "longitude": 100.7828,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 42.5,
+      "rain_1h_mm": 6.4
+    },
+    {
+      "station_id": "RAIN_BKK_007",
+      "station_name_th": "สถานีวัดฝนเขตบางกะปิ",
+      "district": "Bang Kapi",
+      "latitude": 13.7658,
+      "longitude": 100.6477,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 46.0,
+      "rain_1h_mm": 6.9
+    },
+    {
+      "station_id": "RAIN_BKK_008",
+      "station_name_th": "สถานีวัดฝนเขตสายไหม",
+      "district": "Sai Mai",
+      "latitude": 13.9189,
+      "longitude": 100.6658,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 49.5,
+      "rain_1h_mm": 7.4
+    },
+    {
+      "station_id": "RAIN_BKK_009",
+      "station_name_th": "สถานีวัดฝนเขตภาษีเจริญ",
+      "district": "Phasi Charoen",
+      "latitude": 13.7142,
+      "longitude": 100.4355,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 53.0,
+      "rain_1h_mm": 7.9
+    },
+    {
+      "station_id": "RAIN_BKK_010",
+      "station_name_th": "สถานีวัดฝนเขตทวีวัฒนา",
+      "district": "Thawi Watthana",
+      "latitude": 13.7884,
+      "longitude": 100.3541,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 56.5,
+      "rain_1h_mm": 8.5
+    },
+    {
+      "station_id": "RAIN_BKK_011",
+      "station_name_th": "สถานีวัดฝนเขตบางซื่อ",
+      "district": "Bang Sue",
+      "latitude": 13.8122,
+      "longitude": 100.5289,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 60.0,
+      "rain_1h_mm": 9.0
+    },
+    {
+      "station_id": "RAIN_BKK_012",
+      "station_name_th": "สถานีวัดฝนเขตดินแดง",
+      "district": "Din Daeng",
+      "latitude": 13.7699,
+      "longitude": 100.5532,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 63.5,
+      "rain_1h_mm": 9.5
+    },
+    {
+      "station_id": "RAIN_BKK_013",
+      "station_name_th": "สถานีวัดฝนเขตหนองจอก",
+      "district": "Nong Chok",
+      "latitude": 13.8561,
+      "longitude": 100.8625,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 67.0,
+      "rain_1h_mm": 10.0
+    },
+    {
+      "station_id": "RAIN_BKK_014",
+      "station_name_th": "สถานีวัดฝนเขตบางขุนเทียน",
+      "district": "Bang Khun Thian",
+      "latitude": 13.6264,
+      "longitude": 100.4344,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 70.5,
+      "rain_1h_mm": 10.6
+    },
+    {
+      "station_id": "RAIN_BKK_015",
+      "station_name_th": "สถานีวัดฝนเขตมีนบุรี",
+      "district": "Min Buri",
+      "latitude": 13.8138,
+      "longitude": 100.7483,
+      "timestamp_bkk": "2026-10-31 22:37:05",
+      "rain_24h_mm": 74.0,
+      "rain_1h_mm": 11.1
+    }
+  ],
+  "raw_response": {}
+}

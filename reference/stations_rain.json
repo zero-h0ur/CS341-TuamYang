@@ -1,0 +1,123 @@
+[
+  {
+    "station_id": "RAIN_BKK_001",
+    "station_name_th": "สถานีสูบน้ำพระโขนง",
+    "district": "Phra Khanong",
+    "latitude": 13.7082,
+    "longitude": 100.5986,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_002",
+    "station_name_th": "สถานีวัดฝนเขตบางเขน",
+    "district": "Bang Khen",
+    "latitude": 13.8732,
+    "longitude": 100.5971,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_003",
+    "station_name_th": "สถานีวัดฝนเขตดอนเมือง",
+    "district": "Don Mueang",
+    "latitude": 13.9136,
+    "longitude": 100.5906,
+    "agency": "TMD"
+  },
+  {
+    "station_id": "RAIN_BKK_004",
+    "station_name_th": "สถานีวัดฝนเขตจตุจักร",
+    "district": "Chatuchak",
+    "latitude": 13.8285,
+    "longitude": 100.5598,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_005",
+    "station_name_th": "สถานีวัดฝนเขตคลองเตย",
+    "district": "Khlong Toei",
+    "latitude": 13.7153,
+    "longitude": 100.5694,
+    "agency": "TMD"
+  },
+  {
+    "station_id": "RAIN_BKK_006",
+    "station_name_th": "สถานีวัดฝนเขตลาดกระบัง",
+    "district": "Lat Krabang",
+    "latitude": 13.7234,
+    "longitude": 100.7828,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_007",
+    "station_name_th": "สถานีวัดฝนเขตบางกะปิ",
+    "district": "Bang Kapi",
+    "latitude": 13.7658,
+    "longitude": 100.6477,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_008",
+    "station_name_th": "สถานีวัดฝนเขตสายไหม",
+    "district": "Sai Mai",
+    "latitude": 13.9189,
+    "longitude": 100.6658,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_009",
+    "station_name_th": "สถานีวัดฝนเขตภาษีเจริญ",
+    "district": "Phasi Charoen",
+    "latitude": 13.7142,
+    "longitude": 100.4355,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_010",
+    "station_name_th": "สถานีวัดฝนเขตทวีวัฒนา",
+    "district": "Thawi Watthana",
+    "latitude": 13.7884,
+    "longitude": 100.3541,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_011",
+    "station_name_th": "สถานีวัดฝนเขตบางซื่อ",
+    "district": "Bang Sue",
+    "latitude": 13.8122,
+    "longitude": 100.5289,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_012",
+    "station_name_th": "สถานีวัดฝนเขตดินแดง",
+    "district": "Din Daeng",
+    "latitude": 13.7699,
+    "longitude": 100.5532,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_013",
+    "station_name_th": "สถานีวัดฝนเขตหนองจอก",
+    "district": "Nong Chok",
+    "latitude": 13.8561,
+    "longitude": 100.8625,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_014",
+    "station_name_th": "สถานีวัดฝนเขตบางขุนเทียน",
+    "district": "Bang Khun Thian",
+    "latitude": 13.6264,
+    "longitude": 100.4344,
+    "agency": "BMA"
+  },
+  {
+    "station_id": "RAIN_BKK_015",
+    "station_name_th": "สถานีวัดฝนเขตมีนบุรี",
+    "district": "Min Buri",
+    "latitude": 13.8138,
+    "longitude": 100.7483,
+    "agency": "BMA"
+  }
+]
+

@@ -1,0 +1,123 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CS341-TuamYang EventBridge Scheduler & Ingestion Lambda Template (Member 1)",
+  "Parameters": {
+    "S3BucketName": {
+      "Type": "String",
+      "Default": "cs341-tuamyang-data",
+      "Description": "Target S3 Bucket for Raw Zone storage"
+    },
+    "LambdaFunctionName": {
+      "Type": "String",
+      "Default": "ingest_thaiwater",
+      "Description": "Name of the ThaiWater Ingestion Lambda Function"
+    }
+  },
+  "Resources": {
+    "IngestThaiWaterFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Ref": "LambdaFunctionName" },
+        "Runtime": "python3.12",
+        "Handler": "src.ingest_thaiwater.lambda_handler",
+        "Timeout": 60,
+        "MemorySize": 256,
+        "Role": { "Fn::GetAtt": ["LambdaExecutionRole", "Arn"] },
+        "Environment": {
+          "Variables": {
+            "STORAGE_BACKEND": "s3",
+            "S3_BUCKET_NAME": { "Ref": "S3BucketName" },
+            "THAIWATER_API_BASE": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public"
+          }
+        },
+        "Code": {
+          "ZipFile": "# Code deployed via deployment zip or container"
+        }
+      }
+    },
+    "LambdaExecutionRole": {
+      "Type": "AWS::IAM::Role",
+      "Properties": {
+        "AssumeRolePolicyDocument": {
+          "Version": "2012-10-17",
+          "Statement": [
+            {
+              "Effect": "Allow",
+              "Principal": { "Service": ["lambda.amazonaws.com"] },
+              "Action": ["sts:AssumeRole"]
+            }
+          ]
+        },
+        "ManagedPolicyArns": [
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+          "arn:aws:iam::aws:policy/AmazonS3FullAccess"
+        ]
+      }
+    },
+    "WaterLevelScheduleRule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Name": "tuamyang-thaiwater-waterlevel-15min",
+        "Description": "Trigger ingest_thaiwater for 8 canal stations every 15 minutes",
+        "ScheduleExpression": "rate(15 minutes)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Id": "ThaiWaterWaterLevelTarget",
+            "Arn": { "Fn::GetAtt": ["IngestThaiWaterFunction", "Arn"] },
+            "Input": "{\"type\": \"waterlevel\"}"
+          }
+        ]
+      }
+    },
+    "WaterLevelRulePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Ref": "IngestThaiWaterFunction" },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": { "Fn::GetAtt": ["WaterLevelScheduleRule", "Arn"] }
+      }
+    },
+    "RainScheduleRule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Name": "tuamyang-thaiwater-rain-1hr",
+        "Description": "Trigger ingest_thaiwater for 134 rainfall stations every 1 hour",
+        "ScheduleExpression": "rate(1 hour)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Id": "ThaiWaterRainTarget",
+            "Arn": { "Fn::GetAtt": ["IngestThaiWaterFunction", "Arn"] },
+            "Input": "{\"type\": \"rain\"}"
+          }
+        ]
+      }
+    },
+    "RainRulePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Ref": "IngestThaiWaterFunction" },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": { "Fn::GetAtt": ["RainScheduleRule", "Arn"] }
+      }
+    }
+  },
+  "Outputs": {
+    "LambdaArn": {
+      "Description": "ARN of ingest_thaiwater Lambda Function",
+      "Value": { "Fn::GetAtt": ["IngestThaiWaterFunction", "Arn"] }
+    },
+    "WaterLevelRuleArn": {
+      "Description": "ARN of EventBridge WaterLevel Rule",
+      "Value": { "Fn::GetAtt": ["WaterLevelScheduleRule", "Arn"] }
+    },
+    "RainRuleArn": {
+      "Description": "ARN of EventBridge Rain Rule",
+      "Value": { "Fn::GetAtt": ["RainScheduleRule", "Arn"] }
+    }
+  }
+}
+
