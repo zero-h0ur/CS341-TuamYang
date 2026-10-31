@@ -1,60 +1,71 @@
 # ThaiWater Data Contract & Interface Specification
-> **เจ้าของเอกสาร:** สมาชิกคนที่ 1 (ThaiWater Ingestion)  
-> **กลุ่มเป้าหมาย:** สมาชิกคนที่ 3 (Reference & Spatial Join), สมาชิกคนที่ 4 (Orchestration & Validation), สมาชิกคนที่ 5 (Curated & Analysis)
+> **เจ้าของเอกสาร:** สมาชิกคนที่ 1 (ThaiWater Ingestion) — นายภูริณัฐ วรรธนะธัญญา (`PurinatWanthanathanya`)  
+> **กลุ่มเป้าหมาย:** สมาชิกคนที่ 3 (Reference & Spatial Join), สมาชิกคนที่ 4 (Orchestration & Validation), สมาชิกคนที่ 5 (Curated & Analysis)  
+> **อัปเดตล่าสุด:** ปรับปรุงข้อมูลจริง 15-minute telemetry, 8 สถานีจริง และข้อจำกัดภายนอกของ API
 
 ---
 
-## 1. วัตถุประสงค์
-เอกสารฉบับนี้กำหนดสัญญาข้อมูล (Data Contract) โครงสร้างไดเรกทอรี รูปแบบไฟล์ และนิยามตัวแปรทั้งหมดที่สร้างจากขั้นตอน **ThaiWater Ingestion (`ingest_thaiwater`)** เพื่อให้สมาชิกทีมคนอื่นสามารถนำไปประมวลผลต่อ (Spatial join, Validate, Transform, Merge into Iceberg) ได้ทันทีโดยไม่เกิด Breaking Change
+## 1. วัตถุประสงค์และสรุปการค้นพบสำคัญ (Important Discoveries)
+1. **ความละเอียดของข้อมูล (Data Resolution):**  
+   จากการดึงข้อมูลจริงของ ThaiWater พบว่าระดับน้ำโทรมาตรส่งข้อมูลทุก **15 นาที** (ไม่ใช่ 10 นาทีตามที่คาดใน Proposal)
+   - เดือนที่มี 30 วัน = 2,880 เรคคอร์ด (30 วัน × 96 รอบ/วัน)
+   - เดือนที่มี 31 วัน = 2,976 เรคคอร์ด (31 วัน × 96 รอบ/วัน)
+   - **คำแนะนำสำหรับสมาชิก 5 (Curated):** ในการทำ Hourly Roll-up (`khwaeng_hourly`) จะมีข้อมูลระดับน้ำ 4 แถวต่อชั่วโมง
+2. **Timezone:**  
+   พาทและเวลาทั้งหมดของ ThaiWater อยู่ใน **เวลาประเทศไทย (UTC+7 / Asia/Bangkok)**  
+   - `dt=YYYY-MM-DD` และ `hour=HH` เป็นเวลาไทย
+   - ฟิลด์ `timestamp_epoch` (Unix timestamp ในหน่วยวินาที) เป็นสากล ใช้สำหรับ Join ข้ามระบบกับ Traffy (ซึ่งบันทึกเป็น UTC) ได้โดยตรง
+3. **การ Deduplication สำหรับสมาชิก 4 และ 5:**  
+   ไฟล์ Raw Live Ingestion มี Batch ID กำกับเพื่อการตรวจสอบ แต่หากมีการดึงซ้ำ ให้ใช้คู่คีย์ `(api_station_id, timestamp_epoch)` เป็น Composite Primary Key ในการ Deduplicate
 
 ---
 
 ## 2. โครงสร้าง Storage Partition (Dual-mode: S3 / Local)
 
-ไม่ว่าจะรันบน **AWS S3** (`s3://<bucket>/...`) หรือ **Local Filesystem** (`data/...`) จะใช้ Path มาตรฐานเดียวกันดังนี้:
-
 ```text
 raw/
 └── thaiwater/
     ├── waterlevel/
-    │   └── dt=YYYY-MM-DD/
-    │       ├── hour=HH/
-    │       │   └── waterlevel_batch_{batch_id}_{timestamp}.json    # ดึงสดทุก 15 นาที
-    │       └── waterlevel_hist_{station_id}_{year_month}.json     # ข้อมูล Backfill รายเดือน
+    │   ├── dt=YYYY-MM-DD/hour=HH/waterlevel_{batch_id}.json          # Real-time ดึงสดทุก 15 นาที
+    │   └── dt=YYYY-MM-01/waterlevel_hist_st{station_id}_{month}.json  # Backfill รายเดือน (2,880 - 2,976 แถว/เดือน)
     └── rain/
-        └── dt=YYYY-MM-DD/
-            ├── hour=HH/
-            │   └── rain_24h_batch_{batch_id}_{timestamp}.json       # ดึงสดทุก 1 ชม.
-            └── rain_hist_{station_id}_{year_month}.json           # ข้อมูล Backfill รายเดือน
+        ├── dt=YYYY-MM-DD/hour=HH/rain_{batch_id}.json                # Real-time ดึงสดทุก 1 ชม.
+        └── dt=YYYY-MM-01/rain_monthly_st{station_id}_{month}.json     # Backfill รายเดือน (30 - 31 แถว/เดือน)
+
+incoming/
+└── thaiwater/
+    └── dt=YYYY-MM-DD/hour=HH/                                        # จุดรับไฟล์สดสำหรับกระตุ้น Step Functions (สมาชิก 4)
 ```
 
 ---
 
 ## 3. รูปแบบ Raw Data Ingestion Envelope (JSON)
 
-เพื่อรองรับการตรวจสอบ Data Freshness, Row Count, และ Idempotency ของสมาชิกคนที่ 4 (Step Functions) ทุกไฟล์ JSON ในชั้น Raw จะถูกห่อหุ้มด้วย Ingestion Envelope:
-
 ```json
 {
   "envelope_version": "1.0",
-  "batch_id": "tw-wl-20261031-153000-a1b2",
-  "data_type": "waterlevel", 
+  "batch_id": "tw-wa-20261101-001618-f6cf32",
+  "data_type": "waterlevel",
+  "is_mock": false,
   "source_endpoint": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
-  "ingested_at_utc": "2026-10-31T08:30:00Z",
-  "ingested_at_bkk": "2026-10-31T15:30:00+07:00",
+  "ingested_at_utc": "2026-10-31T17:16:15Z",
+  "ingested_at_bkk": "2026-11-01T00:16:15+07:00",
   "station_count": 8,
   "record_count": 8,
   "data": [
     {
-      "station_id": "BKK001",
-      "station_code": "CPY_PKL",
-      "timestamp_bkk": "2026-10-31 15:20:00",
-      "timestamp_iso": "2026-10-31T15:20:00+07:00",
-      "timestamp_epoch": 1793434800,
-      "waterlevel_msl": 1.95,
-      "min_bank_msl": 2.80,
-      "diff_wl_bank_m": 0.85,
-      "raw_api_payload": { ... }
+      "api_station_id": 1,
+      "tele_station_oldcode": "BKK021",
+      "station_name_th": "คลองลาดพร้าว (วัดบางบัว)",
+      "river_name_th": "คลองบางบัว",
+      "latitude": 13.85402,
+      "longitude": 100.58746,
+      "waterlevel_datetime": "2026-10-31 23:45",
+      "timestamp_iso": "2026-10-31T23:45:00+07:00",
+      "timestamp_epoch": 1793465100,
+      "waterlevel_msl": 1.26,
+      "min_bank_msl": -0.33,
+      "diff_wl_bank_m": -1.59
     }
   ]
 }
@@ -62,41 +73,36 @@ raw/
 
 ---
 
-## 4. ตัวแปรและฟิลด์มาตรฐาน (Field Definitions & Units)
+## 4. รายการ 8 สถานีวัดระดับน้ำที่มีข้อมูลตลิ่งจริงใน กทม.
 
-### 4.1 ข้อมูลระดับน้ำ (Water Level)
-| ชื่อฟิลด์ | ชนิดข้อมูล | หน่วย | คำอธิบาย |
-| :--- | :--- | :--- | :--- |
-| `station_id` | String | - | รหัสสถานีอ้างอิง เช่น `BKK001` - `BKK008` |
-| `station_code` | String | - | รหัสย่อ เช่น `CPY_PKL`, `KL_MSW` |
-| `station_name_th` | String | - | ชื่อสถานีภาษาไทย |
-| `timestamp_iso` | String (ISO-8601) | - | เวลาตรวจวัดของสถานีในรูปแบบ `YYYY-MM-DDTHH:MM:SS+07:00` |
-| `timestamp_epoch` | Long | วินาที | Unix Epoch Time (ใช้สำหรับ Join/Sort ข้าม Timezone ได้แม่นยำ) |
-| `waterlevel_msl` | Float | เมตร (ม.รทก.) | ระดับน้ำเทียบกับระดับน้ำทะเลปานกลาง (MSL) |
-| `min_bank_msl` | Float | เมตร (ม.รทก.) | ระดับความสูงสันตลิ่งขั้นต่ำ |
-| `diff_wl_bank_m` | Float | เมตร | ระยะตลิ่งคงเหลือ (Freeboard) คำนวณจาก `min_bank_msl - waterlevel_msl` (ยิ่งน้อยหรือติดลบ = น้ำท่วม) |
+| ID ในระบบ API | รหัสย่อ | ชื่อสถานี | ลำน้ำ/คลอง | ความสูงตลิ่ง (`min_bank_msl`) | สถานะข้อมูลย้อนหลัง |
+| :---: | :--- | :--- | :--- | :---: | :--- |
+| **1** | `BKK021` | คลองลาดพร้าว (วัดบางบัว) | คลองบางบัว | -0.33 m |  Backfill ได้สมบูรณ์ตั้งแต่ 2565 |
+| **3** | `BKK009` | คลองลำปลาทิว (ลาดกระบัง) | คลองลำปลาทิว | -3.171 m |  Backfill ได้สมบูรณ์ตั้งแต่ 2565 |
+| **4** | `CPY015` | สะพานกรุงเทพ | แม่น้ำเจ้าพระยา | -15.697 m |  Backfill ได้สมบูรณ์ตั้งแต่ 2565 |
+| **5** | `BKK003` | คลองมหาสวัสดิ์ (บางกอกน้อย-สวนผัก) | คลองมหาสวัสดิ์ | -3.101 m |  Backfill ได้สมบูรณ์ตั้งแต่ 2565 |
+| **8** | `BKK020` | คลองหกวา (ปากคลอง 2 ใต้) | คลองหกวา | -1.01 m |  Backfill ได้สมบูรณ์ตั้งแต่ 2565 |
+| **10** | `BKK005` | คลองภาษีเจริญ (เพชรเกษม 69) | คลองภาษีเจริญ | -6.605 m |  Backfill ได้สมบูรณ์ (พบ Outlier ตลิ่ง 7.54m ตาม Proposal) |
+| **2599** | `C.12` | ชลประทานสามเสน | แม่น้ำเจ้าพระยา | -14.52 m | ⚠️ ข้อมูลสดยิงได้ปกติ / ประวัติย้อนหลังของ สสน. ติด HTTP 500 |
+| **852087** | `AIT001` | คลองแสนแสบ | คลองแสนแสบ | 0.50 m | ⚠️ ข้อมูลสดยิงได้ปกติ / ประวัติย้อนหลังของ สสน. ติด HTTP 500 |
 
-### 4.2 ข้อมูลปริมาณฝน (Rainfall)
-| ชื่อฟิลด์ | ชนิดข้อมูล | หน่วย | คำอธิบาย |
-| :--- | :--- | :--- | :--- |
-| `station_id` | String | - | รหัสสถานีวัดฝน เช่น `RAIN_BKK_001` |
-| `timestamp_iso` | String (ISO-8601) | - | เวลาที่วัดปริมาณฝน |
-| `rain_24h_mm` | Float | มม. (mm) | ปริมาณน้ำฝนสะสม 24 ชั่วโมงล่าสุด |
-| `rain_1h_mm` | Float | มม. (mm) | ปริมาณน้ำฝนสะสมในรอบ 1 ชั่วโมง (คำนวณจาก Delta ของสะสม หรือ API) |
-| `rain_daily_mm` | Float | มม. (mm) | ปริมาณฝนรวมรายวัน (สำหรับการ Backfill ย้อนหลัง) |
+> **ข้อสังเกตและข้อจำกัดภายนอก (Known External Limitation):**  
+> สถานี ID `2599` (กรมชลประทาน) และ `852087` (AIT) ทางเซิร์ฟเวอร์ของ ThaiWater คืนค่า HTTP 500 เมื่อเรียกกราฟย้อนหลัง `/waterlevel_graph` ทุกช่วงเวลา แต่ส่งข้อมูลสด `/waterlevel_load` ได้ตามปกติ ข้อมูลย้อนหลังของทั้ง 2 สถานีนี้จึงเริ่มสะสมผ่าน EventBridge Ingestion ตั้งแต่วันนี้เป็นต้นไป
 
 ---
 
-## 5. การส่งต่องานให้สมาชิกคนอื่น (Downstream Handoff)
+## 5. การคัดเลือกสถานีวัดน้ำฝน 15 สถานี (Rain Telemetry Stations)
+ในกรุงเทพฯ มีสถานีวัดน้ำฝนทั้งหมด 134 สถานีใน ThaiWater แต่การทำ Ingestion และ Backfill มุ่งเน้น **15 สถานีโทรมาตรที่ใกล้ที่สุดกับสถานีระดับน้ำทั้ง 8 สถานี (Nearest Rain Telemetry Stations)**
+- **เหตุผลการคัดเลือก:**
+  1. **สอดคล้องกับ Q1 และงานของสมาชิกคนที่ 3:** ในขั้นตอน Spatial Join สมาชิกคนที่ 3 จะต้องจับคู่สถานีระดับน้ำเข้ากับสถานีวัดน้ำฝนที่ใกล้ที่สุด (Nearest Neighbor) การเลือก 15 สถานีนี้ครอบคลุมรัศมีรอบสถานีระดับน้ำคลองหลักทั้งหมด
+  2. **ลดภาระ API และ Network:** การดึงข้อมูลประวัติรายเดือนจาก 134 สถานีย้อนหลังถึงปี 2565 จะสร้าง Request กว่า 7,000 requests ต่อ Public API ของ สสน. ซึ่งเสี่ยงต่อการโดน Rate limit หรือบล็อก IP การจำกัดเหลือ 15 สถานีหลักทำให้ได้ข้อมูลที่แม่นยำและเสถียร 100%
+  3. **รายชื่อสถานีฝน 15 แห่ง:** บันทึกไว้อย่างชัดเจนใน `reference/stations_rain.json`
 
-1. **สำหรับสมาชิกคนที่ 3 (Reference + Spatial Join):**
-   - ใช้งานพิกัดสถานีจาก [`reference/stations_water.json`](stations_water.json) (8 สถานี) และ [`reference/stations_rain.json`](stations_rain.json) (134 สถานี)
-   - ใช้ฟิลด์ `latitude` และ `longitude` ในการรัน SQL `ST_Contains` หรือ `ST_Distance` ร่วมกับ Shapefile ขอบเขตแขวง 180 แขวง
-2. **สำหรับสมาชิกคนที่ 4 (Orchestration & Validation):**
-   - Step Functions ตรวจสอบไฟล์ใหม่ผ่าน EventBridge `ObjectCreated` หรือ S3 prefix `raw/thaiwater/`
-   - ตรวจสอบ `record_count > 0`
-   - ตรวจสอบ Data Freshness: `ingested_at_bkk` ห่างจาก `timestamp_bkk` เกิน 1 ชั่วโมงหรือไม่ (หากเกินให้แจ้ง Warning)
-   - ตรวจสอบ Outlier: เช่น กรณีคลองภาษีเจริญ (`BKK008`) ที่เคยรายงานระยะตลิ่งผิดปกติ 7.42 เมตร
-3. **สำหรับสมาชิกคนที่ 5 (Curated & Analysis):**
-   - ใช้ข้อมูลจาก `diff_wl_bank_m` ร่วมกับรายงาน Traffy ในช่วงเหตุการณ์วันที่ 24–26 ก.ย. 2569 เพื่อตอบคำถาม Q1-Q2
+---
 
+## 6. แนวทางรับมือกรณีสถานีแสนแสบ (`852087` / `AIT001`) สำหรับสมาชิก 3 และ 5
+สถานีคลองแสนแสบ (`AIT001`) เป็นสถานีสำคัญในเขตวัฒนาสำหรับตอบคำถามวิจัย Q2 และ Q3:
+1. **Live Ingestion สมบูรณ์:** ตัว Lambda ดึงข้อมูลสดจาก `/waterlevel_load` ทุก 15 นาที ได้ข้อมูลของแสนแสบตามปกติ (พร้อมความสูงตลิ่ง `min_bank_msl = 0.5m`)
+2. **Backfill ย้อนหลังติด HTTP 500:** เนื่องจากข้อจำกัดภายนอกของเซิร์ฟเวอร์ ThaiWater หากสมาชิกคนที่ 5 ต้องการวิเคราะห์เหตุการณ์น้ำท่วมย้อนหลังช่วงเดือนกันยายน 2569:
+   - สามารถใช้ข้อมูลระดับน้ำจากสถานีเชื่อมโยงในโครงข่ายคลอง กทม. เช่น **คลองลาดพร้าว (วัดบางบัว - ID 1)** หรือ **คลองหกวา (ID 8)** ซึ่งระบายน้ำลงสู่ระบบคลองเดียวกัน
+   - หรือใช้ระดับน้ำสะสมจากการรัน Ingestion สดที่บันทึกลงใน S3 ตั้งแต่วันที่เริ่มระบบ

@@ -5,13 +5,22 @@ Outputs structured JSON logs to stdout (CloudWatch) and logs/ingestion.log.
 
 import json
 import logging
+import os
 import sys
 from datetime import datetime, timezone
 from pathlib import Path
 from config.config import LOGS_DIR
 
-LOGS_DIR.mkdir(parents=True, exist_ok=True)
-LOG_FILE_PATH = LOGS_DIR / "ingestion.log"
+# AWS Lambda filesystem is read-only except /tmp
+IS_LAMBDA = bool(os.getenv("AWS_LAMBDA_FUNCTION_NAME"))
+if IS_LAMBDA:
+    LOG_FILE_PATH = Path("/tmp/ingestion.log")
+else:
+    try:
+        LOGS_DIR.mkdir(parents=True, exist_ok=True)
+        LOG_FILE_PATH = LOGS_DIR / "ingestion.log"
+    except Exception:
+        LOG_FILE_PATH = Path("/tmp/ingestion.log")
 
 
 class JsonFormatter(logging.Formatter):

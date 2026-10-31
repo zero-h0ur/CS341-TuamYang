@@ -122,6 +122,7 @@ class TestThaiWaterIngestion(unittest.TestCase):
         manager = BackfillManager(backend="local")
         manager.storage = self.storage
         manager.checkpoint_path = Path(self.temp_dir) / "checkpoint.json"
+        manager.checkpoints = {"completed_tasks": {}, "failed_tasks": {}}
 
         # Mock client that raises API error
         class BrokenClient(ThaiWaterClient):

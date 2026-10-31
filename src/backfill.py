@@ -234,7 +234,8 @@ class BackfillManager:
         rain_stations = self.client.get_rain_stations()
 
         total_tasks = len(months) * (len(water_stations) + len(rain_stations))
-        logger.info(f"Starting FULL historical backfill: {len(months)} months across {len(water_stations)} water + {len(rain_stations)} rain stations (Total ~{total_tasks} tasks)...")
+        end_desc = f"{end_year}-{end_month:02d}" if (end_year and end_month) else "present"
+        logger.info(f"Starting FULL historical backfill ({start_year}-{start_month:02d} to {end_desc}): {len(months)} months across {len(water_stations)} water + {len(rain_stations)} rain stations (Total ~{total_tasks} tasks)...")
 
         results = []
         # 1. Backfill 8 Water Stations
@@ -259,6 +260,10 @@ class BackfillManager:
         """
         Executes backfill focused specifically on the proposal case study storm period (Sep - Oct 2026).
         """
+        water_stations = self.client.get_water_stations()
+        rain_stations = self.client.get_rain_stations()
+        total_tasks = 2 * (len(water_stations) + len(rain_stations))
+        logger.info(f"Starting CASE STUDY backfill (Sep - Oct 2026): 2 months across {len(water_stations)} water + {len(rain_stations)} rain stations (Total {total_tasks} tasks)...")
         return self.run_full_backfill(start_year=2026, start_month=9, end_year=2026, end_month=10, force=force, delay_sec=delay_sec)
 
 
@@ -307,17 +312,22 @@ def main():
     print("=" * 60)
     succeeded = [r for r in results if r["status"] == "SUCCESS"]
     skipped = [r for r in results if r["status"] == "SKIPPED"]
-    failed = [r for r in results if r["status"] in ("FAILED", "EMPTY")]
+    empty = [r for r in results if r["status"] == "EMPTY"]
+    failed = [r for r in results if r["status"] == "FAILED"]
 
     print(f"Total tasks processed: {len(results)}")
-    print(f"  [SUCCESS] Succeeded: {len(succeeded)}")
-    print(f"  [SKIPPED] Skipped (Idempotent): {len(skipped)}")
-    print(f"  [FAILED]  Failed / Empty: {len(failed)}")
+    print(f"  [SUCCESS] Succeeded:                {len(succeeded)}")
+    print(f"  [SKIPPED] Skipped (Idempotent):     {len(skipped)}")
+    print(f"  [EMPTY]   Empty / Inactive Station: {len(empty)}")
+    print(f"  [FAILED]  Failed (API Error 500):   {len(failed)}")
 
     if failed:
-        print("\nFailed task list:")
+        print("\nFailed task list (External Server 500 Errors):")
         for f in failed[:10]:
-            print(f"  - {f.get('task_key')}: {f.get('error', 'empty')}")
+            print(f"  - {f.get('task_key')}: {f.get('error', 'unknown error')}")
+
+    if empty:
+        print(f"\nEmpty task count: {len(empty)} (Telemetry station was inactive or uninstalled during this period)")
 
 
 if __name__ == "__main__":
