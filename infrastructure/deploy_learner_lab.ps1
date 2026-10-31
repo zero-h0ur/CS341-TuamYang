@@ -67,6 +67,11 @@ if ($lambdaExists) {
         --zip-file "fileb://$zipPath" `
         --region $Region | Out-Null
 
+    Write-Host "  Waiting for Lambda update to finish..."
+    aws lambda wait function-updated `
+        --function-name $FunctionName `
+        --region $Region 2>$null
+
     aws lambda update-function-configuration `
         --function-name $FunctionName `
         --timeout 300 `

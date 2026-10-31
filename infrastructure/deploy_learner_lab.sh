@@ -45,6 +45,11 @@ if aws lambda get-function --function-name "${FUNCTION_NAME}" --region "${REGION
         --zip-file "fileb://dist/ingest_thaiwater.zip" \
         --region "${REGION}" >/dev/null
 
+    echo " Waiting for Lambda update to finish..."
+    aws lambda wait function-updated \
+        --function-name "${FUNCTION_NAME}" \
+        --region "${REGION}" 2>/dev/null || sleep 5
+
     aws lambda update-function-configuration \
         --function-name "${FUNCTION_NAME}" \
         --timeout 300 \
