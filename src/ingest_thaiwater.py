@@ -75,6 +75,7 @@ def ingest_waterlevel(client: ThaiWaterClient, storage_driver: Any) -> Dict[str,
         source_endpoint=fetch_result.get("source", "waterlevel_load"),
         records=records,
         is_mock=is_mock,
+        raw_response=fetch_result.get("raw_response", []),
     )
 
     batch_id = envelope["batch_id"]

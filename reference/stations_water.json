@@ -10,11 +10,10 @@
     "tumbon_th": "อนุสาวรีย์",
     "latitude": 13.85402,
     "longitude": 100.58746,
-    "min_bank_msl": -0.33,
+    "min_bank_msl": 2.2,
     "ground_level_msl": -0.33,
-    "latest_waterlevel_datetime": "2026-10-31 22:50",
-    "latest_waterlevel_msl": 1.26,
-    "latest_diff_wl_bank": 0.94
+    "left_bank_msl": 2.2,
+    "right_bank_msl": 2.2
   },
   {
     "api_station_id": 3,
@@ -27,11 +26,10 @@
     "tumbon_th": "ลาดกระบัง",
     "latitude": 13.7407,
     "longitude": 100.79468,
-    "min_bank_msl": -3.171,
+    "min_bank_msl": 0.62,
     "ground_level_msl": -3.171,
-    "latest_waterlevel_datetime": "2026-10-31 22:50",
-    "latest_waterlevel_msl": 0.07,
-    "latest_diff_wl_bank": 0.55
+    "left_bank_msl": 0.6228,
+    "right_bank_msl": 1.188
   },
   {
     "api_station_id": 4,
@@ -44,11 +42,10 @@
     "tumbon_th": "ดาวคะนอง",
     "latitude": 13.700301,
     "longitude": 100.49277,
-    "min_bank_msl": -15.697,
+    "min_bank_msl": 2.16,
     "ground_level_msl": -15.697,
-    "latest_waterlevel_datetime": "2026-10-31 22:50",
-    "latest_waterlevel_msl": 0.7,
-    "latest_diff_wl_bank": 1.46
+    "left_bank_msl": 2.201,
+    "right_bank_msl": 2.161
   },
   {
     "api_station_id": 5,
@@ -61,11 +58,10 @@
     "tumbon_th": "ตลิ่งชัน",
     "latitude": 13.79965,
     "longitude": 100.43863,
-    "min_bank_msl": -3.101,
+    "min_bank_msl": 2.07,
     "ground_level_msl": -3.101,
-    "latest_waterlevel_datetime": "2026-10-31 21:40",
-    "latest_waterlevel_msl": 1.86,
-    "latest_diff_wl_bank": 0.21
+    "left_bank_msl": 2.069,
+    "right_bank_msl": 2.152
   },
   {
     "api_station_id": 8,
@@ -78,11 +74,10 @@
     "tumbon_th": "ลาดพร้าว",
     "latitude": 13.93183,
     "longitude": 100.63952,
-    "min_bank_msl": -1.01,
+    "min_bank_msl": 1.97,
     "ground_level_msl": -1.01,
-    "latest_waterlevel_datetime": "2026-10-31 22:50",
-    "latest_waterlevel_msl": 1.17,
-    "latest_diff_wl_bank": 0.8
+    "left_bank_msl": 1.97,
+    "right_bank_msl": 1.97
   },
   {
     "api_station_id": 10,
@@ -95,11 +90,10 @@
     "tumbon_th": "หลักสอง",
     "latitude": 13.69158,
     "longitude": 100.38127,
-    "min_bank_msl": -6.605,
+    "min_bank_msl": 1.42,
     "ground_level_msl": -6.605,
-    "latest_waterlevel_datetime": "2026-10-31 22:50",
-    "latest_waterlevel_msl": -6.13,
-    "latest_diff_wl_bank": 7.54
+    "left_bank_msl": 1.637,
+    "right_bank_msl": 1.415
   },
   {
     "api_station_id": 2599,
@@ -112,11 +106,10 @@
     "tumbon_th": "ถนนนครไชยศรี",
     "latitude": 13.78815,
     "longitude": 100.509148,
-    "min_bank_msl": -14.52,
+    "min_bank_msl": 2.26,
     "ground_level_msl": -14.52,
-    "latest_waterlevel_datetime": "2026-10-31 22:00",
-    "latest_waterlevel_msl": 1.42,
-    "latest_diff_wl_bank": 0.84
+    "left_bank_msl": 2.264,
+    "right_bank_msl": 3.642
   },
   {
     "api_station_id": 852087,
@@ -129,10 +122,9 @@
     "tumbon_th": "คลองเตยเหนือ",
     "latitude": 13.74325,
     "longitude": 100.562164,
-    "min_bank_msl": 0.5,
+    "min_bank_msl": 2.39,
     "ground_level_msl": 0.5,
-    "latest_waterlevel_datetime": "2026-10-31 22:50",
-    "latest_waterlevel_msl": 1.3,
-    "latest_diff_wl_bank": 1.09
+    "left_bank_msl": 2.39,
+    "right_bank_msl": 2.39
   }
 ]

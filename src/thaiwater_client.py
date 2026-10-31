@@ -7,6 +7,7 @@ Principles:
 - Accurate parsing of real ThaiWater API schemas.
 - Safe type conversions (string to float, preserving 0.0, handling nulls).
 - Preserves original measurement timestamps from telemetry sensors.
+- Uses API's station.min_bank and diff_wl_bank directly with consistency check.
 """
 
 import json
@@ -17,7 +18,7 @@ import urllib.parse
 import urllib.request
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 from config.config import (
     RAIN_24H_GRAPH_ENDPOINT,
     RAIN_MONTHLY_GRAPH_ENDPOINT,
@@ -98,7 +99,7 @@ class ThaiWaterClient:
         if not items:
             raise ThaiWaterAPIError(f"Endpoint {url} returned empty waterlevel_data")
 
-        records = self._parse_waterlevel_load(items)
+        records, matched_raw = self._parse_waterlevel_load(items)
         now_utc = datetime.now(timezone.utc)
         now_bkk = datetime.now(BKK_TZ)
 
@@ -109,11 +110,13 @@ class ThaiWaterClient:
             "fetched_at_utc": now_utc.isoformat(),
             "fetched_at_bkk": now_bkk.isoformat(),
             "records": records,
+            "raw_response": matched_raw,
         }
 
-    def _parse_waterlevel_load(self, items: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
-        """Parses real API response into standardized record structure."""
+    def _parse_waterlevel_load(self, items: List[Dict[str, Any]]) -> Tuple[List[Dict[str, Any]], List[Dict[str, Any]]]:
+        """Parses real API response into standardized record structure and extracts raw matched items."""
         results = []
+        matched_raw = []
         # Station maps by numeric ID and old code
         station_id_map = {s["api_station_id"]: s for s in self._water_stations}
         station_code_map = {s["tele_station_oldcode"]: s for s in self._water_stations if s.get("tele_station_oldcode")}
@@ -127,20 +130,56 @@ class ThaiWaterClient:
             if not meta:
                 continue
 
+            matched_raw.append(item)
+
             # Safe float parsing
             wl_raw = item.get("waterlevel_msl")
             if wl_raw is None:
                 wl_raw = item.get("waterlevel_m")
 
             wl_msl = None
-            if wl_raw is not None:
+            if wl_raw not in (None, ""):
                 try:
                     wl_msl = float(wl_raw)
                 except (ValueError, TypeError):
                     wl_msl = None
 
-            min_bank = meta.get("min_bank_msl")
-            diff_bank = round(min_bank - wl_msl, 3) if (min_bank is not None and wl_msl is not None) else None
+            mb_raw = st.get("min_bank")
+            mb_api = None
+            if mb_raw not in (None, ""):
+                try:
+                    mb_api = float(mb_raw)
+                except (ValueError, TypeError):
+                    mb_api = None
+
+            min_bank = mb_api if mb_api is not None else meta.get("min_bank_msl")
+
+            diff_raw = item.get("diff_wl_bank")
+            diff_api = None
+            if diff_raw not in (None, ""):
+                try:
+                    diff_api = float(diff_raw)
+                except (ValueError, TypeError):
+                    diff_api = None
+
+            derived_diff = round(min_bank - wl_msl, 3) if (min_bank is not None and wl_msl is not None) else None
+
+            if diff_api is not None and derived_diff is not None:
+                if abs(derived_diff - diff_api) > 0.02:
+                    logger.warning(
+                        f"Freeboard diff discrepancy for station {meta['api_station_id']}: "
+                        f"derived={derived_diff}, api={diff_api}"
+                    )
+
+            diff_bank = diff_api if diff_api is not None else derived_diff
+            diff_source = "api" if diff_api is not None else "derived"
+
+            left_raw = st.get("left_bank")
+            left_msl = float(left_raw) if left_raw not in (None, "") else meta.get("left_bank_msl")
+            right_raw = st.get("right_bank")
+            right_msl = float(right_raw) if right_raw not in (None, "") else meta.get("right_bank_msl")
+            ground_raw = st.get("ground_level")
+            ground_msl = float(ground_raw) if ground_raw not in (None, "") else meta.get("ground_level_msl")
 
             # Actual measurement timestamp from sensor
             dt_raw = item.get("waterlevel_datetime") or datetime.now(BKK_TZ).strftime("%Y-%m-%d %H:%M:%S")
@@ -169,10 +208,14 @@ class ThaiWaterClient:
                 "timestamp_epoch": epoch_time,
                 "waterlevel_msl": wl_msl,
                 "min_bank_msl": min_bank,
+                "left_bank_msl": left_msl,
+                "right_bank_msl": right_msl,
+                "ground_level_msl": ground_msl,
                 "diff_wl_bank_m": diff_bank,
+                "diff_source": diff_source,
             })
 
-        return results
+        return results, matched_raw
 
     def fetch_historical_waterlevel(self, api_station_id: int, start_date: str, end_date: str) -> Dict[str, Any]:
         """
@@ -196,7 +239,7 @@ class ThaiWaterClient:
             dt_str = it.get("datetime")
             val_raw = it.get("value")
             wl_msl = None
-            if val_raw is not None:
+            if val_raw not in (None, ""):
                 try:
                     wl_msl = float(val_raw)
                 except (ValueError, TypeError):
@@ -210,6 +253,7 @@ class ThaiWaterClient:
                 "waterlevel_msl": wl_msl,
                 "min_bank_msl": min_bank,
                 "diff_wl_bank_m": diff_bank,
+                "diff_source": "derived",
             })
 
         return {
