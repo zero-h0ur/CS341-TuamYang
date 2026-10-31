@@ -44,12 +44,12 @@ def verify_session_continuity(backend: str = "s3", ingest_type: str = "waterleve
     print(f"Target Telemetry: {ingest_type} (Max allowed gap: {max_gap_minutes} mins)")
 
     storage = get_storage(backend)
-    prefix = f"{RAW_PREFIX}/thaiwater/{ingest_type}/"
+    prefix = f"{RAW_PREFIX}/{ingest_type}/"
     keys = storage.list_keys(prefix)
 
     if not keys:
         # Fallback to incoming
-        prefix = f"{INCOMING_PREFIX}/thaiwater/"
+        prefix = f"{INCOMING_PREFIX}/"
         keys = [k for k in storage.list_keys(prefix) if ingest_type in k]
 
     # Filter to live ingestion batches only (hour=HH partition)
