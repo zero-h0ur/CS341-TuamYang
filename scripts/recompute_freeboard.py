@@ -57,23 +57,29 @@ def main():
 
                 touched = 0
                 data_list = env.get("data") or []
+                file_sid = str(env.get("api_station_id") or env.get("station_id") or "")
+
                 for r in data_list:
-                    sid = str(r.get("api_station_id") or r.get("station_id") or env.get("api_station_id") or env.get("station_id") or "")
-                    wl = r.get("waterlevel_msl")
-                    if sid not in bank or wl in (None, ""):
+                    sid = str(r.get("api_station_id") or r.get("station_id") or file_sid)
+                    if sid not in bank:
                         records_skipped += 1
                         continue
 
-                    try:
-                        wl_float = float(wl)
-                    except (ValueError, TypeError):
-                        records_skipped += 1
-                        continue
-
-                    r["waterlevel_msl"] = wl_float
                     r["min_bank_msl"] = bank[sid]
-                    r["diff_wl_bank_m"] = round(bank[sid] - wl_float, 3)
                     r["diff_source"] = "derived"
+
+                    wl = r.get("waterlevel_msl")
+                    if wl not in (None, ""):
+                        try:
+                            wl_float = float(wl)
+                            r["waterlevel_msl"] = wl_float
+                            r["diff_wl_bank_m"] = round(bank[sid] - wl_float, 3)
+                        except (ValueError, TypeError):
+                            r["diff_wl_bank_m"] = None
+                    else:
+                        r["waterlevel_msl"] = None
+                        r["diff_wl_bank_m"] = None
+
                     touched += 1
 
                 if touched:
