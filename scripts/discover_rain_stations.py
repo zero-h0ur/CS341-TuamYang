@@ -30,3 +30,4 @@ print(f"Total discovered valid rain stations in 1-50: {len(rain_results)}")
 out_file = Path(__file__).resolve().parent.parent / "reference" / "discovered_rain_stations.json"
 with open(out_file, "w", encoding="utf-8") as f:
     json.dump(rain_results, f, indent=2)
+

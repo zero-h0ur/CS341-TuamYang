@@ -79,9 +79,19 @@ aws events put-rule \
     --description "Trigger ingest_thaiwater waterlevel every 15 min" \
     --region "${REGION}" >/dev/null
 
+TARGETS_WATER=$(cat <<EOF
+[
+  {
+    "Id": "TargetWaterLevel",
+    "Arn": "${LAMBDA_ARN}",
+    "Input": "{\"type\":\"waterlevel\"}"
+  }
+]
+EOF
+)
 aws events put-targets \
     --rule "${RULE_WATER}" \
-    --targets "Id=TargetWaterLevel,Arn=${LAMBDA_ARN},Input={\"type\":\"waterlevel\"}" \
+    --targets "${TARGETS_WATER}" \
     --region "${REGION}" >/dev/null
 
 aws lambda add-permission \
@@ -101,9 +111,19 @@ aws events put-rule \
     --description "Trigger ingest_thaiwater rain every 1 hour" \
     --region "${REGION}" >/dev/null
 
+TARGETS_RAIN=$(cat <<EOF
+[
+  {
+    "Id": "TargetRain",
+    "Arn": "${LAMBDA_ARN}",
+    "Input": "{\"type\":\"rain\"}"
+  }
+]
+EOF
+)
 aws events put-targets \
     --rule "${RULE_RAIN}" \
-    --targets "Id=TargetRain,Arn=${LAMBDA_ARN},Input={\"type\":\"rain\"}" \
+    --targets "${TARGETS_RAIN}" \
     --region "${REGION}" >/dev/null
 
 aws lambda add-permission \
@@ -123,3 +143,4 @@ echo "Run live ingestion directly in CloudShell:"
 echo "  python3 -m src.ingest_thaiwater --type all --backend s3"
 echo "  python3 -m src.backfill --type case_study --backend s3"
 echo "  aws s3 ls s3://${BUCKET_NAME}/raw/thaiwater/ --recursive"
+

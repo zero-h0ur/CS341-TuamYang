@@ -19,3 +19,4 @@ elif isinstance(rain_data, list):
     print("len:", len(rain_data))
     if rain_data:
         print("Sample item:", rain_data[0])
+

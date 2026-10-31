@@ -60,3 +60,4 @@ ref_file = Path(__file__).resolve().parent.parent / "reference" / "stations_wate
 with open(ref_file, "w", encoding="utf-8") as f:
     json.dump(real_stations, f, ensure_ascii=False, indent=2)
 print(f"Updated {ref_file} with real ThaiWater station metadata!")
+

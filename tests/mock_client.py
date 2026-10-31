@@ -108,3 +108,4 @@ class MockThaiWaterClient(ThaiWaterClient):
             "rain_latest_mm": 2.0,
             "data_points": 48,
         }
+

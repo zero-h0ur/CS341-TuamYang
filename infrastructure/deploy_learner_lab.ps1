@@ -153,3 +153,4 @@ Write-Host "   b) Click 'End Session' on AWS Academy Learner Lab."
 Write-Host "   c) Wait 30-40 minutes (so at least two 15-minute runs occur)."
 Write-Host "   d) Start a new session, run: python infrastructure/check_learner_lab.py --backend s3"
 Write-Host "   e) Capture screenshots of S3 listings and CloudWatch logs for your PR evidence!"
+
