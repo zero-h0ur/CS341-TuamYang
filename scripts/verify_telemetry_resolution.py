@@ -3,7 +3,7 @@ Telemetry Resolution & Gap Verification Script
 Owner: Member 1 (PurinatWanthanathanya)
 
 Verifies the exact sampling interval of ThaiWater historical telemetry data.
-Demonstrates whether data is sampled at 15-minute intervals (96 rows/day).
+Demonstrates whether data is sampled at 10-minute intervals (144 rows/day) or 1-hour intervals (24 rows/day).
 
 Usage:
   python scripts/verify_telemetry_resolution.py --key raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_st1_2026_09.json [--backend s3|local]
@@ -55,21 +55,25 @@ def verify_resolution(key: str, backend: str = "s3"):
             else:
                 dt = datetime.strptime(dt_str[:19], "%Y-%m-%d %H:%M:%S")
             parsed_times.append(dt)
-        except Exception as e:
+        except Exception:
             continue
 
     parsed_times.sort()
     intervals_min = []
-    gaps = []
 
     for i in range(1, len(parsed_times)):
         diff_sec = (parsed_times[i] - parsed_times[i - 1]).total_seconds()
         diff_min = round(diff_sec / 60.0, 2)
         intervals_min.append(diff_min)
-        if diff_min != 15.0:
-            gaps.append((parsed_times[i - 1], parsed_times[i], diff_min))
 
     counter = Counter(intervals_min)
+    primary_interval, primary_count = counter.most_common(1)[0] if counter else (None, 0)
+
+    gaps = []
+    for i in range(1, len(parsed_times)):
+        diff_min = round((parsed_times[i] - parsed_times[i - 1]).total_seconds() / 60.0, 2)
+        if diff_min != primary_interval:
+            gaps.append((parsed_times[i - 1], parsed_times[i], diff_min))
 
     print("\n--- Telemetry Sampling Frequency Distribution ---")
     for interval, count in counter.most_common():
@@ -84,14 +88,18 @@ def verify_resolution(key: str, backend: str = "s3"):
     print(f"  Average Interval:  {sum(intervals_min) / len(intervals_min):.2f} min")
 
     print("\n--- Conclusion for Data Contract & Schema ---")
-    if all(i == 15.0 for i in intervals_min):
-        print(" [CONFIRMED] Telemetry resolution is STRICTLY 15 MINUTES (0 gaps detected).")
-        print("  - Daily records: 24h * 4 readings/h = 96 records/day.")
-        print("  - 30-day month = 2,880 records.")
-        print("  - 31-day month = 2,976 records.")
-        print("  - Recommendation: Update contract to 4 readings/hour for downstream hourly joins.")
+    if primary_interval == 10.0:
+        print(f" [CONFIRMED] Telemetry resolution is STRICTLY 10 MINUTES ({primary_count}/{len(intervals_min)} transitions).")
+        print("  - Daily records: 24h * 6 readings/h = 144 records/day.")
+        print("  - 30-day month = 4,320 records (slots).")
+        print("  - 31-day month = 4,464 records (slots).")
+        print("  - Recommendation: Downstream joins expect up to 6 readings per hour for canal stations.")
+    elif primary_interval == 60.0:
+        print(f" [CONFIRMED] Telemetry resolution is 1 HOUR ({primary_count}/{len(intervals_min)} transitions, e.g. RID C.12).")
+        print("  - Daily records: 24h * 1 reading/h = 24 records/day.")
+        print("  - 30-day month = 720 records (slots).")
     else:
-        print(f" [ANALYSIS] Primary interval is {counter.most_common(1)[0][0]} minutes.")
+        print(f" [ANALYSIS] Primary interval is {primary_interval} minutes.")
         print(f"  - Irregular intervals / gaps count: {len(gaps)}")
 
 

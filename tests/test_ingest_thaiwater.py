@@ -190,7 +190,6 @@ class TestThaiWaterIngestion(unittest.TestCase):
         # Mock _request_json to return 36 hours of data (from 2026-10-31 00:00 to 2026-11-01 11:00)
         items = []
         base = datetime(2026, 10, 31, 0, 0)
-        from datetime import timedelta
         for i in range(36):
             dt = base + timedelta(hours=i)
             # 1.0 mm per hour, except index 35 which has null
@@ -206,6 +205,43 @@ class TestThaiWaterIngestion(unittest.TestCase):
         self.assertIsNone(res["series"][-1]["rain_mm"])
         self.assertEqual(res["window_start"], "2026-10-31 00:00")
         self.assertEqual(res["window_end"], "2026-11-01 11:00")
+
+    def test_fetch_historical_waterlevel_sends_tele_waterlevel_param(self):
+        """Verifies fetch_historical_waterlevel includes station_type=tele_waterlevel."""
+        client = ThaiWaterClient()
+        captured_url = []
+        client._request_json = lambda url: (captured_url.append(url), {"data": {"graph_data": [{"datetime": "2026-09-01 00:00", "value": "1.23"}], "min_bank": 2.2}})[1]
+
+        res = client.fetch_historical_waterlevel(api_station_id=1, start_date="2026-09-01", end_date="2026-09-30")
+        self.assertEqual(res["record_count"], 1)
+        self.assertIn("station_type=tele_waterlevel", captured_url[0])
+        self.assertEqual(res["records"][0]["waterlevel_msl"], 1.23)
+        self.assertEqual(res["records"][0]["min_bank_msl"], 2.2)
+
+    def test_backfill_all_null_records_treated_as_empty(self):
+        """Validates that a backfill response with only null values is treated as EMPTY and not saved."""
+        manager = BackfillManager(backend="local")
+        manager.storage = self.storage
+        manager.checkpoint_path = Path(self.temp_dir) / "checkpoint.json"
+        manager.checkpoints = {"completed_tasks": {}, "failed_tasks": {}}
+
+        class AllNullClient(ThaiWaterClient):
+            def fetch_historical_waterlevel(self, *args, **kwargs):
+                return {
+                    "source": "mock",
+                    "status": "success",
+                    "is_mock": True,
+                    "records": [
+                        {"api_station_id": 1, "datetime": "2026-09-01 00:00", "waterlevel_msl": None},
+                        {"api_station_id": 1, "datetime": "2026-09-01 00:10", "waterlevel_msl": None},
+                    ]
+                }
+
+        manager.client = AllNullClient()
+        res = manager.backfill_waterlevel_monthly(1, year=2026, month=9)
+        self.assertEqual(res["status"], "EMPTY")
+        self.assertEqual(res["record_count"], 0)
+        self.assertNotIn("wl_st1_2026_09", manager.checkpoints["completed_tasks"])
 
 
 if __name__ == "__main__":

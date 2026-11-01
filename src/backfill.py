@@ -63,12 +63,15 @@ class BackfillManager:
             json.dump(self.checkpoints, f, ensure_ascii=False, indent=2)
 
     def is_task_completed(self, task_key: str, dest_key: str) -> bool:
-        """Verifies if task was previously marked complete AND file exists in storage."""
+        """Verifies if task was previously marked complete with valid records AND file exists in storage."""
         now = datetime.now()
         cur_suffix = f"_{now.year}_{now.month:02d}"
         if task_key.endswith(cur_suffix):
             return False
-        return task_key in self.checkpoints.get("completed_tasks", {}) and self.storage.exists(dest_key)
+        cp = self.checkpoints.get("completed_tasks", {}).get(task_key)
+        if not cp or cp.get("record_count", 0) <= 0:
+            return False
+        return self.storage.exists(dest_key)
 
     def backfill_waterlevel_monthly(self, api_station_id: int, year: int, month: int,
                                     force: bool = False) -> Dict[str, Any]:
@@ -97,9 +100,10 @@ class BackfillManager:
             self._save_checkpoint(task_key, {"error": str(e), "failed_at": datetime.now(timezone.utc).isoformat()}, is_success=False)
             return {"status": "FAILED", "task_key": task_key, "error": str(e)}
 
-        if not records:
-            logger.warning(f"[EMPTY] Task {task_key} returned 0 records. Not marking as completed.")
-            return {"status": "EMPTY", "task_key": task_key, "record_count": 0}
+        non_null_records = [r for r in records if r.get("waterlevel_msl") not in (None, "")]
+        if not non_null_records:
+            logger.warning(f"[EMPTY] Task {task_key} returned 0 non-null records (all {len(records)} slots empty). Not writing file and not marking as completed.")
+            return {"status": "EMPTY", "task_key": task_key, "record_count": 0, "slots": len(records)}
 
         envelope = {
             "envelope_version": "1.0",
@@ -111,7 +115,8 @@ class BackfillManager:
             "month": month,
             "start_date": start_date,
             "end_date": end_date,
-            "record_count": len(records),
+            "record_count": len(non_null_records),
+            "total_slots": len(records),
             "created_at_utc": datetime.now(timezone.utc).isoformat(),
             "data": records,
         }
@@ -125,7 +130,8 @@ class BackfillManager:
         if not is_current_month:
             self._save_checkpoint(task_key, {
                 "completed_at": datetime.now(timezone.utc).isoformat(),
-                "record_count": len(records),
+                "record_count": len(non_null_records),
+                "total_slots": len(records),
                 "dest_key": dest_key,
             }, is_success=True)
         else:
@@ -135,7 +141,7 @@ class BackfillManager:
             logger=logger,
             batch_id=task_key,
             data_type="waterlevel_hist",
-            record_count=len(records),
+            record_count=len(non_null_records),
             duration_sec=duration,
             destination=dest_uri,
             status="SUCCESS",
@@ -144,7 +150,8 @@ class BackfillManager:
         return {
             "status": "SUCCESS",
             "task_key": task_key,
-            "record_count": len(records),
+            "record_count": len(non_null_records),
+            "total_slots": len(records),
             "destination": dest_uri,
         }
 
@@ -171,9 +178,10 @@ class BackfillManager:
             self._save_checkpoint(task_key, {"error": str(e), "failed_at": datetime.now(timezone.utc).isoformat()}, is_success=False)
             return {"status": "FAILED", "task_key": task_key, "error": str(e)}
 
-        if not records:
-            logger.warning(f"[EMPTY] Task {task_key} returned 0 records.")
-            return {"status": "EMPTY", "task_key": task_key, "record_count": 0}
+        non_null_records = [r for r in records if r.get("rainfall_daily_mm") not in (None, "")]
+        if not non_null_records:
+            logger.warning(f"[EMPTY] Task {task_key} returned 0 non-null records (all {len(records)} days empty). Not writing file and not marking as completed.")
+            return {"status": "EMPTY", "task_key": task_key, "record_count": 0, "slots": len(records)}
 
         envelope = {
             "envelope_version": "1.0",
@@ -183,7 +191,8 @@ class BackfillManager:
             "api_station_id": api_station_id,
             "year": year,
             "month": month,
-            "record_count": len(records),
+            "record_count": len(non_null_records),
+            "total_slots": len(records),
             "created_at_utc": datetime.now(timezone.utc).isoformat(),
             "data": records,
         }
@@ -196,7 +205,8 @@ class BackfillManager:
         if not is_current_month:
             self._save_checkpoint(task_key, {
                 "completed_at": datetime.now(timezone.utc).isoformat(),
-                "record_count": len(records),
+                "record_count": len(non_null_records),
+                "total_slots": len(records),
                 "dest_key": dest_key,
             }, is_success=True)
         else:
@@ -206,7 +216,7 @@ class BackfillManager:
             logger=logger,
             batch_id=task_key,
             data_type="rain_monthly_hist",
-            record_count=len(records),
+            record_count=len(non_null_records),
             duration_sec=duration,
             destination=dest_uri,
             status="SUCCESS",
@@ -215,7 +225,8 @@ class BackfillManager:
         return {
             "status": "SUCCESS",
             "task_key": task_key,
-            "record_count": len(records),
+            "record_count": len(non_null_records),
+            "total_slots": len(records),
             "destination": dest_uri,
         }
 

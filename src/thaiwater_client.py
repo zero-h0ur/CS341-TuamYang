@@ -219,10 +219,16 @@ class ThaiWaterClient:
 
     def fetch_historical_waterlevel(self, api_station_id: int, start_date: str, end_date: str) -> Dict[str, Any]:
         """
-        Fetches historical 10-minute waterlevel data from /waterlevel_graph.
-        Query params: station_id, start_date, end_date
+        Fetches historical waterlevel telemetry data from /waterlevel_graph with station_type=tele_waterlevel.
+        Query params: station_id, start_date, end_date, station_type=tele_waterlevel.
+        Resolution: 10 minutes for Bangkok canal telemetry stations (6 readings/hr), 1 hour for RID stations.
         """
-        params = {"station_id": api_station_id, "start_date": start_date, "end_date": end_date}
+        params = {
+            "station_id": api_station_id,
+            "start_date": start_date,
+            "end_date": end_date,
+            "station_type": "tele_waterlevel",
+        }
         query_str = urllib.parse.urlencode(params)
         url = f"{WATERLEVEL_GRAPH_ENDPOINT}?{query_str}"
 
@@ -230,9 +236,17 @@ class ThaiWaterClient:
         graph_data = raw_data.get("data", {})
         raw_items = graph_data.get("graph_data", []) if isinstance(graph_data, dict) else []
 
-        # Find min_bank from metadata
+        # Find min_bank: prioritize min_bank directly returned by API, fallback to metadata
         meta = next((s for s in self._water_stations if s["api_station_id"] == api_station_id), None)
-        min_bank = meta.get("min_bank_msl") if meta else None
+        api_min_bank = graph_data.get("min_bank") if isinstance(graph_data, dict) else None
+        min_bank = None
+        if api_min_bank not in (None, ""):
+            try:
+                min_bank = float(api_min_bank)
+            except (ValueError, TypeError):
+                min_bank = None
+        if min_bank is None and meta:
+            min_bank = meta.get("min_bank_msl")
 
         records = []
         for it in raw_items:
@@ -256,6 +270,8 @@ class ThaiWaterClient:
                 "diff_source": "derived",
             })
 
+        non_null_count = sum(1 for r in records if r["waterlevel_msl"] is not None)
+
         return {
             "source": url,
             "status": "success",
@@ -263,7 +279,8 @@ class ThaiWaterClient:
             "api_station_id": api_station_id,
             "start_date": start_date,
             "end_date": end_date,
-            "record_count": len(records),
+            "record_count": non_null_count,
+            "total_slots": len(records),
             "records": records,
         }
 
