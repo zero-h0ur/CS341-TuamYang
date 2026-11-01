@@ -8,6 +8,7 @@ import shutil
 import sys
 import tempfile
 import unittest
+from datetime import datetime, timedelta
 from pathlib import Path
 
 # Add project root to sys.path
@@ -80,6 +81,49 @@ class TestThaiWaterIngestion(unittest.TestCase):
         self.assertTrue(self.storage.exists(res["incoming_key"]), "File must exist in incoming/thaiwater/dt=.../hour=.../")
         self.assertTrue(self.storage.exists(res["partition_key"]), "File must exist in raw/thaiwater/rain/...")
 
+        saved_data = self.storage.load_json(res["partition_key"])
+        first_record = saved_data["data"][0]
+        self.assertIn("series", first_record)
+        self.assertIn("rain_24h_points", first_record)
+        self.assertEqual(first_record["rain_24h_points"], 24)
+        self.assertEqual(len(first_record["series"]), 36)
+
+    def test_ingest_rain_partial_failure(self):
+        """Tests that partial station failures result in PARTIAL status with failed_stations listed."""
+        class PartiallyFailingMock(MockThaiWaterClient):
+            def fetch_24h_rain_station(self, api_station_id: int):
+                if api_station_id == 2:  # fail station 2
+                    raise ThaiWaterAPIError("Station 2 timeout")
+                return super().fetch_24h_rain_station(api_station_id)
+
+        failing_client = PartiallyFailingMock()
+        res = ingest_rain(failing_client, self.storage)
+        self.assertEqual(res["status"], "PARTIAL")
+        self.assertEqual(res["failed_count"], 1)
+        self.assertEqual(res["failed_stations"][0]["station_id"], 2)
+        self.assertGreater(res["record_count"], 0)
+
+    def test_backfill_ongoing_month_not_checkpointed(self):
+        """Validates that the current ongoing month is not marked complete in checkpoint."""
+        manager = BackfillManager(backend="local")
+        manager.storage = self.storage
+        manager.client = self.mock_client
+        manager.checkpoint_path = Path(self.temp_dir) / "checkpoint.json"
+        manager.checkpoints = {"completed_tasks": {}, "failed_tasks": {}}
+
+        from datetime import datetime
+        now = datetime.now()
+        cur_y, cur_m = now.year, now.month
+
+        res = manager.backfill_waterlevel_monthly(1, year=cur_y, month=cur_m, force=False)
+        self.assertEqual(res["status"], "SUCCESS")
+
+        task_key = f"wl_st1_{cur_y}_{cur_m:02d}"
+        self.assertNotIn(task_key, manager.checkpoints["completed_tasks"],
+                         "Ongoing current month must not be marked complete in checkpoint")
+        self.assertFalse(manager.is_task_completed(task_key, res["destination"]),
+                         "is_task_completed must return False for current ongoing month")
+
     def test_backfill_idempotency_success_criteria_1(self):
         """
         Validates Success Criteria 1:
@@ -139,6 +183,29 @@ class TestThaiWaterIngestion(unittest.TestCase):
         self.assertNotIn("wl_st1_2026_09", manager.checkpoints["completed_tasks"])
         # Task must be recorded under failed_tasks
         self.assertIn("wl_st1_2026_09", manager.checkpoints["failed_tasks"])
+
+    def test_fetch_24h_rain_station_series_and_24h_points(self):
+        """Verifies fetch_24h_rain_station parses series, handles nulls, and sums exactly 24 points."""
+        client = ThaiWaterClient()
+        # Mock _request_json to return 36 hours of data (from 2026-10-31 00:00 to 2026-11-01 11:00)
+        items = []
+        base = datetime(2026, 10, 31, 0, 0)
+        from datetime import timedelta
+        for i in range(36):
+            dt = base + timedelta(hours=i)
+            # 1.0 mm per hour, except index 35 which has null
+            val = None if i == 35 else "1.0"
+            items.append({"rainfall_datetime": dt.strftime("%Y-%m-%d %H:%M"), "rainfall_value": val})
+
+        client._request_json = lambda url: {"data": items}
+
+        res = client.fetch_24h_rain_station(api_station_id=2)
+        self.assertEqual(res["rain_24h_points"], 24)
+        self.assertEqual(res["rain_24h_mm"], 24.0)
+        self.assertEqual(len(res["series"]), 36)
+        self.assertIsNone(res["series"][-1]["rain_mm"])
+        self.assertEqual(res["window_start"], "2026-10-31 00:00")
+        self.assertEqual(res["window_end"], "2026-11-01 11:00")
 
 
 if __name__ == "__main__":

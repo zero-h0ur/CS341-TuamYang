@@ -100,12 +100,23 @@ class MockThaiWaterClient(ThaiWaterClient):
 
     def fetch_24h_rain_station(self, api_station_id: int) -> Dict[str, Any]:
         meta = next((s for s in self._rain_stations if s["api_station_id"] == api_station_id), None)
+        now_bkk = datetime.now(BKK_TZ)
+        series = []
+        for i in range(36):
+            dt = (now_bkk - timedelta(hours=35 - i)).strftime("%Y-%m-%d %H:00")
+            series.append({"datetime": dt, "rain_mm": 0.5 if i >= 12 else 1.0})
+        last24 = series[-24:]
         return {
             "api_station_id": api_station_id,
             "station_name_th": meta.get("station_name_th", "") if meta else "",
-            "rainfall_datetime": datetime.now(BKK_TZ).strftime("%Y-%m-%d %H:%M:%S"),
-            "rain_24h_mm": 18.5,
-            "rain_latest_mm": 2.0,
-            "data_points": 48,
+            "latitude": meta.get("latitude") if meta else None,
+            "longitude": meta.get("longitude") if meta else None,
+            "rainfall_datetime": series[-1]["datetime"],
+            "rain_24h_mm": round(sum(p["rain_mm"] for p in last24), 1),
+            "rain_24h_points": len(last24),
+            "rain_latest_mm": round(series[-1]["rain_mm"], 1),
+            "window_start": series[0]["datetime"],
+            "window_end": series[-1]["datetime"],
+            "series": series,
         }
 

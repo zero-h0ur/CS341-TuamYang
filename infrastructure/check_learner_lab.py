@@ -36,7 +36,10 @@ def extract_timestamp_from_key(key: str) -> datetime | None:
     return None
 
 
-def verify_session_continuity(backend: str = "s3", ingest_type: str = "waterlevel", max_gap_minutes: int = 25):
+def verify_session_continuity(backend: str = "s3", ingest_type: str = "waterlevel", max_gap_minutes: int | None = None):
+    if max_gap_minutes is None:
+        max_gap_minutes = 75 if ingest_type == "rain" else 25
+
     print("=" * 75)
     print(">>> AWS Academy Learner Lab Session Continuity Verification")
     print("=" * 75)
@@ -111,23 +114,18 @@ def verify_session_continuity(backend: str = "s3", ingest_type: str = "waterleve
 
     if not gaps_found:
         print(f"\n [PASSED] Executions ran continuously without gaps > {max_gap_minutes} mins.")
-        print("  Conclusion: EventBridge and Lambda continued triggering across Learner Lab session boundaries.")
+        print(f"  Conclusion: Ingestion schedule for {ingest_type} ran continuously without interruption.")
     else:
         print(f"\n [DETECTED {len(gaps_found)} INGESTION GAP(S) > {max_gap_minutes} MINS]")
         for g in gaps_found:
             print(f"  * Missing interval: {g['gap_minutes']} mins (Between {g['from_bkk']} and {g['to_bkk']})")
-        print("\n [RECOMMENDATION]:")
-        print("  AWS Academy Learner Lab suspends executions when the lab session is in 'Stopped' status.")
-        print("  Document this finding clearly in the PR:")
-        print("  'EventBridge Scheduler operates normally during active sessions, but AWS Learner Lab freeze'")
-        print("  'suspends execution when session is stopped, requiring session reactivation or GitHub Actions fallback.'")
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Check Learner Lab persistence")
     parser.add_argument("--backend", default="s3", choices=["local", "s3"])
     parser.add_argument("--type", default="waterlevel", choices=["waterlevel", "rain"])
-    parser.add_argument("--max-gap-minutes", type=int, default=25)
+    parser.add_argument("--max-gap-minutes", type=int, default=None, help="Max allowed gap in minutes (default: 25 for waterlevel, 75 for rain)")
     args = parser.parse_args()
 
     verify_session_continuity(backend=args.backend, ingest_type=args.type, max_gap_minutes=args.max_gap_minutes)

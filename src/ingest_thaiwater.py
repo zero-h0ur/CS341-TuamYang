@@ -123,18 +123,27 @@ def ingest_rain(client: ThaiWaterClient, storage_driver: Any) -> Dict[str, Any]:
     logger.info(f"Starting real rainfall ingestion at {now_bkk.isoformat()}...")
     rain_stations = client.get_rain_stations()
     records = []
+    failed_stations = []
 
     for st in rain_stations:
         st_id = st["api_station_id"]
         try:
             res = client.fetch_24h_rain_station(st_id)
             records.append(res)
-        except ThaiWaterAPIError as e:
+        except Exception as e:
             logger.warning(f"Could not fetch 24h rain for station {st_id}: {e}")
+            failed_stations.append({"station_id": st_id, "error": str(e)})
 
     if not records:
         logger.error("Failed to fetch rainfall records for all stations.")
-        return {"status": "FAILED", "data_type": "rain", "error": "No rainfall stations responded"}
+        return {
+            "status": "FAILED",
+            "data_type": "rain",
+            "error": "No rainfall stations responded",
+            "failed_stations": failed_stations,
+        }
+
+    status = "SUCCESS" if not failed_stations else "PARTIAL"
 
     envelope = create_envelope(
         data_type="rain",
@@ -142,6 +151,9 @@ def ingest_rain(client: ThaiWaterClient, storage_driver: Any) -> Dict[str, Any]:
         records=records,
         is_mock=False,
     )
+    if failed_stations:
+        envelope["failed_stations"] = failed_stations
+        envelope["failed_count"] = len(failed_stations)
 
     batch_id = envelope["batch_id"]
     filename = f"rain_{batch_id}.json"
@@ -162,14 +174,16 @@ def ingest_rain(client: ThaiWaterClient, storage_driver: Any) -> Dict[str, Any]:
         record_count=len(records),
         duration_sec=duration,
         destination=f"{incoming_uri} & {dest_uri}",
-        status="SUCCESS",
+        status=status,
     )
 
     return {
-        "status": "SUCCESS",
+        "status": status,
         "data_type": "rain",
         "batch_id": batch_id,
         "record_count": len(records),
+        "failed_count": len(failed_stations),
+        "failed_stations": failed_stations,
         "destination_uri": dest_uri,
         "incoming_uri": incoming_uri,
         "partition_key": partition_key,

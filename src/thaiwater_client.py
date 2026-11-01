@@ -314,37 +314,59 @@ class ThaiWaterClient:
     def fetch_24h_rain_station(self, api_station_id: int) -> Dict[str, Any]:
         """
         Fetches 24-hour latest rainfall for a specific station from /rain_24h_graph.
+        Returns full series of hourly data points, calculates rain_24h_mm from the last 24 points.
         """
         params = {"station_id": api_station_id}
         url = f"{RAIN_24H_GRAPH_ENDPOINT}?{urllib.parse.urlencode(params)}"
         raw_data = self._request_json(url)
         items = raw_data.get("data", []) if isinstance(raw_data, dict) else []
 
+        if not items:
+            raise ThaiWaterAPIError(f"Empty rainfall series for station {api_station_id}")
+
         meta = next((s for s in self._rain_stations if s["api_station_id"] == api_station_id), None)
 
-        # Sum total rainfall in 24 hours
-        total_24h = 0.0
-        latest_val = 0.0
-        latest_dt = ""
-
+        series = []
         for it in items:
-            val = it.get("rainfall_value")
-            if val is not None:
-                try:
-                    v = float(val)
-                    total_24h += v
-                    latest_val = v
-                    latest_dt = it.get("rainfall_datetime", "")
-                except (ValueError, TypeError):
-                    pass
+            dt_raw = it.get("rainfall_datetime")
+            val_raw = it.get("rainfall_value")
+            val = float(val_raw) if val_raw not in (None, "") else None
+            series.append({
+                "datetime": dt_raw,
+                "rain_mm": val,
+            })
+
+        valid = [p for p in series if p["rain_mm"] is not None]
+        last = valid[-1] if valid else (series[-1] if series else None)
+
+        FMT = "%Y-%m-%d %H:%M"
+
+        def _parse_rain_dt(dt_str: Optional[str]) -> Optional[datetime]:
+            if not dt_str:
+                return None
+            try:
+                if len(dt_str) >= 19:
+                    return datetime.strptime(dt_str[:19], "%Y-%m-%d %H:%M:%S")
+                return datetime.strptime(dt_str[:16], FMT)
+            except Exception:
+                return None
+
+        last_dt = _parse_rain_dt(last.get("datetime")) if last else None
+        last24 = [
+            p for p in valid
+            if _parse_rain_dt(p.get("datetime")) and last_dt and _parse_rain_dt(p.get("datetime")) > last_dt - timedelta(hours=24)
+        ] if last_dt else []
 
         return {
             "api_station_id": api_station_id,
             "station_name_th": meta.get("station_name_th", "") if meta else "",
             "latitude": meta.get("latitude") if meta else None,
             "longitude": meta.get("longitude") if meta else None,
-            "rainfall_datetime": latest_dt,
-            "rain_24h_mm": round(total_24h, 1),
-            "rain_latest_mm": round(latest_val, 1),
-            "data_points": len(items),
+            "rainfall_datetime": last.get("datetime") if last else "",
+            "rain_24h_mm": round(sum(p["rain_mm"] for p in last24), 1) if last24 else None,
+            "rain_24h_points": len(last24),
+            "rain_latest_mm": round(last["rain_mm"], 1) if (last and last.get("rain_mm") is not None) else None,
+            "window_start": series[0]["datetime"] if series else None,
+            "window_end": series[-1]["datetime"] if series else None,
+            "series": series,
         }

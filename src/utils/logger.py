@@ -44,6 +44,7 @@ def setup_logger(name: str = "ingest_thaiwater") -> logging.Logger:
     """Configures and returns a structured logger."""
     logger = logging.getLogger(name)
     logger.setLevel(logging.INFO)
+    logger.propagate = False
 
     # Avoid duplicate handlers if already setup
     if logger.handlers:

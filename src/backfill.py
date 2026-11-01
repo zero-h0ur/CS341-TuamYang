@@ -64,6 +64,10 @@ class BackfillManager:
 
     def is_task_completed(self, task_key: str, dest_key: str) -> bool:
         """Verifies if task was previously marked complete AND file exists in storage."""
+        now = datetime.now()
+        cur_suffix = f"_{now.year}_{now.month:02d}"
+        if task_key.endswith(cur_suffix):
+            return False
         return task_key in self.checkpoints.get("completed_tasks", {}) and self.storage.exists(dest_key)
 
     def backfill_waterlevel_monthly(self, api_station_id: int, year: int, month: int,
@@ -116,11 +120,16 @@ class BackfillManager:
         dest_uri = self.storage.save_json(dest_key, envelope, overwrite=True)
         duration = time.time() - start_time
 
-        self._save_checkpoint(task_key, {
-            "completed_at": datetime.now(timezone.utc).isoformat(),
-            "record_count": len(records),
-            "dest_key": dest_key,
-        }, is_success=True)
+        now = datetime.now()
+        is_current_month = (year == now.year and month == now.month)
+        if not is_current_month:
+            self._save_checkpoint(task_key, {
+                "completed_at": datetime.now(timezone.utc).isoformat(),
+                "record_count": len(records),
+                "dest_key": dest_key,
+            }, is_success=True)
+        else:
+            logger.info(f"[CURRENT_MONTH] Task {task_key} is ongoing ({year}-{month:02d}). Saved to storage but not marked completed in checkpoint.")
 
         log_ingestion_metric(
             logger=logger,
@@ -182,11 +191,16 @@ class BackfillManager:
         dest_uri = self.storage.save_json(dest_key, envelope, overwrite=True)
         duration = time.time() - start_time
 
-        self._save_checkpoint(task_key, {
-            "completed_at": datetime.now(timezone.utc).isoformat(),
-            "record_count": len(records),
-            "dest_key": dest_key,
-        }, is_success=True)
+        now = datetime.now()
+        is_current_month = (year == now.year and month == now.month)
+        if not is_current_month:
+            self._save_checkpoint(task_key, {
+                "completed_at": datetime.now(timezone.utc).isoformat(),
+                "record_count": len(records),
+                "dest_key": dest_key,
+            }, is_success=True)
+        else:
+            logger.info(f"[CURRENT_MONTH] Task {task_key} is ongoing ({year}-{month:02d}). Saved to storage but not marked completed in checkpoint.")
 
         log_ingestion_metric(
             logger=logger,
@@ -224,7 +238,8 @@ class BackfillManager:
 
     def run_full_backfill(self, start_year: int = 2022, start_month: int = 1,
                           end_year: Optional[int] = None, end_month: Optional[int] = None,
-                          force: bool = False, delay_sec: float = 0.2) -> List[Dict[str, Any]]:
+                          force: bool = False, delay_sec: float = 0.2,
+                          is_case_study: bool = False) -> List[Dict[str, Any]]:
         """
         Executes full historical backfill from 2022 (2565) to present.
         Covers all 8 canal waterlevel stations and nearest rainfall stations.
@@ -235,7 +250,8 @@ class BackfillManager:
 
         total_tasks = len(months) * (len(water_stations) + len(rain_stations))
         end_desc = f"{end_year}-{end_month:02d}" if (end_year and end_month) else "present"
-        logger.info(f"Starting FULL historical backfill ({start_year}-{start_month:02d} to {end_desc}): {len(months)} months across {len(water_stations)} water + {len(rain_stations)} rain stations (Total ~{total_tasks} tasks)...")
+        if not is_case_study:
+            logger.info(f"Starting FULL historical backfill ({start_year}-{start_month:02d} to {end_desc}): {len(months)} months across {len(water_stations)} water + {len(rain_stations)} rain stations (Total ~{total_tasks} tasks)...")
 
         results = []
         # 1. Backfill 8 Water Stations
@@ -264,7 +280,7 @@ class BackfillManager:
         rain_stations = self.client.get_rain_stations()
         total_tasks = 2 * (len(water_stations) + len(rain_stations))
         logger.info(f"Starting CASE STUDY backfill (Sep - Oct 2026): 2 months across {len(water_stations)} water + {len(rain_stations)} rain stations (Total {total_tasks} tasks)...")
-        return self.run_full_backfill(start_year=2026, start_month=9, end_year=2026, end_month=10, force=force, delay_sec=delay_sec)
+        return self.run_full_backfill(start_year=2026, start_month=9, end_year=2026, end_month=10, force=force, delay_sec=delay_sec, is_case_study=True)
 
 
 def main():
