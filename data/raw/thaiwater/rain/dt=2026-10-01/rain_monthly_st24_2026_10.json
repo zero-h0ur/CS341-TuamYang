@@ -1,0 +1,199 @@
+{
+  "envelope_version": "1.0",
+  "batch_type": "historical_backfill",
+  "data_type": "rain_monthly",
+  "is_mock": false,
+  "api_station_id": 24,
+  "year": 2026,
+  "month": 10,
+  "record_count": 31,
+  "created_at_utc": "2026-10-31T16:24:23.364301+00:00",
+  "data": [
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-01",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-02",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-03",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-04",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-05",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-06",
+      "rainfall_daily_mm": 14.8
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-07",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-08",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-09",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-10",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-11",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-12",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-13",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-14",
+      "rainfall_daily_mm": 1.4
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-15",
+      "rainfall_daily_mm": 40.8
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-16",
+      "rainfall_daily_mm": 34.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-17",
+      "rainfall_daily_mm": 13.8
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-18",
+      "rainfall_daily_mm": 31.8
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-19",
+      "rainfall_daily_mm": 0.2
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-20",
+      "rainfall_daily_mm": 5.8
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-21",
+      "rainfall_daily_mm": 0.2
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-22",
+      "rainfall_daily_mm": 0.2
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-23",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-24",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-25",
+      "rainfall_daily_mm": 14.4
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-26",
+      "rainfall_daily_mm": 7.6
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-27",
+      "rainfall_daily_mm": 8.6
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-28",
+      "rainfall_daily_mm": 15.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-29",
+      "rainfall_daily_mm": 0.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-30",
+      "rainfall_daily_mm": 9.0
+    },
+    {
+      "api_station_id": 24,
+      "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+      "date": "2026-10-31",
+      "rainfall_daily_mm": null
+    }
+  ]
+}

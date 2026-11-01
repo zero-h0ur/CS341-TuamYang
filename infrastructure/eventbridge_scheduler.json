@@ -1,0 +1,125 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Description": "CS341-TuamYang EventBridge Scheduler & Ingestion Lambda Template (AWS Academy Learner Lab Compatible)",
+  "Parameters": {
+    "S3BucketName": {
+      "Type": "String",
+      "Default": "cs341-tuamyang-data",
+      "Description": "Target S3 Bucket for Raw Zone storage"
+    },
+    "LambdaFunctionName": {
+      "Type": "String",
+      "Default": "ingest_thaiwater",
+      "Description": "Name of the ThaiWater Ingestion Lambda Function"
+    },
+    "CodeS3Bucket": {
+      "Type": "String",
+      "Default": "",
+      "Description": "Optional S3 bucket containing the deployment package zip (leave empty if deploying via AWS CLI zip update)"
+    },
+    "CodeS3Key": {
+      "Type": "String",
+      "Default": "deployments/ingest_thaiwater.zip",
+      "Description": "S3 Key of the deployment zip file"
+    }
+  },
+  "Conditions": {
+    "HasCodeS3Bucket": { "Fn::Not": [{ "Fn::Equals": [{ "Ref": "CodeS3Bucket" }, ""] }] }
+  },
+  "Resources": {
+    "IngestThaiWaterFunction": {
+      "Type": "AWS::Lambda::Function",
+      "Properties": {
+        "FunctionName": { "Ref": "LambdaFunctionName" },
+        "Runtime": "python3.12",
+        "Handler": "src.ingest_thaiwater.lambda_handler",
+        "Timeout": 300,
+        "MemorySize": 256,
+        "Role": { "Fn::Sub": "arn:aws:iam::${AWS::AccountId}:role/LabRole" },
+        "Environment": {
+          "Variables": {
+            "STORAGE_BACKEND": "s3",
+            "S3_BUCKET_NAME": { "Ref": "S3BucketName" },
+            "THAIWATER_API_BASE": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public"
+          }
+        },
+        "Code": {
+          "Fn::If": [
+            "HasCodeS3Bucket",
+            {
+              "S3Bucket": { "Ref": "CodeS3Bucket" },
+              "S3Key": { "Ref": "CodeS3Key" }
+            },
+            {
+              "ZipFile": "# Initial placeholder. Update code using deploy_learner_lab.ps1\ndef lambda_handler(event, context):\n    from src.ingest_thaiwater import lambda_handler as real_handler\n    return real_handler(event, context)\n"
+            }
+          ]
+        }
+      }
+    },
+    "WaterLevelScheduleRule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Name": "tuamyang-thaiwater-waterlevel-15min",
+        "Description": "Trigger ingest_thaiwater for 8 canal stations every 15 minutes",
+        "ScheduleExpression": "rate(15 minutes)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Id": "ThaiWaterWaterLevelTarget",
+            "Arn": { "Fn::GetAtt": ["IngestThaiWaterFunction", "Arn"] },
+            "Input": "{\"type\": \"waterlevel\"}"
+          }
+        ]
+      }
+    },
+    "WaterLevelRulePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Ref": "IngestThaiWaterFunction" },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": { "Fn::GetAtt": ["WaterLevelScheduleRule", "Arn"] }
+      }
+    },
+    "RainScheduleRule": {
+      "Type": "AWS::Events::Rule",
+      "Properties": {
+        "Name": "tuamyang-thaiwater-rain-1hr",
+        "Description": "Trigger ingest_thaiwater for rainfall stations every 1 hour",
+        "ScheduleExpression": "rate(1 hour)",
+        "State": "ENABLED",
+        "Targets": [
+          {
+            "Id": "ThaiWaterRainTarget",
+            "Arn": { "Fn::GetAtt": ["IngestThaiWaterFunction", "Arn"] },
+            "Input": "{\"type\": \"rain\"}"
+          }
+        ]
+      }
+    },
+    "RainRulePermission": {
+      "Type": "AWS::Lambda::Permission",
+      "Properties": {
+        "FunctionName": { "Ref": "IngestThaiWaterFunction" },
+        "Action": "lambda:InvokeFunction",
+        "Principal": "events.amazonaws.com",
+        "SourceArn": { "Fn::GetAtt": ["RainScheduleRule", "Arn"] }
+      }
+    }
+  },
+  "Outputs": {
+    "LambdaArn": {
+      "Description": "ARN of ingest_thaiwater Lambda Function",
+      "Value": { "Fn::GetAtt": ["IngestThaiWaterFunction", "Arn"] }
+    },
+    "WaterLevelRuleArn": {
+      "Description": "ARN of EventBridge WaterLevel Rule",
+      "Value": { "Fn::GetAtt": ["WaterLevelScheduleRule", "Arn"] }
+    },
+    "RainRuleArn": {
+      "Description": "ARN of EventBridge Rain Rule",
+      "Value": { "Fn::GetAtt": ["RainScheduleRule", "Arn"] }
+    }
+  }
+}
