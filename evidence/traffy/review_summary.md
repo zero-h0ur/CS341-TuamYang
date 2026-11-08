@@ -14,9 +14,17 @@ Rule version: `traffy-flood-v1.0`. Each sample was selected without seeing predi
 | uncertain | 2 | 4 | 0 |
 
 Three-class agreement: 94.0%.
-Flood precision: 1.0; flood recall: 1.0.
+This agreement is a different metric from precision.
 
-Precision excludes uncertain reference labels. Recall counts uncertain predictions as missed positives.
+## Precision over all predicted positives
+
+TP=76; FP=0; unresolved predicted positives=2; all predicted positives=78.
+
+**A single precision value is unresolved. Bounds: 97.44% to 100.00%.**
+Bounds assume the unresolved predicted positives are all false or all true, respectively.
+
+The legacy resolved-only precision field excludes unknown references and is conditional; it is not the headline precision over the whole sample.
+AI-reference scores/bounds are provisional and must not be presented as human-verified field accuracy.
 The sample is uniform across all reports, not balanced by flood class. Metrics describe this period only.
 
 ## Disagreements
@@ -30,5 +38,5 @@ The sample is uniform across all reports, not balanced by flood class. Metrics d
 
 ## Human confirmation
 
-Read the full local `sample_100.json`, fill `human_review_100.json`, and rerun evaluate with those labels.
+Read the full local `sample_100.json`, fill every label/rationale in `human_review_100.json`, set reviewer_name and status=completed, and rerun evaluate with those labels.
 Repository evidence contains IDs, labels and rationales; full descriptions stay in the local ignored sample.

@@ -97,6 +97,10 @@ class ReviewTests(unittest.TestCase):
         self.assertEqual(result["three_class_agreement"], 0.25)
         self.assertEqual(result["flood_precision_excluding_uncertain_reference"], 1.0)
         self.assertEqual(result["flood_recall_including_abstentions_as_missed"], 0.5)
+        self.assertIsNone(result["precision"])
+        self.assertEqual(result["precision_counts"]["all_predicted_positives"], 2)
+        self.assertEqual(result["precision_counts"]["unresolved_predicted_positives"], 1)
+        self.assertEqual(result["precision_bounds"], {"lower": 0.5, "upper": 1.0})
         self.assertFalse(result["human_verified"])
 
     def test_blank_human_template_is_not_accepted_as_completed_review(self):
@@ -104,6 +108,34 @@ class ReviewTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             evaluate(self.root, self.sample_path, self.sample_path.with_name("human_review_100.json"),
                      self.root / "evidence")
+
+    def test_human_labels_with_pending_status_are_not_reported_as_verified(self):
+        sample(self.root, "2026-09-24", "2026-09-24", 4, 341, self.sample_path)
+        labels_path = self.root / "review/human_review_100.json"
+        labels = json.loads(labels_path.read_text(encoding="utf-8"))
+        labels["reviewer_name"] = "fixture reviewer"
+        for row in labels["reports"]:
+            row.update(label="non_flood", rationale="synthetic test label")
+        write_json(labels_path, labels)
+        with self.assertRaisesRegex(ValueError, "status=completed"):
+            evaluate(self.root, self.sample_path, labels_path, self.root / "evidence")
+        labels["status"] = "completed"
+        write_json(labels_path, labels)
+        self.assertTrue(evaluate(self.root, self.sample_path, labels_path, self.root / "evidence")["human_verified"])
+
+    def test_new_sampling_parameters_do_not_overwrite_existing_review_work(self):
+        sample(self.root, "2026-09-24", "2026-09-24", 3, 341, self.sample_path)
+        before = self.sample_path.read_bytes()
+        with self.assertRaisesRegex(ValueError, "different snapshot"):
+            sample(self.root, "2026-09-24", "2026-09-24", 4, 341, self.sample_path)
+        self.assertEqual(self.sample_path.read_bytes(), before)
+
+    def test_unrelated_historical_files_are_not_loaded_into_a_study_sample(self):
+        unrelated = self.root / "incoming/traffy/dt=2022-06-01/traffy_2022-06-01.json"
+        unrelated.parent.mkdir(parents=True)
+        unrelated.write_text("not the selected study snapshot", encoding="utf-8")
+        result = sample(self.root, "2026-09-24", "2026-09-24", 3, 341, self.sample_path)
+        self.assertEqual(result["population_count"], 4)
 
 
 if __name__ == "__main__":

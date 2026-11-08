@@ -74,3 +74,32 @@ since 2022 has been downloaded or is available from the source.
 Observed result: **794 reports on 2022-06-01 Bangkok time**. The padded UTC
 query returned 1,468 rows against an advertised total of 1,558, recorded as a
 source coverage warning. See `evidence/traffy/issue5/historical_smoke.json`.
+
+## Precision over the full set of predicted positives
+
+Issue #5 asks for precision, which is a different metric from 94/100 overall
+agreement. The original report's resolved-only precision removed uncertain
+reference labels, making its 100% easy to misread.
+
+The unchanged 100-report sample contains:
+
+- 78 positive predictions: 76 reference-confirmed positive, 0 reference-negative,
+  and 2 reference-uncertain predictions.
+- A single precision point is **unresolved**. Keeping all 78 in the denominator
+  gives bounds of **76/78 = 97.44%** to **78/78 = 100%**.
+- These references are provisional AI text labels. Bounds describe agreement
+  with that reference, not verified physical flooding or human accuracy.
+- The legacy resolved-only score remains available for compatibility, clearly
+  marked conditional and no longer used as the headline precision.
+
+No source descriptions, sample IDs or reference labels were changed to improve
+the result. Existing samples are now protected from replacement by a different
+seed/count/snapshot. Human evaluation requires a nonempty reviewer name, valid
+labels/rationales for every sampled ID and explicit `status: "completed"`.
+The existing human template is left untouched and pending.
+
+```powershell
+python -X utf8 -m scripts.review_traffy evaluate --labels evidence/traffy/ai_review_labels.json
+# After personally checking the unchanged full-text sample:
+python -X utf8 -m scripts.review_traffy evaluate --labels data/review/traffy/human_review_100.json --output-dir evidence/traffy/human_review
+```

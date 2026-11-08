@@ -9,6 +9,7 @@ from src.ingest_traffy import TraffyIngestor, ingest_hourly, lambda_handler
 from src.backfill_traffy import backfill
 from src.storage import LocalStorageDriver
 from src.traffy_client import TraffyAPIError
+from scripts.review_traffy import flood_precision
 from tests import test_traffy as fixture_tests
 from tests.test_traffy import report
 
@@ -150,6 +151,31 @@ class HistoricalBackfillTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             list(backfill("2022-06-05", "2022-06-01", engine))
         engine.ingest_day.assert_not_called()
+
+
+class PrecisionTests(unittest.TestCase):
+    def matrix(self, tp, fp, unresolved):
+        return {"flood": {"flood": tp}, "non_flood": {"flood": fp},
+                "uncertain": {"flood": unresolved}}
+
+    def test_resolved_precision_uses_true_and_false_positives(self):
+        result = flood_precision(self.matrix(8, 2, 0))
+        self.assertEqual(result["precision"], 0.8)
+        self.assertEqual(result["precision_status"], "scored")
+        self.assertEqual(result["precision_counts"]["all_predicted_positives"], 10)
+
+    def test_unresolved_positives_remain_in_the_denominator_of_bounds(self):
+        result = flood_precision(self.matrix(8, 2, 2))
+        self.assertIsNone(result["precision"])
+        self.assertAlmostEqual(result["precision_bounds"]["lower"], 8 / 12)
+        self.assertAlmostEqual(result["precision_bounds"]["upper"], 10 / 12)
+        self.assertAlmostEqual(result["resolved_positive_coverage"], 10 / 12)
+
+    def test_no_positive_predictions_does_not_become_zero_or_perfect_precision(self):
+        result = flood_precision(self.matrix(0, 0, 0))
+        self.assertIsNone(result["precision"])
+        self.assertEqual(result["precision_status"], "no_predicted_positives")
+        self.assertEqual(result["precision_bounds"], {"lower": None, "upper": None})
 
 
 if __name__ == "__main__":

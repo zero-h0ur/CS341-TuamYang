@@ -1,10 +1,23 @@
 {
-  "generated_at_utc": "2026-11-08T21:33:09.497832+00:00",
+  "generated_at_utc": "2026-11-08T22:05:39.277317+00:00",
   "rule_version": "traffy-flood-v1.0",
   "reviewer_type": "ai",
   "reviewer_name": "Codex (AI text review)",
   "human_verified": false,
   "reference_status": "AI provisional labels; human confirmation pending",
+  "precision": null,
+  "precision_status": "unresolved_positive_labels",
+  "precision_counts": {
+    "true_positives": 76,
+    "false_positives": 0,
+    "unresolved_predicted_positives": 2,
+    "all_predicted_positives": 78
+  },
+  "precision_bounds": {
+    "lower": 0.9743589743589743,
+    "upper": 1.0
+  },
+  "resolved_positive_coverage": 0.9743589743589743,
   "sampling": {
     "method": "simple_random_without_replacement",
     "seed": 341,

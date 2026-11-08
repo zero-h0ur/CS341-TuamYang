@@ -37,7 +37,7 @@ Commit each completed logical change separately, as requested by the user.
   midnight catch-up, and opt-in hourly schedule; commit.
 - [x] Add/test mid-2022 defaults and bounded resumed backfills; verify a real
   historical day and record scope; commit.
-- [ ] Correct precision reporting, counts/bounds and explicit human completion;
+- [x] Correct precision reporting, counts/bounds and explicit human completion;
   rescore the existing frozen sample transparently; commit.
 - [ ] Update runbook/Issue checklist/PR description, run regression and delivery
   checks, publish the branch and a draft PR; commit verification separately.

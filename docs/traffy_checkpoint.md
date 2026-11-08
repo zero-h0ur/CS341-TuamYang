@@ -137,8 +137,14 @@ python -X utf8 -m scripts.review_traffy evaluate --labels evidence/traffy/ai_rev
 precision/recall ที่คำนวณในรายงานย่อยตัด reference กำกวมออกตามนิยามที่ระบุ
 จึงไม่ควรหยิบค่า 100% ของกลุ่มย่อยมารายงานเป็นความแม่นยำรวม
 
+ผลแก้ตาม Issue #5: รายงานหลักแสดง TP=76, FP=0 และ predicted positives ที่ยัง
+ไม่แน่ใจ 2 รายงานจากทั้งหมด 78 รายงาน จึงแสดง **precision เป็นช่วง 97.44–100%**
+เทียบกับ AI reference เบื้องต้น และยังไม่ให้ค่าเดียวจนกว่าจะตัดสินสองรายงานนั้นได้
+ดูรายละเอียดล่าสุดใน `docs/traffy_issue5.md`
+
 ให้คุณอ่าน `data/review/traffy/sample_100.json` ซึ่งมีข้อความเต็ม แล้วกรอก
 `data/review/traffy/human_review_100.json`: ชื่อผู้ตรวจ, label และ rationale ครบทุกข้อ
+และเปลี่ยน `status` เป็น `completed` เมื่อคุณตรวจเสร็จจริง
 จากนั้นรัน:
 
 ```powershell
