@@ -1,7 +1,9 @@
 # Close the implementation gaps against Traffy Issue #5
 
 ## Status
-In progress on `fix/traffy-issue-5`, based on `feature/ingest-traffy`.
+Implemented and verified locally on `fix/traffy-issue-5`, based on
+`feature/ingest-traffy`. Review material is ready; the publication result is
+reported in the delivery message.
 
 ## Summary
 Review the existing Checkpoint work against the actual Issue #5. Add explicit
@@ -39,8 +41,17 @@ Commit each completed logical change separately, as requested by the user.
   historical day and record scope; commit.
 - [x] Correct precision reporting, counts/bounds and explicit human completion;
   rescore the existing frozen sample transparently; commit.
-- [ ] Update runbook/Issue checklist/PR description, run regression and delivery
-  checks, publish the branch and a draft PR; commit verification separately.
+- [x] Update runbook/Issue checklist/PR description, run regression and delivery
+  checks, and prepare the branch diff/PR body; commit verification separately.
+
+### Recorded results
+- Hourly Local API smoke: 56 current-day reports, provisional at the recorded cutoff.
+- Historical Local API smoke: 794 reports on 2022-06-01, not a complete multiyear download.
+- Frozen 100-report review: 76 TP, 0 FP, 2 unresolved predicted positives;
+  precision is not yet a single resolved value (AI-reference bounds 97.44%–100%).
+- 63 Python checks pass, including 11 ThaiWater regression checks.
+- PowerShell AWS argument mock and isolated Lambda ZIP import pass.
+- AWS deployment and human confirmation are explicitly pending.
 
 ## Grill-Me Outcome
 Skipped: this is a bounded compatibility repair against explicit issue tasks,

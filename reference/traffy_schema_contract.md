@@ -5,6 +5,14 @@
 Owner: member 2 / Ingestion Traffy. Data source: the public Bangkok search API
 specified in the Proposal, not the authenticated Exchange API.
 
+Issue #5 additions: `mode=hourly` refreshes today's data with an explicit cutoff
+and `is_provisional=true`; at Bangkok midnight it also catches yesterday.
+See `docs/traffy_issue5.md` for schedule and history presets. Newly written
+manifests expose `source_window_live` and observed totals. A changing total is
+allowed with warnings when the padded API query touches the current UTC date,
+even if the selected Bangkok day is yesterday. Fully historical queries retain
+strict consistency checks.
+
 Input to spatial join and curated analysis is the **all-report** daily envelope
 under `incoming/traffy/`. It contains flood, non-flood and uncertain reports.
 Filtering never removes reports from this denominator. The separate flood-only
@@ -102,7 +110,7 @@ The manifest records `source_total_advisory`, `source_rows_fetched`,
 `source_total_delta`, `source_exhausted` and `quality_warnings`. Preserve these
 warnings when presenting coverage. The reason for the discrepancy is unknown.
 
-If `total` changes between nonempty pages, a page repeats, the pagination limit
+If `total` changes between nonempty pages in a fully historical query, a page repeats, the pagination limit
 is exceeded, or the request fails after retries, no new incoming partition is
 published. The Lambda raises on failure so the scheduler can retry.
 

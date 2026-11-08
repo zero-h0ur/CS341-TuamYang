@@ -1,0 +1,41 @@
+{
+  "status": "SUCCESS",
+  "batch_id": "tf-2026-09-25-75701dbd7e48",
+  "date_bkk": "2026-09-25",
+  "closed_day": true,
+  "rule_version": "traffy-flood-v1.0",
+  "started_at_utc": "2026-11-08T21:19:03.892593Z",
+  "source_endpoint": "https://publicapi.traffy.in.th/share/teamchadchart/search",
+  "window_start_utc": "2026-09-24T17:00:00Z",
+  "window_end_utc_exclusive": "2026-09-25T17:00:00Z",
+  "source_start_date_utc": "2026-09-24",
+  "source_end_date_utc": "2026-09-25",
+  "raw_page_keys": [
+    "raw/traffy/dt=2026-09-25/batch=tf-2026-09-25-75701dbd7e48/page-00000.json",
+    "raw/traffy/dt=2026-09-25/batch=tf-2026-09-25-75701dbd7e48/page-00001.json",
+    "raw/traffy/dt=2026-09-25/batch=tf-2026-09-25-75701dbd7e48/page-00002.json",
+    "raw/traffy/dt=2026-09-25/batch=tf-2026-09-25-75701dbd7e48/page-00003.json",
+    "raw/traffy/dt=2026-09-25/batch=tf-2026-09-25-75701dbd7e48/page-00004.json",
+    "raw/traffy/dt=2026-09-25/batch=tf-2026-09-25-75701dbd7e48/page-00005.json",
+    "raw/traffy/dt=2026-09-25/batch=tf-2026-09-25-75701dbd7e48/page-00006.json"
+  ],
+  "source_rows_fetched": 5010,
+  "source_exhausted": true,
+  "source_total_advisory": 5057,
+  "source_total_delta": 47,
+  "quality_warnings": [
+    "source_total_differs_from_exposed_rows"
+  ],
+  "record_count": 2673,
+  "flood_count": 1894,
+  "uncertain_count": 15,
+  "non_flood_count": 764,
+  "excluded_outside_bkk_day": 2337,
+  "duplicate_count": 0,
+  "invalid_coordinate_count": 0,
+  "records_sha256": "734b0a30ad8bdc5d305de86edae9b423b6390dd6e88a839fa4a648edeafe3de4",
+  "flood_records_sha256": "3c7a9eb3f1e5c9a91c18695ff664bc8823e6ef609588448cca9eabd1833e637e",
+  "incoming_key": "incoming/traffy/dt=2026-09-25/traffy_2026-09-25.json",
+  "flood_key": "staged/traffy/dt=2026-09-25/flood_reports.json",
+  "completed_at_utc": "2026-11-08T21:19:40.369007Z"
+}

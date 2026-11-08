@@ -11,7 +11,7 @@ from src.storage import LocalStorageDriver
 from src.traffy_client import TraffyAPIError
 from scripts.review_traffy import flood_precision
 from tests import test_traffy as fixture_tests
-from tests.test_traffy import report
+from tests.test_traffy import FakeClient, report
 
 
 class HourlyTests(unittest.TestCase):
@@ -113,6 +113,20 @@ class HourlyTests(unittest.TestCase):
             self.assertFalse(result["is_provisional"])
             self.assertEqual(result["record_count"], 1)
             self.assertIn("source_total_changed_in_adjacent_live_utc_day", result["quality_warnings"])
+
+    def test_next_poll_adds_new_reports_without_duplicate_published_rows(self):
+        with tempfile.TemporaryDirectory() as directory:
+            source = FakeClient([report("first", "2026-11-09 04:00:00+00")])
+            storage = LocalStorageDriver(directory)
+            engine = TraffyIngestor(source, storage,
+                                   now=lambda: datetime(2026, 11, 9, 5, tzinfo=timezone.utc))
+            first = engine.ingest_day("2026-11-09", allow_open_day=True)
+            source.rows.extend([report("second", "2026-11-09 04:30:00+00"), source.rows[0]])
+            second = engine.ingest_day("2026-11-09", allow_open_day=True)
+            self.assertEqual((first["record_count"], second["record_count"]), (1, 2))
+            self.assertEqual(second["duplicate_count"], 1)
+            self.assertEqual(first["incoming_key"], second["incoming_key"])
+            self.assertEqual(len(storage.list_keys("incoming/traffy")), 1)
 
 
 class HistoricalBackfillTests(unittest.TestCase):

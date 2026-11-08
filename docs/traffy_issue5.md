@@ -33,7 +33,7 @@ may appear on the next poll; a live poll is not a transactional snapshot.
 To install both schedules on the team's actual AWS environment:
 
 ```powershell
-.\infrastructure\deploy_traffy.ps1 -BucketName "cs341-tuamyang-data" -Region "us-east-1" -EnableDailySchedule -EnableHourlySchedule
+powershell -NoProfile -ExecutionPolicy RemoteSigned -File infrastructure/deploy_traffy.ps1 -BucketName "cs341-tuamyang-data" -Region "us-east-1" -EnableDailySchedule -EnableHourlySchedule
 ```
 
 The hourly rule uses `cron(0 * * * ? *)` and the daily rule uses minute 15, so
@@ -46,6 +46,8 @@ aws events disable-rule --name tuamyang-traffy-hourly --region us-east-1
 
 Actual deployment is still unverified. `tests/test_deploy_traffy.ps1` exercises
 AWS CLI arguments with a mock function; it performs no cloud calls.
+The PowerShell command scopes the execution policy to that process; it does
+not change the user's machine-wide policy.
 
 ## Historical backfill from mid-2022
 
@@ -102,4 +104,25 @@ The existing human template is left untouched and pending.
 python -X utf8 -m scripts.review_traffy evaluate --labels evidence/traffy/ai_review_labels.json
 # After personally checking the unchanged full-text sample:
 python -X utf8 -m scripts.review_traffy evaluate --labels data/review/traffy/human_review_100.json --output-dir evidence/traffy/human_review
+```
+
+## Issue checklist and remaining evidence
+
+| Issue task | Implementation and observed verification | Remaining external evidence |
+|---|---|---|
+| Daily Lambda, hourly polling in heavy rain | Daily CLI/event preserved; explicit hourly mode, cutoff, midnight catch-up and optional rule added; live Local smoke test has 56 reports | Deploy/invoke Lambda and enable/observe the schedule on the team's AWS account |
+| Backfill since mid-2022 | Defaults to 2022-06-01; bounded runs resume past verified dates; real 2022-06-01 smoke test has 794 reports | Run the full date range selected by the team; a one-day smoke check is not a multiyear download |
+| Filter flood text despite blank category | Existing v1.0 text rules retained; no category is required for affirmative text; negation and preventive descriptions have checks | Review limitations with the team; an isolated ambiguous `ท่วม` mention remains reviewable instead of being silently treated as proven flooding |
+| UTC to Bangkok and 100-report precision | Time boundaries checked; the same seeded 100 reports retained; TP/FP/unresolved counts and full-denominator bounds reported | The owner reads the sample and marks the human review completed; unresolved positives must stay visible |
+| PR evidence | Original work in PR #8; this follow-up has separate logical commits on `fix/traffy-issue-5` | Review/merge in dependency order after external evidence is attached |
+
+Local verification: **63 Python checks pass** (52 Traffy and 11 ThaiWater),
+the minimal Lambda ZIP imports from an isolated process, and the deployment
+argument mock passes both schedule modes and a target failure scenario.
+Recorded evidence is under `evidence/traffy/issue5/`; human labels and the
+original September study data have not been altered.
+
+```powershell
+python -X utf8 -m scripts.test_traffy_checkpoint
+powershell -NoProfile -ExecutionPolicy RemoteSigned -File tests/test_deploy_traffy.ps1
 ```

@@ -182,7 +182,7 @@ python -X utf8 -m scripts.package_traffy
 ใช้ AWS CLI ที่ตั้งค่า Learner Lab ไว้แล้ว และแก้ bucket/region ให้ตรงทีม:
 
 ```powershell
-.\infrastructure\deploy_traffy.ps1 -BucketName "cs341-tuamyang-data" -Region "us-east-1"
+powershell -NoProfile -ExecutionPolicy RemoteSigned -File infrastructure/deploy_traffy.ps1 -BucketName "cs341-tuamyang-data" -Region "us-east-1"
 aws lambda invoke --function-name ingest_traffy --cli-binary-format raw-in-base64-out --payload file://infrastructure/traffy_lambda_event.json --region us-east-1 dist/traffy_lambda_result.json
 ```
 
