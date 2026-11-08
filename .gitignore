@@ -17,3 +17,12 @@ Thumbs.db
 # Test coverage & logs
 .pytest_cache/
 
+# Traffy source payloads/review working copies can contain personal details.
+# Keep reproducible counts and redacted review evidence under evidence/traffy/.
+data/raw/traffy/
+data/incoming/traffy/
+data/staged/traffy/
+data/checkpoints/traffy/
+data/review/traffy/
+dist/
+

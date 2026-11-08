@@ -1,0 +1,6 @@
+{
+  "Name": "tuamyang-traffy-daily",
+  "Description": "Ingest yesterday in Bangkok at 01:15 Asia/Bangkok (18:15 UTC)",
+  "ScheduleExpression": "cron(15 18 * * ? *)",
+  "State": "ENABLED"
+}

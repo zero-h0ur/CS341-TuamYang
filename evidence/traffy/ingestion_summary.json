@@ -1,0 +1,127 @@
+{
+  "verified_at_utc": "2026-11-08T21:35:30.296348+00:00",
+  "environment": "Local Python; public Traffy endpoint; not a deployed AWS invocation",
+  "period_bkk_inclusive": [
+    "2026-09-24",
+    "2026-09-26"
+  ],
+  "unique_report_count": 9614,
+  "daily": [
+    {
+      "date_bkk": "2026-09-24",
+      "record_count": 1100,
+      "flood_count": 113,
+      "non_flood_count": 986,
+      "uncertain_count": 1,
+      "invalid_coordinate_count": 0,
+      "duplicate_count": 0,
+      "source_rows_fetched": 2489,
+      "source_total_advisory": 2529,
+      "source_total_delta": 40,
+      "quality_warnings": [
+        "source_total_differs_from_exposed_rows"
+      ],
+      "source_exhausted": true
+    },
+    {
+      "date_bkk": "2026-09-25",
+      "record_count": 2673,
+      "flood_count": 1894,
+      "non_flood_count": 764,
+      "uncertain_count": 15,
+      "invalid_coordinate_count": 0,
+      "duplicate_count": 0,
+      "source_rows_fetched": 5010,
+      "source_total_advisory": 5057,
+      "source_total_delta": 47,
+      "quality_warnings": [
+        "source_total_differs_from_exposed_rows"
+      ],
+      "source_exhausted": true
+    },
+    {
+      "date_bkk": "2026-09-26",
+      "record_count": 5841,
+      "flood_count": 5014,
+      "non_flood_count": 788,
+      "uncertain_count": 39,
+      "invalid_coordinate_count": 0,
+      "duplicate_count": 0,
+      "source_rows_fetched": 8822,
+      "source_total_advisory": 8891,
+      "source_total_delta": 69,
+      "quality_warnings": [
+        "source_total_differs_from_exposed_rows"
+      ],
+      "source_exhausted": true
+    }
+  ],
+  "source_partitions": [
+    {
+      "date_bkk": "2026-09-24",
+      "record_count": 1100,
+      "records_sha256": "fd938490b3333719904274705ad76ecbd7412422e36d5fc1d1ee6d0e880d5304"
+    },
+    {
+      "date_bkk": "2026-09-25",
+      "record_count": 2673,
+      "records_sha256": "734b0a30ad8bdc5d305de86edae9b423b6390dd6e88a839fa4a648edeafe3de4"
+    },
+    {
+      "date_bkk": "2026-09-26",
+      "record_count": 5841,
+      "records_sha256": "592d35f7dbdc993d2c05379e4f38ac6f1544b58da8fb9938f64b94f8d6636889"
+    }
+  ],
+  "q2_denominator_preserved": true,
+  "uncertain_reports_included_in_denominator": true,
+  "replay": {
+    "network_used": false,
+    "new_objects": 0,
+    "days": [
+      {
+        "date_bkk": "2026-09-24",
+        "status": "SKIPPED",
+        "before_count": 1100,
+        "after_count": 1100,
+        "before_sha256": "fd938490b3333719904274705ad76ecbd7412422e36d5fc1d1ee6d0e880d5304",
+        "after_sha256": "fd938490b3333719904274705ad76ecbd7412422e36d5fc1d1ee6d0e880d5304"
+      },
+      {
+        "date_bkk": "2026-09-25",
+        "status": "SKIPPED",
+        "before_count": 2673,
+        "after_count": 2673,
+        "before_sha256": "734b0a30ad8bdc5d305de86edae9b423b6390dd6e88a839fa4a648edeafe3de4",
+        "after_sha256": "734b0a30ad8bdc5d305de86edae9b423b6390dd6e88a839fa4a648edeafe3de4"
+      },
+      {
+        "date_bkk": "2026-09-26",
+        "status": "SKIPPED",
+        "before_count": 5841,
+        "after_count": 5841,
+        "before_sha256": "592d35f7dbdc993d2c05379e4f38ac6f1544b58da8fb9938f64b94f8d6636889",
+        "after_sha256": "592d35f7dbdc993d2c05379e4f38ac6f1544b58da8fb9938f64b94f8d6636889"
+      }
+    ]
+  },
+  "lambda_package": {
+    "path": "dist\\ingest_traffy.zip",
+    "bytes": 11764,
+    "sha256": "6cd495b7901873c08019d12367159271a023b4dee67131e05f5dd9e925358c78",
+    "handler": "src.ingest_traffy.lambda_handler",
+    "files": [
+      "src/__init__.py",
+      "src/storage.py",
+      "src/traffy_client.py",
+      "src/traffy_filter.py",
+      "src/ingest_traffy.py",
+      "config/__init__.py",
+      "config/config.py",
+      "config/traffy.py"
+    ],
+    "isolated_handler_import": true
+  },
+  "aws_deployed": false,
+  "s3_live_verified": false
+}

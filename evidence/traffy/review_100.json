@@ -1,0 +1,1132 @@
+{
+  "generated_at_utc": "2026-11-08T21:33:09.497832+00:00",
+  "rule_version": "traffy-flood-v1.0",
+  "reviewer_type": "ai",
+  "reviewer_name": "Codex (AI text review)",
+  "human_verified": false,
+  "reference_status": "AI provisional labels; human confirmation pending",
+  "sampling": {
+    "method": "simple_random_without_replacement",
+    "seed": 341,
+    "sample_size": 100,
+    "population_count": 9614,
+    "start_date_bkk": "2026-09-24",
+    "end_date_bkk": "2026-09-26",
+    "population_ids_sha256": "e8700fee5e8c297fb23d9438f30f5b7f197e8d73786008646c407851fd7572f3",
+    "source_partitions": [
+      {
+        "date_bkk": "2026-09-24",
+        "record_count": 1100,
+        "records_sha256": "fd938490b3333719904274705ad76ecbd7412422e36d5fc1d1ee6d0e880d5304"
+      },
+      {
+        "date_bkk": "2026-09-25",
+        "record_count": 2673,
+        "records_sha256": "734b0a30ad8bdc5d305de86edae9b423b6390dd6e88a839fa4a648edeafe3de4"
+      },
+      {
+        "date_bkk": "2026-09-26",
+        "record_count": 5841,
+        "records_sha256": "592d35f7dbdc993d2c05379e4f38ac6f1544b58da8fb9938f64b94f8d6636889"
+      }
+    ]
+  },
+  "confusion_matrix_rows_reference_columns_prediction": {
+    "flood": {
+      "flood": 76,
+      "non_flood": 0,
+      "uncertain": 0
+    },
+    "non_flood": {
+      "flood": 0,
+      "non_flood": 18,
+      "uncertain": 0
+    },
+    "uncertain": {
+      "flood": 2,
+      "non_flood": 4,
+      "uncertain": 0
+    }
+  },
+  "three_class_agreement": 0.94,
+  "scorable_binary_reference_count": 94,
+  "binary_agreement_including_abstentions_as_incorrect": 1.0,
+  "flood_precision_excluding_uncertain_reference": 1.0,
+  "flood_recall_including_abstentions_as_missed": 1.0,
+  "reports": [
+    {
+      "ticket_id": "2026-ZR2YHG",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุฝนเมื่อคืนทำให้น้ำท่วมขังในหมู่บ้านและขอเร่งระบาย",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-HZRC7Z",
+      "reference_label": "uncertain",
+      "predicted_label": "non_flood",
+      "agrees": false,
+      "rationale": "ขอขนย้ายรถออกจากคอนโด แต่ข้อความไม่ระบุสาเหตุหรือน้ำท่วมโดยตรง",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-Z3KCAL",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมเข้าบ้านและระดับน้ำเพิ่มต่อเนื่อง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-AKRMN8",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำขึ้นท่วมเต็มซอยหลังหยุดสูบน้ำ",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-4Z66WL",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมมากจนออกจากซอยไปซื้ออาหารไม่ได้",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-3RHK72",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ร้องเรียนร้านค้ากีดขวางบันไดและทางเดิน ไม่กล่าวถึงน้ำท่วม",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-YRF89F",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำเข้าบ้านและทำให้พื้นกับทรัพย์สินเสียหาย",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "ท่วมบ้าน",
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-G8CAAP",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ร้องเรียนรถจอดในที่ห้ามจอดและทิ้งขยะ",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-6FZRGD",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ติดตามการปรับปรุงทางเข้าและการลงพื้นที่ ไม่มีข้อความเรื่องน้ำท่วม",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-FNH4KG",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมขังสูงจนรถยนต์ผ่านไม่ได้",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-RY7C27",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ต้นไม้ล้มทับบ้าน ไม่ใช่รายงานน้ำท่วม",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-KXMANY",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมถนนประมาณ 30 เซนติเมตรและรถสัญจรไม่ได้",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-E6DH2C",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ปัญหามอเตอร์ไซค์ลงอุโมงค์ ไม่มีข้อมูลน้ำท่วม",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-7ECJ3K",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "กล่าวถึงคลองล้นและระบุระดับน้ำข้อเท้ากับเวลาที่ท่วมแล้ว แม้น้ำยังไม่เข้าบ้าน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-JT9WAH",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมขังสูงในหมู่บ้านและขอกระสอบทราย",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-NKLMBX",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมสูงจนออกไปข้างนอกไม่ได้และต้องการอาหาร",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-69GXHC",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "มีน้ำขังรอบบ้านแล้ว 15–20 เซนติเมตร แม้ยังไม่เข้าตัวบ้าน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-WJZUT2",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "แจ้งไฟแสงสว่างบนสะพานไม่ติด",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-4WXKT3",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมสูงถึงเข่าหรือเอวและทรัพย์สินเสียหาย",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-H6NJ4Z",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมขัง 15–20 เซนติเมตรและขอเร่งระบาย",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-W9A9XP",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมระดับเข่าตั้งแต่เมื่อวาน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-6NVN7B",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมสูงและต้องการความช่วยเหลือออกจากบ้าน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-G378RU",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำเข้าบ้านตั้งแต่เช้าและถนนสัญจรลำบาก",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-7EMM7G",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมขังปากซอยทำให้เข้าออกหมู่บ้านลำบาก",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-NFEPXR",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมหนักในซอยและรถออกไม่ได้",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-2NNP93",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "แม้ประเด็นหลักเป็นรถจอดกีดขวาง แต่ระบุน้ำท่วมซ้ำเมื่อฝนตกและกระทบการเข้าออก",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-2PW84M",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุมีน้ำขังบนทางเดินเท้า เป็นการรายงานน้ำขังจริง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-HF4W34",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมรอบนี้พร้อมความสูงและระยะเวลา",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-N6KLE2",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ร้องเรียนป้ายโฆษณาบนเสาไฟ",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-UEHK3J",
+      "reference_label": "uncertain",
+      "predicted_label": "non_flood",
+      "agrees": false,
+      "rationale": "ขอทรายกันน้ำและระบุรถสัญจรไม่ได้ แต่ไม่ยืนยันว่ามีน้ำท่วมแล้ว",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-XKFV4K",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมประมาณหนึ่งเมตรตั้งแต่เช้า",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-2REUVD",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "พบน้ำท่วมสูงและขอเร่งระบาย แม้จะขอทรายป้องกันน้ำเข้าบ้านด้วย",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-GPWH6A",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมขังเหนือเข่ามาหนึ่งวัน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-DUCEHV",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมจากฝนต่อเนื่อง สูง 70 เซนติเมตร",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-W2ZTL4",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมขังสูงแล้ว ไม่ใช่เพียงขอป้องกันล่วงหน้า",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-FWCV68",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "น้ำฝนไหลลงบันไดทำให้ลื่น ไม่มีการระบุน้ำท่วมหรือขัง",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-44NWA4",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมสูงขึ้นเรื่อย ๆ และขอสูบน้ำด่วน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-XRGEV8",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุถนนท่วมขังทุกครั้งที่ฝนตกและมีระดับน้ำในครั้งนี้",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "ท่วมขัง",
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-K9U2YP",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมขังในซอยถึงหน้าแข้ง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-EZGCHF",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำล้อมบ้านและเข้าบ้านบางส่วนแล้ว",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-HCTKKV",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมซ้ำทุกปีและครั้งนี้สูงถึงหน้าแข้ง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-BENNYL",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมประมาณหนึ่งเมตรจากพื้นถนน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-CUTWJY",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมสูงในซอยพร้อมระดับและระยะเวลา",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-6MECMP",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "แผ่นอิฐตกลงท่อ ไม่มีข้อความระบุน้ำท่วม",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-JVZH7X",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมสูงและต้องการอพยพออกจากพื้นที่",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-M6JKYN",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมขังระดับหน้าแข้ง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-MHPP8C",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำขังบนถนนและป้ายรถเมล์ระดับข้อเท้า",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำขัง",
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-XJF9JN",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ขออพยพคนเนื่องจากได้รับผลกระทบจากน้ำท่วม",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-8KGZGK",
+      "reference_label": "uncertain",
+      "predicted_label": "non_flood",
+      "agrees": false,
+      "rationale": "มีเพียงชื่อซอย ไม่มีรายละเอียดให้ยืนยันประเภทปัญหาจากข้อความ",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-2PMCJK",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ร้องเรียนผักตบชวา น้ำเน่า และยุงในคลอง ไม่ยืนยันว่าน้ำท่วม",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-MUZF3L",
+      "reference_label": "uncertain",
+      "predicted_label": "flood",
+      "agrees": false,
+      "rationale": "เนื้อความบอกน้ำในคลองเกือบเสมอถนน แต่ช่องระยะเวลาบอกท่วมแล้ว ข้อความขัดกันจึงควรตรวจเพิ่ม",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-FHRGM7",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ติดตามไฟทางติดค้างกลางวัน",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-ACJAFC",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมในหมู่บ้านถึงเข่าและเพิ่มขึ้น",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-RKZ9TP",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "แม้สะกดผิดบางคำ แต่ระบุน้ำท่วมขัง 50 เซนติเมตรมาแปดชั่วโมง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-PHZMVC",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมเข้าในบ้านและระดับเพิ่มขึ้น",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-XWNFMD",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "พบน้ำท่วมขังในซอยประมาณ 30 เซนติเมตร",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-YC2BD7",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "พบน้ำท่วมขัง 10 เซนติเมตรในซอยจากฝนตกหนัก",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-H6VDL2",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ร้องเรียนพื้นทางหน้าร้านและความเสี่ยงอุบัติเหตุ ไม่กล่าวถึงน้ำท่วม",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-EE4VX9",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมซอยถึงเข่าจนออกไปทำงานไม่ได้",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-TXHLP3",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมสูงและไหลเข้าบ้านหลายหลัง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-ZGXJR9",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "แจ้งเรื่องน้ำท่วมและขอสูบน้ำพร้อมระดับข้อเท้า",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-C8F3P8",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมเข้าบ้านประมาณ 40 เซนติเมตร",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-E276PG",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "คลองล้นและน้ำท่วมบ้านกับถนนเพิ่มขึ้น",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-ME6TAD",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมไม่ระบายระดับหัวเข่า",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-E9B4J7",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระดับน้ำเพิ่ม ทรัพย์สินเสียหาย และน้ำเข้าบ้านกับรถ",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-TX8G3D",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ร้องเรียนแมลงสาบในห้องน้ำและขอควบคุมสุขอนามัย",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-2CLWVX",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ขอตรวจสอบระยะร่นอาคาร ไม่มีข้อมูลน้ำท่วม",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-ALHCNH",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมซ้ำและครั้งนี้มีระดับหน้าแข้ง พร้อมปัญหาถนนต่ำ",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-78B38C",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมสูงระดับเข่า",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-GTDW4W",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมทั้งซอยประมาณ 30 เซนติเมตร",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-62R7M8",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วม 40–50 เซนติเมตรและต้องการกระสอบทราย",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-MH94F7",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมสูงจนรถติดและประชาชนขาดของจำเป็น",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-VJ3XN2",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ขอเร่งระบายน้ำและช่องรายละเอียดระบุท่วมถึงหน้าแข้งแล้ว",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-U4VWAM",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำท่วมขังซ้ำบริเวณแยกจากถนนทรุดและยังไม่แก้ไข",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-VJ4RUM",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำขังระบายไม่ทันจนการจราจรติดขัดและสูงถึงหน้าแข้ง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำขัง",
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-ZX7CHY",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมขังระดับหน้าแข้ง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม",
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-6MKHU7",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "พบมีน้ำท่วมขังอยู่แล้ว แม้จะขอทรายเตรียมรับฝนเพิ่ม",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-DXMYRM",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำจากคลองล้นถนนและเข้าบ้าน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำขัง",
+        "น้ำท่วม",
+        "น้ำเข้าบ้าน"
+      ]
+    },
+    {
+      "ticket_id": "2026-EZEVZM",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมตั้งแต่เช้าและระดับเพิ่มถึงเย็น",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-A3KAWP",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมเหนือเข่าและต้องการความช่วยเหลือเคลื่อนย้ายออกจากพื้นที่",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-3DPWEK",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมเข้าบ้านถึงหัวเข่า",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-BZ34TV",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำเข้าบริเวณตัวบ้านระดับหน้าแข้ง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-Z892MW",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมเข้าตัวเรือนและระบุระดับทั้งในบ้านกับนอกบ้าน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-BHJ823",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ร้องเรียนการจอดรถกีดขวางในย่านประตูน้ำ ซึ่งเป็นชื่อพื้นที่ ไม่ใช่เหตุท่วม",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-KFVEF9",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมเข้าบ้านและขอให้สูบน้ำ",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-CU966J",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมขังสูงจนเข้าบ้านและขอเปิดประตูน้ำหรือเครื่องสูบ",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-DCTBT4",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมขังในซอยและไหลเข้าบ้านประชาชน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วมขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-LFHWXH",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ชุมชนริมคลองมีน้ำท่วมสูงถึงหน้าแข้ง",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-YEVA4P",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมห้องเช่าริมคลองหนักและทรัพย์สินเสียหาย",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-V947RE",
+      "reference_label": "uncertain",
+      "predicted_label": "non_flood",
+      "agrees": false,
+      "rationale": "ข้อความติดตามสั้นและไม่ระบุว่าเป็นปัญหาอะไร",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-MABXHM",
+      "reference_label": "uncertain",
+      "predicted_label": "flood",
+      "agrees": false,
+      "rationale": "ขอเดินอุโมงค์เพื่อบรรเทาน้ำท่วมหลายเขต แต่ไม่ยืนยันเหตุท่วมที่จุดรายงาน",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-A6PLC3",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมซอยสูงประมาณ 80 เซนติเมตรจนรถเข้าออกไม่ได้",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-T8DUJ2",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำเข้าชั้นหนึ่งแล้ว แม้คาดว่าจะสูงเพิ่มหากฝนไม่หยุด",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-G4RGFA",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "แจ้งรถจอดบนทางเท้า",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-7XYY7W",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ขอถุงทรายพร้อมระบุระดับน้ำข้อเท้าและท่วมมาแล้ว",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-DA4FW8",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "ร้องเรียนเสียงก่อสร้างรบกวนชีวิตและการทำงาน",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    },
+    {
+      "ticket_id": "2026-HLALCG",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "พบน้ำท่วมสูงในซอยและขอเครื่องสูบน้ำ",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-VVDDRV",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "น้ำท่วมเพิ่มทั้งในบ้านและนอกบ้าน พร้อมระบุระดับน้ำ",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำท่วม"
+      ]
+    },
+    {
+      "ticket_id": "2026-L8PGKY",
+      "reference_label": "flood",
+      "predicted_label": "flood",
+      "agrees": true,
+      "rationale": "ระบุน้ำขังเมื่อฝนตกหนักระหว่างงานวางท่อและถนนเป็นหลุม",
+      "prediction_reason": "affirmative_flood_description",
+      "matched_terms": [
+        "น้ำขัง"
+      ]
+    },
+    {
+      "ticket_id": "2026-EKZZDU",
+      "reference_label": "non_flood",
+      "predicted_label": "non_flood",
+      "agrees": true,
+      "rationale": "แจ้งดวงไฟส่องทางดับชำรุดหลายดวง",
+      "prediction_reason": "no_flood_evidence",
+      "matched_terms": []
+    }
+  ]
+}

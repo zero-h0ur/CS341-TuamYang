@@ -1,0 +1,21 @@
+name: Traffy Checkpoint checks
+
+on:
+  pull_request:
+  push:
+    branches: [feature/ingest-traffy]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-python@v7.1.0
+        with:
+          python-version: '3.12'
+      - name: Run Traffy behavior and delivery tests
+        run: python -m unittest tests.test_traffy tests.test_traffy_delivery -v
+      - name: Build Lambda archive
+        run: python -m scripts.package_traffy
