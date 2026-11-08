@@ -3,7 +3,7 @@ name: Traffy Checkpoint checks
 on:
   pull_request:
   push:
-    branches: [feature/ingest-traffy, fix/traffy-issue-5]
+    branches: [feature/ingest-traffy]
 
 jobs:
   test:

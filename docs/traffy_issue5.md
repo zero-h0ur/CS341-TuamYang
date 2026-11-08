@@ -2,7 +2,8 @@
 
 This follow-up is scoped to member 2's Checkpoint assignment:
 <https://github.com/zero-h0ur/CS341-TuamYang/issues/5>.
-Changes live on `fix/traffy-issue-5`, based on the original Traffy branch.
+Changes are consolidated on `feature/ingest-traffy` and reviewed with the
+original Traffy implementation in PR #8. The former follow-up PR #9 is superseded.
 
 ## Hourly ingestion during heavy rain
 
@@ -114,7 +115,7 @@ python -X utf8 -m scripts.review_traffy evaluate --labels data/review/traffy/hum
 | Backfill since mid-2022 | Defaults to 2022-06-01; bounded runs resume past verified dates; real 2022-06-01 smoke test has 794 reports | Run the full date range selected by the team; a one-day smoke check is not a multiyear download |
 | Filter flood text despite blank category | Existing v1.0 text rules retained; no category is required for affirmative text; negation and preventive descriptions have checks | Review limitations with the team; an isolated ambiguous `ท่วม` mention remains reviewable instead of being silently treated as proven flooding |
 | UTC to Bangkok and 100-report precision | Time boundaries checked; the same seeded 100 reports retained; TP/FP/unresolved counts and full-denominator bounds reported | The owner reads the sample and marks the human review completed; unresolved positives must stay visible |
-| PR evidence | Original work in PR #8; this follow-up has separate logical commits on `fix/traffy-issue-5` | Review/merge in dependency order after external evidence is attached |
+| PR evidence | Original implementation and Issue #5 corrections share `feature/ingest-traffy` and PR #8; logical commits are preserved | Review the combined PR after external evidence is attached; shared storage still depends on the ThaiWater base branch |
 
 Local verification: **63 Python checks pass** (52 Traffy and 11 ThaiWater),
 the minimal Lambda ZIP imports from an isolated process, and the deployment

@@ -1,5 +1,8 @@
 # Address Traffy Issue #5: hourly ingestion, historical backfill and precision
 
+Historical PR #9 description, superseded by the combined PR #8 on
+`feature/ingest-traffy`. The current PR body is `docs/pr_ingest_traffy.md`.
+
 The original daily handler selected yesterday, so running it hourly would keep
 skipping yesterday instead of ingesting today's reports. Add explicit hourly
 mode with a live cutoff, provisional flags, changing-total warnings and a
@@ -30,9 +33,9 @@ completion.
   imports in isolation.
 - PowerShell deployment checks use an AWS mock, including target failure.
 
-This branch is based on `feature/ingest-traffy` / PR #8, so review against that
-branch to isolate the fixes. Commits are split by hourly ingestion, backfill,
-precision and final verification as requested.
+These corrections were originally based on `feature/ingest-traffy` / PR #8.
+They now live on that same feature branch. Commits remain split by hourly
+ingestion, backfill, precision and final verification as requested.
 
 Refs #5. AWS deployment/live S3 verification and the user's human confirmation
 of the 100 reports remain pending; this PR does not close those evidence gaps.

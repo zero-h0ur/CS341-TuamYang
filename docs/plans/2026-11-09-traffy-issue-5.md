@@ -1,9 +1,9 @@
 # Close the implementation gaps against Traffy Issue #5
 
 ## Status
-Implemented and verified locally on `fix/traffy-issue-5`, based on
-`feature/ingest-traffy`. Review material is ready; the publication result is
-reported in the delivery message.
+Implemented and verified locally on `fix/traffy-issue-5`, then consolidated into
+`feature/ingest-traffy` at the user's request. PR #8 contains the complete work;
+the former follow-up PR #9 is superseded. Logical commits are preserved.
 
 ## Summary
 Review the existing Checkpoint work against the actual Issue #5. Add explicit
