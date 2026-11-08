@@ -46,3 +46,31 @@ aws events disable-rule --name tuamyang-traffy-hourly --region us-east-1
 
 Actual deployment is still unverified. `tests/test_deploy_traffy.ps1` exercises
 AWS CLI arguments with a mock function; it performs no cloud calls.
+
+## Historical backfill from mid-2022
+
+The CLI now defaults to **2022-06-01** through yesterday (inclusive Bangkok
+dates), which makes the issue's history start explicit. Override `--start` if
+the team selects a different interpretation of mid-year or a shorter period.
+For a bounded run, use a new-date budget:
+
+```powershell
+python -X utf8 -m src.backfill_traffy --max-days 7 --backend local
+```
+
+Run the same command again to skip verified completed dates and process the
+next seven dates. A skip does not consume the budget. `backfill_progress` states
+whether the requested range is complete, whether the budget was exhausted and
+which date comes next. The first failed date is the retry point.
+Without `--max-days`, the CLI attempts the whole requested range; do not confuse
+a successful bounded run with a completed multiyear download.
+`--force` explicitly refreshes dates, so repeat it with the returned `next_date`
+as `--start` to advance rather than refreshing the same first chunk again.
+
+The historical API check is deliberately bounded to a real day in June 2022.
+This verifies the old schema and access path without claiming that every day
+since 2022 has been downloaded or is available from the source.
+
+Observed result: **794 reports on 2022-06-01 Bangkok time**. The padded UTC
+query returned 1,468 rows against an advertised total of 1,558, recorded as a
+source coverage warning. See `evidence/traffy/issue5/historical_smoke.json`.

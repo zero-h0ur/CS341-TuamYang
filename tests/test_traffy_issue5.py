@@ -6,6 +6,7 @@ from datetime import date, datetime, timezone
 from unittest.mock import Mock, call, patch
 
 from src.ingest_traffy import TraffyIngestor, ingest_hourly, lambda_handler
+from src.backfill_traffy import backfill
 from src.storage import LocalStorageDriver
 from src.traffy_client import TraffyAPIError
 from tests import test_traffy as fixture_tests
@@ -111,6 +112,44 @@ class HourlyTests(unittest.TestCase):
             self.assertFalse(result["is_provisional"])
             self.assertEqual(result["record_count"], 1)
             self.assertIn("source_total_changed_in_adjacent_live_utc_day", result["quality_warnings"])
+
+
+class HistoricalBackfillTests(unittest.TestCase):
+    def test_a_limited_run_resumes_past_completed_dates_on_the_next_run(self):
+        completed = set()
+        engine = Mock()
+        def ingest(day, force=False):
+            status = "SUCCESS" if force or day not in completed else "SKIPPED"
+            completed.add(day)
+            return {"status": status, "date_bkk": day.isoformat()}
+        engine.ingest_day.side_effect = ingest
+        first = list(backfill("2022-06-01", "2022-06-05", engine, max_days=2))
+        self.assertEqual([r["date_bkk"] for r in first], ["2022-06-01", "2022-06-02"])
+        self.assertTrue(first[-1]["backfill_progress"]["budget_exhausted"])
+        self.assertEqual(first[-1]["backfill_progress"]["next_date"], "2022-06-03")
+        second = list(backfill("2022-06-01", "2022-06-05", engine, max_days=2))
+        self.assertEqual([r["status"] for r in second], ["SKIPPED", "SKIPPED", "SUCCESS", "SUCCESS"])
+        self.assertEqual(second[-1]["backfill_progress"]["next_date"], "2022-06-05")
+        third = list(backfill("2022-06-01", "2022-06-05", engine, max_days=2))
+        self.assertTrue(third[-1]["backfill_progress"]["range_complete"])
+        self.assertIsNone(third[-1]["backfill_progress"]["next_date"])
+
+    def test_failed_date_remains_the_resume_point(self):
+        engine = Mock()
+        engine.ingest_day.return_value = {"status": "FAILED", "error": "fixture"}
+        results = list(backfill("2022-06-01", "2022-06-05", engine, max_days=2))
+        self.assertEqual(len(results), 1)
+        self.assertEqual(results[0]["backfill_progress"]["next_date"], "2022-06-01")
+        self.assertFalse(results[0]["backfill_progress"]["range_complete"])
+
+    def test_invalid_budget_or_reversed_range_is_rejected_before_fetching(self):
+        engine = Mock()
+        for budget in (0, -1, True):
+            with self.assertRaises(ValueError):
+                list(backfill("2022-06-01", "2022-06-05", engine, max_days=budget))
+        with self.assertRaises(ValueError):
+            list(backfill("2022-06-05", "2022-06-01", engine))
+        engine.ingest_day.assert_not_called()
 
 
 if __name__ == "__main__":

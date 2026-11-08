@@ -35,7 +35,7 @@ Commit each completed logical change separately, as requested by the user.
 ## Plan Todos
 - [x] Add/test hourly Lambda/CLI mode, live cutoff, changing-total warnings,
   midnight catch-up, and opt-in hourly schedule; commit.
-- [ ] Add/test mid-2022 defaults and bounded resumed backfills; verify a real
+- [x] Add/test mid-2022 defaults and bounded resumed backfills; verify a real
   historical day and record scope; commit.
 - [ ] Correct precision reporting, counts/bounds and explicit human completion;
   rescore the existing frozen sample transparently; commit.
