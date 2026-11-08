@@ -1,0 +1,4 @@
+{
+  "mode": "hourly",
+  "storage_backend": "s3"
+}

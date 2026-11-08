@@ -144,14 +144,24 @@ class TraffyIngestor:
 
         start = datetime.combine(day, time.min, BKK).astimezone(UTC)
         end = start + timedelta(days=1)
+        if not closed:
+            # A live poll is a provisional view up to the invocation time,
+            # rather than an assertion about the rest of today's observations.
+            end = min(end, now.astimezone(UTC))
         # API date endpoints are inclusive and interpreted in UTC. Pad the UTC
         # dates then apply the exact half-open Bangkok-day interval ourselves.
         source_start = start.date().isoformat()
         source_end = (end - timedelta(microseconds=1)).date().isoformat()
+        # Before 07:00 Bangkok, even yesterday's padded UTC query can include
+        # today's newly submitted reports. Bound the output by report time and
+        # tolerate moving totals in that source window as well.
+        source_window_live = source_end >= now.astimezone(UTC).date().isoformat()
         batch_id = f"tf-{dt}-{uuid.uuid4().hex[:12]}"
         manifest = {
             "status": "RUNNING", "batch_id": batch_id, "date_bkk": dt,
             "closed_day": closed, "rule_version": RULE_VERSION,
+            "is_provisional": not closed,
+            "source_window_live": source_window_live,
             "started_at_utc": utc_iso(now),
             "source_endpoint": self.client.api_url,
             "window_start_utc": utc_iso(start), "window_end_utc_exclusive": utc_iso(end),
@@ -163,7 +173,9 @@ class TraffyIngestor:
             unique = {}
             excluded, duplicates, expected_total = 0, 0, None
             source_exhausted = False
-            for page in self.client.iter_pages(source_start, source_end, remaining_ms=remaining_ms):
+            totals_observed = set()
+            for page in self.client.iter_pages(source_start, source_end, remaining_ms=remaining_ms,
+                                               allow_total_change=source_window_live):
                 raw_key = f"{RAW_PREFIX}/dt={dt}/batch={batch_id}/page-{page['index']:05d}.json"
                 raw = {"source_endpoint": self.client.api_url,
                        "fetched_at_utc": utc_iso(self.now()), **page}
@@ -172,6 +184,7 @@ class TraffyIngestor:
                 rows = page["response"]["results"]
                 if page["response"]["total"] is not None and (rows or expected_total is None):
                     expected_total = page["response"]["total"]
+                    totals_observed.add(expected_total)
                 source_exhausted = bool(page.get("source_exhausted"))
                 manifest["source_rows_fetched"] += len(rows)
                 for source in rows:
@@ -195,6 +208,10 @@ class TraffyIngestor:
             if not source_exhausted:
                 raise ValueError("Source did not confirm the terminal empty page")
             total_delta = (expected_total or 0) - manifest["source_rows_fetched"]
+            warnings = ["source_total_differs_from_exposed_rows"] if total_delta else []
+            if len(totals_observed) > 1:
+                warnings.append("source_total_changed_during_provisional_poll" if not closed
+                                else "source_total_changed_in_adjacent_live_utc_day")
             records = sorted(unique.values(), key=lambda x: (x["reported_at_utc"], x["ticket_id"]))
             floods = [x for x in records if x["is_flood_report"] is True]
             review_count = sum(x["needs_review"] for x in records)
@@ -203,7 +220,8 @@ class TraffyIngestor:
             manifest.update({
                 "source_exhausted": True, "source_total_advisory": expected_total,
                 "source_total_delta": total_delta,
-                "quality_warnings": ["source_total_differs_from_exposed_rows"] if total_delta else [],
+                "source_totals_observed": sorted(totals_observed),
+                "quality_warnings": warnings,
                 "record_count": len(records), "flood_count": len(floods),
                 "uncertain_count": review_count,
                 "non_flood_count": len(records) - len(floods) - review_count,
@@ -220,6 +238,8 @@ class TraffyIngestor:
                 "ingested_at_utc": utc_iso(self.now()),
                 "ingested_at_bkk": self.now().astimezone(BKK).isoformat(),
                 "date_bkk": dt, "rule_version": RULE_VERSION,
+                "is_provisional": not closed,
+                "window_end_utc_exclusive": utc_iso(end),
                 "manifest_key": manifest_key, "raw_page_keys": manifest["raw_page_keys"],
                 "record_count": len(records), "records_sha256": records_hash(records),
                 "flood_count": len(floods), "uncertain_count": review_count,
@@ -247,6 +267,27 @@ class TraffyIngestor:
             return {**manifest, "manifest_key": manifest_key}
 
 
+def ingest_hourly(ingestor, now=None, remaining_ms=None):
+    """Refresh today's partial data; also catch yesterday at Bangkok midnight.
+
+    The daily rule remains responsible for a closed-day refresh. Offset
+    pagination on a live source is not a transactionally consistent snapshot.
+    """
+    now = (now or datetime.now(BKK)).astimezone(BKK)
+    days = [now.date()]
+    if now.hour == 0:
+        days.insert(0, now.date() - timedelta(days=1))
+    results = []
+    for day in days:
+        result = ingestor.ingest_day(day, force=True, allow_open_day=True,
+                                     remaining_ms=remaining_ms)
+        results.append(result)
+        if result["status"] == "FAILED":
+            break
+    return {"mode": "hourly", "status": "FAILED" if any(
+        x["status"] == "FAILED" for x in results) else "SUCCESS", "results": results}
+
+
 def lambda_handler(event=None, context=None):
     if event is None:
         event = {}
@@ -255,6 +296,11 @@ def lambda_handler(event=None, context=None):
     for option in ("force", "allow_open_day"):
         if option in event and type(event[option]) is not bool:
             raise ValueError(f"{option} must be a JSON boolean, not a string")
+    mode = event.get("mode", "daily")
+    if mode not in ("daily", "hourly"):
+        raise ValueError("mode must be daily or hourly")
+    if mode == "hourly" and "date" in event:
+        raise ValueError("hourly mode selects today's Bangkok date; use daily mode for an explicit date")
     # Scheduled invocation processes yesterday in Bangkok; no date arithmetic in
     # EventBridge is needed. A historical date can be passed explicitly.
     day = event.get("date") or (datetime.now(BKK).date() - timedelta(days=1)).isoformat()
@@ -262,21 +308,26 @@ def lambda_handler(event=None, context=None):
     if backend is not None and backend not in ("local", "s3"):
         raise ValueError("storage_backend must be local or s3")
     ingestor = TraffyIngestor(backend=backend)
-    result = ingestor.ingest_day(
-        day, force=event.get("force", False),
-        allow_open_day=event.get("allow_open_day", False),
-        remaining_ms=getattr(context, "get_remaining_time_in_millis", None),
-    )
+    remaining_ms = getattr(context, "get_remaining_time_in_millis", None)
+    if mode == "hourly":
+        result = ingest_hourly(ingestor, remaining_ms=remaining_ms)
+    else:
+        result = ingestor.ingest_day(
+            day, force=event.get("force", False),
+            allow_open_day=event.get("allow_open_day", False), remaining_ms=remaining_ms,
+        )
     if result["status"] == "FAILED":
         # Raise for Lambda/EventBridge retry semantics; a 200 with an error body
         # would look successful to the scheduler.
-        raise RuntimeError(f"Traffy ingestion failed: {result['error']}")
+        error = result.get("error") or next(x["error"] for x in result["results"] if x["status"] == "FAILED")
+        raise RuntimeError(f"Traffy ingestion failed: {error}")
     return result
 
 
 def main():
     parser = argparse.ArgumentParser(description="Ingest one Bangkok calendar day from Traffy")
-    parser.add_argument("--date", default=(datetime.now(BKK).date() - timedelta(days=1)).isoformat())
+    parser.add_argument("--date")
+    parser.add_argument("--mode", choices=["daily", "hourly"], default="daily")
     parser.add_argument("--backend", choices=["local", "s3"], default=None)
     parser.add_argument("--local-dir", help="Local output root; cannot be combined with --backend s3")
     parser.add_argument("--page-size", type=int, default=1000)
@@ -285,11 +336,16 @@ def main():
     args = parser.parse_args()
     if args.local_dir and args.backend == "s3":
         parser.error("--local-dir requires local storage")
+    if args.mode == "hourly" and args.date:
+        parser.error("--mode hourly selects today's date; omit --date")
     storage = LocalStorageDriver(args.local_dir) if args.local_dir else None
     try:
-        result = TraffyIngestor(TraffyClient(page_size=args.page_size), storage, args.backend).ingest_day(
-            args.date, force=args.force, allow_open_day=args.allow_open_day,
-        )
+        ingestor = TraffyIngestor(TraffyClient(page_size=args.page_size), storage, args.backend)
+        if args.mode == "hourly":
+            result = ingest_hourly(ingestor)
+        else:
+            day = args.date or (datetime.now(BKK).date() - timedelta(days=1)).isoformat()
+            result = ingestor.ingest_day(day, force=args.force, allow_open_day=args.allow_open_day)
     except (ValueError, OSError) as exc:
         parser.exit(1, f"Traffy ingestion error: {exc}\n")
     print(json.dumps(result, ensure_ascii=False, indent=2))

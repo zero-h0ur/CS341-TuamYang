@@ -1,0 +1,46 @@
+{
+  "command": "python -X utf8 -m src.ingest_traffy --mode hourly --backend local",
+  "environment": "Local real API; not a deployed schedule",
+  "aws_deployed": false,
+  "manifest": {
+    "status": "SUCCESS",
+    "batch_id": "tf-2026-11-09-733e80013492",
+    "date_bkk": "2026-11-09",
+    "closed_day": false,
+    "rule_version": "traffy-flood-v1.0",
+    "is_provisional": true,
+    "started_at_utc": "2026-11-08T21:59:07.208044Z",
+    "source_endpoint": "https://publicapi.traffy.in.th/share/teamchadchart/search",
+    "window_start_utc": "2026-11-08T17:00:00Z",
+    "window_end_utc_exclusive": "2026-11-08T21:59:07.208044Z",
+    "source_start_date_utc": "2026-11-08",
+    "source_end_date_utc": "2026-11-08",
+    "raw_page_keys": [
+      "raw/traffy/dt=2026-11-09/batch=tf-2026-11-09-733e80013492/page-00000.json",
+      "raw/traffy/dt=2026-11-09/batch=tf-2026-11-09-733e80013492/page-00001.json",
+      "raw/traffy/dt=2026-11-09/batch=tf-2026-11-09-733e80013492/page-00002.json"
+    ],
+    "source_rows_fetched": 1084,
+    "source_exhausted": true,
+    "source_total_advisory": 1090,
+    "source_total_delta": 6,
+    "source_totals_observed": [
+      1090
+    ],
+    "quality_warnings": [
+      "source_total_differs_from_exposed_rows"
+    ],
+    "record_count": 56,
+    "flood_count": 8,
+    "uncertain_count": 0,
+    "non_flood_count": 48,
+    "excluded_outside_bkk_day": 1028,
+    "duplicate_count": 0,
+    "invalid_coordinate_count": 0,
+    "records_sha256": "331ecd41a87c19cc6e1befafbc89cd82b93410556e1816b0ac1912a1f2a1e328",
+    "flood_records_sha256": "1436436404bef1439e3ee54e8d1fa58f9e02c1373097a1f292d93a80c62dd770",
+    "incoming_key": "incoming/traffy/dt=2026-11-09/traffy_2026-11-09.json",
+    "flood_key": "staged/traffy/dt=2026-11-09/flood_reports.json",
+    "completed_at_utc": "2026-11-08T21:59:09.277334Z"
+  }
+}

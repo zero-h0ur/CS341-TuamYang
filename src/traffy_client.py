@@ -62,7 +62,7 @@ class TraffyClient:
                 raise TraffyAPIError(f"Traffy request failed after {attempt + 1} attempts: {error}")
             self.sleep(retry_after if retry_after is not None else min(2 ** attempt, 8))
 
-    def iter_pages(self, start_date, end_date, remaining_ms=None):
+    def iter_pages(self, start_date, end_date, remaining_ms=None, allow_total_change=False):
         """Yield pages through an explicit empty response, or raise.
 
         The live legacy API can overstate total and uses total=null on its
@@ -93,9 +93,9 @@ class TraffyClient:
                 raise TraffyAPIError("total must be a non-negative integer")
             if expected is None:
                 expected = total
-            elif expected != total:
+            elif expected != total and not allow_total_change:
                 raise TraffyAPIError("Source total changed during pagination; retry the date window")
-            if offset + len(rows) > total or not rows:
+            if (offset + len(rows) > total and not allow_total_change) or not rows:
                 raise TraffyAPIError("Page size/total mismatch or premature empty page")
             signature = json.dumps(rows, sort_keys=True, ensure_ascii=False)
             if rows and signature in seen_pages:

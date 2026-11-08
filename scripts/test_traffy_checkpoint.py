@@ -29,7 +29,8 @@ def main():
         try:
             with contextlib.redirect_stdout(output), contextlib.redirect_stderr(output):
                 suite = unittest.defaultTestLoader.loadTestsFromNames([
-                    "tests.test_traffy", "tests.test_traffy_delivery", "tests.test_ingest_thaiwater",
+                    "tests.test_traffy", "tests.test_traffy_delivery", "tests.test_traffy_issue5",
+                    "tests.test_ingest_thaiwater",
                 ])
                 names = list(test_ids(suite))
                 result = unittest.TextTestRunner(stream=output, verbosity=2).run(suite)

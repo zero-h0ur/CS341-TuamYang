@@ -3,7 +3,7 @@ name: Traffy Checkpoint checks
 on:
   pull_request:
   push:
-    branches: [feature/ingest-traffy]
+    branches: [feature/ingest-traffy, fix/traffy-issue-5]
 
 jobs:
   test:
@@ -16,6 +16,9 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run Traffy behavior and delivery tests
-        run: python -m unittest tests.test_traffy tests.test_traffy_delivery -v
+        run: python -m unittest tests.test_traffy tests.test_traffy_delivery tests.test_traffy_issue5 -v
+      - name: Check deployment argument wiring with mocked AWS
+        shell: pwsh
+        run: ./tests/test_deploy_traffy.ps1
       - name: Build Lambda archive
         run: python -m scripts.package_traffy

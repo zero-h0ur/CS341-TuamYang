@@ -31,7 +31,7 @@ class FakeClient:
         self.calls = []
         self.fail_after_page = fail_after_page
 
-    def iter_pages(self, start, end, remaining_ms=None):
+    def iter_pages(self, start, end, remaining_ms=None, allow_total_change=False):
         self.calls.append((start, end))
         yield {"index": 0, "params": {"start": start, "end": end, "offset": 0},
                "response": {"status": True, "total": len(self.rows), "results": self.rows}}
