@@ -1,73 +1,75 @@
-# Add Traffy daily/hourly ingestion, historical backfill and Checkpoint evidence
+# เพิ่มระบบดึงข้อมูล Traffy รายวัน/รายชั่วโมง ข้อมูลย้อนหลัง และหลักฐาน Checkpoint
 
-Traffy reports can now be ingested daily, polled hourly during heavy rain, or
-backfilled through CLI or `src.ingest_traffy.lambda_handler`. The pipeline saves
-original API pages, publishes one deduplicated all-report partition per day,
-and annotates flood/non-flood/uncertain descriptions with versioned reasons.
-All-report counts are preserved for the Q2 denominator.
+รองรับการดึงรายงาน Traffy รายวันและรายชั่วโมงในช่วงฝนหนักผ่าน CLI หรือ
+`src.ingest_traffy.lambda_handler` พร้อมสคริปต์ดึงข้อมูลย้อนหลัง (backfill)
+ระบบบันทึกข้อมูลดิบจาก API ทุกหน้า จัดเก็บรายงานทั้งหมดแยกตามวันโดยตัดรายการซ้ำ
+และจัดประเภทข้อความเป็นน้ำท่วม / ไม่ใช่น้ำท่วม / ไม่แน่ชัด พร้อมเหตุผลและเวอร์ชันของกติกา
+เก็บรายงานทุกประเภทไว้เพื่อใช้จำนวนรายงานทั้งหมดเป็นตัวหารในการวิเคราะห์ Q2
 
-All member 2 changes, including the Issue #5 corrections, are consolidated on
-`feature/ingest-traffy` in this PR. This branch depends on
-`feature/ingest-thaiwater` for shared Local/S3 storage. Review against that branch
-to isolate member 2's changes; after the base enters main, retarget this PR to
-main. If the base is squash-merged, first replay only the Traffy commits onto
-main so the dependency's history is not duplicated. No ThaiWater ingestion
-modules were changed.
+PR นี้รวมงานของสมาชิกคนที่ 2 รวมถึงการแก้ไขตาม Issue #5 ไว้บน
+`feature/ingest-traffy` แล้ว โดยใช้ส่วนจัดเก็บข้อมูล Local/S3 ร่วมจาก
+`feature/ingest-thaiwater` จึงตั้ง branch ดังกล่าวเป็นฐานของ PR เพื่อให้ตรวจเฉพาะงาน Traffy ได้
+เมื่อ branch ฐานเข้า `main` แล้ว ให้เปลี่ยนฐานของ PR นี้เป็น `main`
+หาก branch ฐานถูก merge แบบ squash ให้ย้ายเฉพาะ commit ของ Traffy ไปต่อบน `main` ก่อน
+เพื่อป้องกันประวัติของงานฐานซ้ำซ้อน งานนี้ไม่มีการแก้ไขโมดูลดึงข้อมูล ThaiWater
 
-## Behavior
+## การทำงานของระบบ
 
-- Daily ingestion selects yesterday in Bangkok time; hourly mode refreshes
-  today's provisional partition with a live cutoff and midnight catch-up.
-  Optional EventBridge rules supply daily and hourly Lambda events.
-- Backfill defaults to 2022-06-01 through yesterday. `--max-days` bounds new
-  processed dates; verified checkpoints are skipped and progress gives the next
-  date. A bounded run does not imply that the full date range was downloaded.
-- Flood rules use descriptions even when problem categories are empty, retain
-  negation/prevention context and flag uncertain matches for review.
-- UTC timestamps become explicit UTC and Bangkok fields. Raw pages, hashes and
-  a final manifest support deduplication, replay and downstream validation.
-- Review sampling protects existing work. Human scoring requires completed
-  labels, while unresolved predicted positives remain visible in precision.
+- โหมดรายวันดึงข้อมูลของเมื่อวานตามเวลาไทย ส่วนโหมดรายชั่วโมงอัปเดตข้อมูลของวันนี้
+  โดยระบุว่ายังเป็นข้อมูลระหว่างวัน ใช้เวลาที่เริ่มรันเป็นจุดตัด และดึงข้อมูลของเมื่อวานซ้ำ
+  ในชั่วโมงแรกหลังเที่ยงคืนเพื่อเก็บช่วงรอยต่อวัน มี EventBridge rules สำหรับตั้งเวลาเรียก Lambda
+  ทั้งรายวันและรายชั่วโมง โดยเลือกเปิดใช้งานได้
+- Backfill เริ่มต้นที่ `2022-06-01` ถึงเมื่อวาน ใช้ `--max-days` จำกัดจำนวนวันที่ประมวลผลใหม่ต่อรอบ
+  ข้ามวันที่มี checkpoint ซึ่งตรวจสอบแล้ว และแจ้งวันที่ควรรันต่อ
+  การรันสำเร็จภายใต้จำนวนวันที่จำกัดยังไม่ได้หมายความว่าดึงข้อมูลครบทั้งช่วงย้อนหลัง
+- กติกากรองน้ำท่วมใช้ข้อความบรรยายได้แม้ช่องประเภทปัญหาจะว่าง
+  พิจารณาบริบทปฏิเสธและการป้องกัน พร้อมทำเครื่องหมายข้อความที่ไม่แน่ชัดให้ตรวจเพิ่มเติม
+- แปลงเวลา UTC เป็นฟิลด์เวลา UTC และเวลาไทยอย่างชัดเจน
+  เก็บข้อมูลดิบ ค่า hash และ manifest เมื่อจบการรัน เพื่อรองรับการตัดรายการซ้ำ
+  การรันซ้ำ และการตรวจสอบก่อนส่งต่อข้อมูลให้ขั้นตอนถัดไป
+- ป้องกันการสุ่มตัวอย่างใหม่ทับงานตรวจเดิม การประเมินโดยคนต้องกรอกผลตรวจครบก่อน
+  และการคำนวณ precision ยังคงแสดงรายการที่ระบบจัดเป็นน้ำท่วมแต่ผลอ้างอิงยังไม่แน่ชัด
 
-## Validation and evidence
+## ผลตรวจสอบและหลักฐาน
 
-- Real public API ingestion for 2026-09-24 through 2026-09-26 Bangkok time:
-  **9,614 unique reports**, with manifests, raw provenance and record hashes.
-- Checkpoint replay: same counts/hashes, no new stored objects, no API calls.
-- Real hourly Local ingestion: **56 reports on 2026-11-09** at the recorded
-  cutoff. Real bounded historical backfill: **794 reports on 2022-06-01**.
-- 63 local Python checks pass (52 Traffy checks plus 11 ThaiWater regression checks).
-  They cover pagination, API failures, Thai timezone boundaries,
-  deduplication, negation/prevention filtering, live refresh, midnight catch-up,
-  resumed backfill, mocked Lambda/S3 wiring and review-metric handling.
-- A minimal Lambda ZIP imports its handler in an isolated process.
-- PowerShell deployment checks validate daily/hourly schedule arguments and
-  target failure handling using mocked AWS calls.
-- 100 reports selected uniformly with seed 341; AI read all descriptions without
-  seeing predictions. Agreement is 94/100; six AI reference labels are uncertain.
-  Of 78 positive predictions, TP=76, FP=0 and two references are unresolved.
-  Point precision remains unresolved, with bounds **97.44%–100%** against this
-  provisional AI reference. **These labels are not human ground truth.**
-  A human review template and scoring command are included.
+- ดึงข้อมูลจริงจาก API สาธารณะช่วง `2026-09-24` ถึง `2026-09-26` ตามเวลาไทย
+  ได้ **9,614 รายงานที่ไม่ซ้ำกัน** พร้อม manifest หลักฐานที่มาของข้อมูลดิบ และค่า hash ของรายงาน
+- รันซ้ำจาก checkpoint ได้จำนวนรายงานและค่า hash เท่าเดิม ไม่มีไฟล์จัดเก็บเพิ่มและไม่มีการเรียก API
+- ทดสอบดึงข้อมูลจริงแบบรายชั่วโมงบนเครื่อง (Local) ได้ **56 รายงานในวันที่ `2026-11-09`**
+  ณ เวลาตัดข้อมูลที่บันทึกไว้ และทดสอบ backfill จริงแบบจำกัดช่วงได้
+  **794 รายงานในวันที่ `2022-06-01`**
+- การตรวจสอบด้วย Python บนเครื่องผ่าน **63 รายการ** แบ่งเป็น Traffy 52 รายการ
+  และการตรวจสอบผลกระทบต่อ ThaiWater เดิม 11 รายการ ครอบคลุมการแบ่งหน้า ความล้มเหลวของ API
+  รอยต่อวันตามเวลาไทย การตัดรายการซ้ำ บริบทปฏิเสธ/ป้องกันน้ำท่วม การอัปเดตข้อมูลระหว่างวัน
+  การเก็บข้อมูลช่วงเที่ยงคืน การรัน backfill ต่อ การเชื่อม Lambda/S3 แบบจำลอง และการคำนวณผลประเมิน
+- แพ็กเกจ Lambda ZIP สามารถ import handler ได้ใน process แยก
+- การทดสอบ PowerShell ตรวจสอบพารามิเตอร์ตั้งเวลารายวัน/รายชั่วโมง
+  และการจัดการกรณีลงทะเบียน target ไม่สำเร็จ โดยจำลองการเรียก AWS (mock)
+- สุ่มรายงาน 100 รายการด้วยโอกาสเท่ากันโดยใช้ seed `341` ให้ AI อ่านข้อความทั้งหมดโดยไม่เห็นผลจากกติกา
+  ผลจัดประเภทตรงกัน **94/100 รายการ** และมีผลอ้างอิงจาก AI ที่ไม่แน่ชัด 6 รายการ
+  ใน 78 รายการที่กติกาจัดเป็นน้ำท่วม มี TP=76, FP=0 และผลอ้างอิงยังไม่แน่ชัด 2 รายการ
+  จึงยังสรุป precision เป็นค่าเดียวไม่ได้ โดยมีขอบเขตค่าที่เป็นไปได้ **97.44%–100%**
+  เมื่อเทียบกับผลอ้างอิงเบื้องต้นจาก AI **ผลเหล่านี้ยังไม่ใช่ข้อมูลอ้างอิงที่ตรวจยืนยันโดยคน**
+  มีแบบฟอร์มสำหรับให้คนตรวจและคำสั่งคำนวณผลเตรียมไว้แล้ว
 
-## Source limitations and remaining verification
+## ข้อจำกัดของแหล่งข้อมูลและสิ่งที่ยังต้องตรวจยืนยัน
 
-The public endpoint only accepted UTC date parameters during probing. It also
-advertised totals larger than the rows it exposed (deltas 40/47/69); the client
-fetches through an explicit empty page and records the discrepancy rather than
-claiming full coverage of the advertised total. Report time is not confirmed
-flood onset, and text/category matches do not prove a flood at a household.
+จากการทดสอบ endpoint สาธารณะรับพารามิเตอร์ช่วงเวลาเป็นวันที่ UTC เท่านั้น
+และแจ้งจำนวนรวมมากกว่าจำนวนแถวที่ส่งกลับจริง โดยต่างกัน 40/47/69 รายการในสามวันที่ทดสอบ
+ตัวดึงข้อมูลจึงอ่านต่อจนพบหน้าว่างที่ยืนยันว่าจบ แล้วบันทึกความต่างไว้
+ยังไม่ถือว่าดึงครบตามจำนวนรวมที่ API แจ้ง เวลาแจ้งรายงานยังไม่ใช่เวลาที่น้ำเริ่มท่วมซึ่งยืนยันแล้ว
+และการพบข้อความหรือประเภทปัญหาที่เกี่ยวกับน้ำท่วมยังไม่ยืนยันว่าเกิดน้ำท่วมที่บ้านแต่ละหลัง
 
-**AWS deployment/invocation and live S3 writes have not been performed.** The
-runbook includes packaging, Learner Lab deployment and optional daily/hourly
-scheduling. The complete historical range has not been downloaded. Before
-claiming AWS or human-review completion, attach those actual results.
-Source descriptions/photos/coordinates are excluded from committed evidence;
-local raw snapshots remain available for inspection.
+**ยังไม่ได้ deploy/เรียกใช้งาน Lambda บน AWS หรือเขียนข้อมูลลง S3 จริง**
+คู่มือมีขั้นตอนสร้างแพ็กเกจ deploy บน Learner Lab และเลือกเปิดตารางรันรายวัน/รายชั่วโมงไว้แล้ว
+ยังไม่ได้ดึงข้อมูลย้อนหลังครบทั้งช่วง ก่อนระบุว่างาน AWS หรือการตรวจโดยคนเสร็จสมบูรณ์
+ต้องแนบผลจากการดำเนินการจริงก่อน
+ไฟล์หลักฐานที่ commit ไม่รวมข้อความบรรยาย รูปภาพ หรือพิกัดจากต้นทาง
+ส่วนข้อมูลดิบที่ดึงไว้บนเครื่องยังสามารถใช้ตรวจสอบได้
 
-See `docs/traffy_checkpoint.md`, `docs/traffy_issue5.md`,
-`reference/traffy_schema_contract.md` and `evidence/traffy/` for reproducible
-commands, handoff rules and recorded results.
+คำสั่งสำหรับรันซ้ำ ข้อตกลงการส่งต่อข้อมูล และผลที่บันทึกไว้ อยู่ใน
+`docs/traffy_checkpoint.md`, `docs/traffy_issue5.md`,
+`reference/traffy_schema_contract.md` และ `evidence/traffy/`
 
-Refs #5. This PR includes the work previously reviewed separately in PR #9;
-external AWS and human-review evidence remain pending.
+อ้างอิง Issue #5 โดย PR นี้รวมงานที่เคยแยกตรวจใน PR #9 แล้ว
+หลักฐานการใช้งาน AWS จริงและผลตรวจตัวอย่างโดยคนยังต้องดำเนินการเพิ่มเติม
