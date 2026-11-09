@@ -70,13 +70,21 @@ a successful bounded run with a completed multiyear download.
 `--force` explicitly refreshes dates, so repeat it with the returned `next_date`
 as `--start` to advance rather than refreshing the same first chunk again.
 
-The historical API check is deliberately bounded to a real day in June 2022.
+The initial historical API check was bounded to a real day in June 2022.
 This verifies the old schema and access path without claiming that every day
 since 2022 has been downloaded or is available from the source.
 
 Observed result: **794 reports on 2022-06-01 Bangkok time**. The padded UTC
 query returned 1,468 rows against an advertised total of 1,558, recorded as a
 source coverage warning. See `evidence/traffy/issue5/historical_smoke.json`.
+
+The owner subsequently requested a full download. The full-range Local runner
+targets 2022-06-01 through 2026-11-08 (1,622 Bangkok days), continues from
+verified outputs and checks the delivered files again before claiming completion.
+See `docs/traffy_full_backfill.md`. Runtime progress is in the ignored
+`data/checkpoints/traffy/runs/full_history/progress.json`; only a final audit with
+`range_complete=true` proves the requested range is complete. AWS configuration
+was explicitly deferred by the owner after STS reported no credentials.
 
 ## Precision over the full set of predicted positives
 

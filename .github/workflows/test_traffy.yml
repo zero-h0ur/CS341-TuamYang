@@ -16,7 +16,7 @@ jobs:
         with:
           python-version: '3.12'
       - name: Run Traffy behavior and delivery tests
-        run: python -m unittest tests.test_traffy tests.test_traffy_delivery tests.test_traffy_issue5 -v
+        run: python -m unittest tests.test_traffy tests.test_traffy_delivery tests.test_traffy_issue5 tests.test_traffy_full_backfill -v
       - name: Check deployment argument wiring with mocked AWS
         shell: pwsh
         run: ./tests/test_deploy_traffy.ps1
