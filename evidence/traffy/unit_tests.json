@@ -1,5 +1,5 @@
 {
-  "verified_at_utc": "2026-11-09T16:09:07.666536+00:00",
+  "verified_at_utc": "2026-11-09T17:30:16.292534+00:00",
   "command": "python -X utf8 -m scripts.test_traffy_checkpoint",
   "python_version": "3.13.3",
   "tests_run": 76,

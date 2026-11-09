@@ -238,10 +238,11 @@ def main():
             result = run_download(ingest, [g["date_bkk"] for g in initial["gaps"]],
                                   workers=args.workers, attempts=args.attempts, progress=progress,
                                   stop=lambda: (run_dir / "STOP").exists(), event=event)
-        summary = audit_range(storage, args.start, args.end)
+        summary = initial if args.audit_only else audit_range(storage, args.start, args.end)
         status = "SUCCESS" if summary["range_complete"] else ("STOPPED" if result["stopped"] else "INCOMPLETE")
         summary.update(status=status, started_at_utc=started, workers=args.workers,
-                       request_interval_seconds=args.request_interval, aws_verified=False)
+                       request_interval_seconds=args.request_interval, aws_verified=False,
+                       audit_only=args.audit_only, audit_network_used=False)
         write_json(Path(args.output_dir) / "summary.json", summary)
         write_json(run_dir / "progress.json", {**base, "status": status,
                    "range_complete": summary["range_complete"], "verified_days": summary["verified_days"],
