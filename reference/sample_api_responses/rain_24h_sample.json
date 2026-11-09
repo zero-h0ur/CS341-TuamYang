@@ -1,0 +1,8 @@
+{
+  "result": "NO",
+  "data": {
+    "RespCode": 422,
+    "RespMessage": "invalid station id",
+    "APIError": {}
+  }
+}
