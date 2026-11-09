@@ -33,6 +33,11 @@ class MockThaiWaterClient(ThaiWaterClient):
             wl = mock_levels.get(st_id, 1.5)
             min_bank = st.get("min_bank_msl", 2.0)
             diff = round(min_bank - wl, 3)
+            q_flag = st.get("quality_flag", "NORMAL")
+            usable = st.get("usable_for_freeboard", True)
+            if diff is not None and abs(diff) > 5.0:
+                q_flag = "SUSPECT_DATUM_MISMATCH"
+                usable = False
             records.append({
                 "api_station_id": st_id,
                 "tele_station_oldcode": st.get("tele_station_oldcode", ""),
@@ -43,6 +48,8 @@ class MockThaiWaterClient(ThaiWaterClient):
                 "waterlevel_msl": wl,
                 "min_bank_msl": min_bank,
                 "diff_wl_bank_m": diff,
+                "quality_flag": q_flag,
+                "usable_for_freeboard": usable,
             })
 
         return {

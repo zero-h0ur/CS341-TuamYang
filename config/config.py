@@ -35,6 +35,9 @@ RAIN_STATIONS_FILE = REFERENCE_DIR / "stations_rain.json"
 # Timing & Quality Thresholds
 MAX_FRESHNESS_HOURS = 2.0  # Alert if data is older than 2 hours
 OUTLIER_FREEBOARD_DIFF_M = 5.0  # Flag if freeboard is excessively divergent (e.g. Phasi Charoen 7.42m anomaly)
+MIN_WATERLEVEL_NON_NULL_RATIO = 0.30  # Minimum % non-null readings required for valid monthly waterlevel backfill
+MIN_RAIN_NON_NULL_RATIO = 0.50  # Minimum % non-null daily records required for valid monthly rain backfill
+BANK_HEIGHT_TOLERANCE_M = 0.05  # Tolerance between API reported min_bank and reference min_bank_msl
 
 # S3 / Partition Paths
 INCOMING_PREFIX = "incoming/thaiwater"

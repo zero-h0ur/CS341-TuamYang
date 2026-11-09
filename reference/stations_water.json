@@ -13,7 +13,9 @@
     "min_bank_msl": 2.2,
     "ground_level_msl": -0.33,
     "left_bank_msl": 2.2,
-    "right_bank_msl": 2.2
+    "right_bank_msl": 2.2,
+    "quality_flag": "NORMAL",
+    "usable_for_freeboard": true
   },
   {
     "api_station_id": 3,
@@ -29,7 +31,9 @@
     "min_bank_msl": 0.62,
     "ground_level_msl": -3.171,
     "left_bank_msl": 0.6228,
-    "right_bank_msl": 1.188
+    "right_bank_msl": 1.188,
+    "quality_flag": "NORMAL",
+    "usable_for_freeboard": true
   },
   {
     "api_station_id": 4,
@@ -45,7 +49,9 @@
     "min_bank_msl": 2.16,
     "ground_level_msl": -15.697,
     "left_bank_msl": 2.201,
-    "right_bank_msl": 2.161
+    "right_bank_msl": 2.161,
+    "quality_flag": "NORMAL",
+    "usable_for_freeboard": true
   },
   {
     "api_station_id": 5,
@@ -61,7 +67,9 @@
     "min_bank_msl": 2.07,
     "ground_level_msl": -3.101,
     "left_bank_msl": 2.069,
-    "right_bank_msl": 2.152
+    "right_bank_msl": 2.152,
+    "quality_flag": "NORMAL",
+    "usable_for_freeboard": true
   },
   {
     "api_station_id": 8,
@@ -77,7 +85,9 @@
     "min_bank_msl": 1.97,
     "ground_level_msl": -1.01,
     "left_bank_msl": 1.97,
-    "right_bank_msl": 1.97
+    "right_bank_msl": 1.97,
+    "quality_flag": "NORMAL",
+    "usable_for_freeboard": true
   },
   {
     "api_station_id": 10,
@@ -93,13 +103,16 @@
     "min_bank_msl": 1.42,
     "ground_level_msl": -6.605,
     "left_bank_msl": 1.637,
-    "right_bank_msl": 1.415
+    "right_bank_msl": 1.415,
+    "quality_flag": "SUSPECT_DATUM_MISMATCH",
+    "usable_for_freeboard": false,
+    "flag_reason": "Waterlevel readings (-6.5m to -1.7m) indicate different vertical datum from min_bank (1.42m)"
   },
   {
     "api_station_id": 2599,
     "tele_station_oldcode": "C.12",
     "station_name_th": "กรมชลประทานสามเสน",
-    "station_name_en": "",
+    "station_name_en": "Samsen Royal Irrigation Department",
     "river_name_th": "แม่น้ำเจ้าพระยา",
     "province_th": "กรุงเทพมหานคร",
     "amphoe_th": "ดุสิต",
@@ -109,7 +122,9 @@
     "min_bank_msl": 2.26,
     "ground_level_msl": -14.52,
     "left_bank_msl": 2.264,
-    "right_bank_msl": 3.642
+    "right_bank_msl": 3.642,
+    "quality_flag": "NORMAL",
+    "usable_for_freeboard": true
   },
   {
     "api_station_id": 852087,
@@ -125,6 +140,8 @@
     "min_bank_msl": 2.39,
     "ground_level_msl": 0.5,
     "left_bank_msl": 2.39,
-    "right_bank_msl": 2.39
+    "right_bank_msl": 2.39,
+    "quality_flag": "NORMAL",
+    "usable_for_freeboard": true
   }
 ]
