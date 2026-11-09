@@ -1,5 +1,5 @@
 {
-  "verified_at_utc": "2026-11-08T22:10:19.247839+00:00",
+  "verified_at_utc": "2026-11-09T16:02:11.068527+00:00",
   "environment": "Local Python; public Traffy endpoint; not a deployed AWS invocation",
   "period_bkk_inclusive": [
     "2026-09-24",
@@ -107,8 +107,8 @@
   },
   "lambda_package": {
     "path": "dist\\ingest_traffy.zip",
-    "bytes": 12610,
-    "sha256": "7fa26460f4d1cc537a755c0554d8424455ffb868e44e247affd870815162f98e",
+    "bytes": 12653,
+    "sha256": "624140a676c1d12de7c939f9ef45fcde65bbaea8572c9a2b4b1fef20fe039ac4",
     "handler": "src.ingest_traffy.lambda_handler",
     "files": [
       "src/__init__.py",

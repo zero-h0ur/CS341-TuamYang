@@ -6,8 +6,9 @@ import tempfile
 import threading
 import time
 import unittest
+from unittest.mock import patch
 
-from scripts.run_traffy_backfill import PacedOpener, audit_day, audit_range, run_download
+from scripts.run_traffy_backfill import PacedOpener, audit_day, audit_range, run_download, write_json
 from src.ingest_traffy import TraffyIngestor
 from src.storage import LocalStorageDriver
 from tests import test_traffy as fixtures
@@ -64,6 +65,39 @@ class HistoryAuditTests(unittest.TestCase):
 
 
 class ControlledRunnerTests(unittest.TestCase):
+    def test_atomic_status_write_recovers_from_a_windows_read_lock(self):
+        real_replace = Path.replace
+        calls = []
+        def transient_lock(path, target):
+            calls.append(target)
+            if len(calls) == 1:
+                raise PermissionError("fixture Windows reader lock")
+            return real_replace(path, target)
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "status.json"
+            with patch.object(Path, "replace", new=transient_lock), patch("scripts.run_traffy_backfill.time.sleep"):
+                write_json(target, {"complete": True})
+            self.assertIn('"complete": true', target.read_text())
+            self.assertEqual(len(calls), 2)
+
+    def test_persistent_status_lock_preserves_the_previous_complete_json(self):
+        with tempfile.TemporaryDirectory() as directory:
+            target = Path(directory) / "status.json"
+            write_json(target, {"version": 1})
+            with patch.object(Path, "replace", side_effect=PermissionError("fixture lock")), \
+                    patch("scripts.run_traffy_backfill.time.sleep"), self.assertRaises(PermissionError):
+                write_json(target, {"version": 2}, replace_attempts=2)
+            self.assertIn('"version": 1', target.read_text())
+
+    def test_optional_progress_file_lock_does_not_abort_date_ingestion(self):
+        events = []
+        def locked_progress(_):
+            raise PermissionError("fixture locked dashboard")
+        result = run_download(lambda _: {"status": "SUCCESS"}, ["first", "second"],
+                              workers=1, progress=locked_progress, event=events.append)
+        self.assertEqual(result["completed"], ["first", "second"])
+        self.assertTrue(any(e.get("event") == "PROGRESS_WRITE_DELAYED" for e in events))
+
     def test_workers_are_bounded_and_failed_dates_retry_without_overlapping(self):
         lock = threading.Lock()
         active, calls, peak = set(), {}, [0]

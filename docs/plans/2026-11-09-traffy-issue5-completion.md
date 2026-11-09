@@ -43,8 +43,11 @@ progress atomically; provide a stop file to finish in-flight days gracefully.
 Keep operational evidence free of full report text or credentials.
 
 ## Validation
-The expanded offline suite passed 73/73 checks, including the ten new history
-audit, damaged-output, retry, date ownership, pacing and graceful-stop checks.
+The expanded offline suite passed 76/76 checks, including thirteen new history
+audit, damaged-output, retry, date ownership, pacing, graceful-stop and Windows
+file-lock checks. A real transient Windows lock on progress.json interrupted
+the first controlled run. Atomic replacement now retries, and a locked progress
+dashboard no longer aborts date ingestion. The download resumed from verified files.
 Test missing dates, damaged outputs, retries, concurrency bounds and graceful
 stopping. Run the existing Traffy/ThaiWater suite after implementation changes.
 Audit all expected days before reporting range_complete=true.

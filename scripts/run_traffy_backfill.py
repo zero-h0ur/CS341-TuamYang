@@ -27,12 +27,21 @@ def timestamp():
     return datetime.now(timezone.utc).isoformat()
 
 
-def write_json(path, payload):
+def write_json(path, payload, replace_attempts=10):
     path = Path(path)
     path.parent.mkdir(parents=True, exist_ok=True)
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(payload, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    temporary.replace(path)
+    # Windows readers/antivirus may briefly deny replacement of an open file.
+    # Keep the last complete JSON readable, then retry the atomic replacement.
+    for attempt in range(replace_attempts):
+        try:
+            temporary.replace(path)
+            return
+        except PermissionError:
+            if attempt + 1 == replace_attempts:
+                raise
+            time.sleep(min(0.05 * 2 ** attempt, 0.5))
 
 
 def days_between(start, end):
@@ -123,7 +132,7 @@ def audit_range(storage, start, end):
             "uncertain_count": sum(r["uncertain_count"] for r in verified),
             "non_flood_count": sum(r["non_flood_count"] for r in verified),
             "days_with_source_coverage_warning": sum(bool(r["quality_warnings"]) for r in verified),
-            "coverage_boundary": "All requested daily partitions verified; API advertised totals may exceed exposed rows.",
+            "coverage_boundary": "Only range_complete=true means every requested date passed; API advertised totals may exceed exposed rows.",
             "checks": ["both output hashes/counts and batch IDs", "real-data flags", "Bangkok day membership",
                        "unique IDs within each date", "flood subset and denominator", "raw references and terminal empty page"],
             "partitions": verified}
@@ -166,9 +175,15 @@ def run_download(ingest, pending_days, *, workers=4, attempts=3, progress=None, 
                            "status": result.get("status"), "record_count": result.get("record_count"),
                            "error": result.get("error")})
             if progress:
-                progress({"completed_dates_this_run": len(completed), "failed_dates": failures,
-                          "active_dates": sorted(d for d, _ in active.values()),
-                          "queued_attempts": len(queue), "stopping": stopped})
+                try:
+                    progress({"completed_dates_this_run": len(completed), "failed_dates": failures,
+                              "active_dates": sorted(d for d, _ in active.values()),
+                              "queued_attempts": len(queue), "stopping": stopped})
+                except PermissionError as exc:
+                    # An optional dashboard must not abort successful ingestion.
+                    # The next loop retries; the final delivery audit is strict.
+                    if event:
+                        event({"at_utc": timestamp(), "event": "PROGRESS_WRITE_DELAYED", "error": str(exc)})
     return {"completed": sorted(completed), "failures": failures, "stopped": stopped}
 
 

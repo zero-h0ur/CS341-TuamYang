@@ -125,7 +125,7 @@ python -X utf8 -m scripts.review_traffy evaluate --labels data/review/traffy/hum
 | UTC to Bangkok and 100-report precision | Time boundaries checked; the same seeded 100 reports retained; TP/FP/unresolved counts and full-denominator bounds reported | The owner reads the sample and marks the human review completed; unresolved positives must stay visible |
 | PR evidence | Original implementation and Issue #5 corrections share `feature/ingest-traffy` and PR #8; logical commits are preserved | Review the combined PR after external evidence is attached; shared storage still depends on the ThaiWater base branch |
 
-Local verification: **73 Python checks pass** (62 Traffy and 11 ThaiWater),
+Local verification: **76 Python checks pass** (65 Traffy and 11 ThaiWater),
 the minimal Lambda ZIP imports from an isolated process, and the deployment
 argument mock passes both schedule modes and a target failure scenario.
 Recorded evidence is under `evidence/traffy/issue5/`; human labels and the
