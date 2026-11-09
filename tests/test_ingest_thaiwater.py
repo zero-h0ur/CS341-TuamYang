@@ -302,10 +302,19 @@ class TestThaiWaterIngestion(unittest.TestCase):
         self.assertGreater(rec["diff_wl_bank_m"], 5.0)
 
     def test_real_rain_stations_metadata(self):
-        """Verifies reference/stations_rain.json has exactly 15 valid Bangkok stations with verified coordinates."""
+        """Verifies reference/stations_rain.json has exactly 14 valid Bangkok stations with verified coordinates."""
         client = ThaiWaterClient()
         stations = client.get_rain_stations()
-        self.assertEqual(len(stations), 15, "Expected 15 target Bangkok rain stations")
+        self.assertEqual(len(stations), 14, "Expected 14 target Bangkok rain stations (station 4 removed due to no rain sensor)")
+
+        # Verify station 4 (Saphan Krungthep) was removed because it only measures waterlevel
+        self.assertNotIn(4, [s["api_station_id"] for s in stations])
+
+        # Verify station 852087 (Asok) is flagged as SUSPECT_RAIN_SENSOR_OUTAGE and unusable for rainfall
+        st_asok = next((s for s in stations if s["api_station_id"] == 852087), None)
+        self.assertIsNotNone(st_asok)
+        self.assertEqual(st_asok.get("quality_flag"), "SUSPECT_RAIN_SENSOR_OUTAGE")
+        self.assertFalse(st_asok.get("usable_for_rainfall"))
 
         # Verify station 2 is real Saen Saep (Bang Kapi) station and not dummy rounded (13.72, 100.51)
         st2 = next((s for s in stations if s["api_station_id"] == 2), None)
@@ -368,6 +377,21 @@ class TestThaiWaterIngestion(unittest.TestCase):
 
             if sid in (2599, 852087):
                 self.assertGreater(len(non_null), 500, f"Station {sid} should have >= 500 non-null readings")
+
+        # Check rain persisted files:
+        rain_dir = Path(__file__).resolve().parent.parent / "data" / "raw" / "thaiwater" / "rain" / "dt=2026-09-01"
+        if rain_dir.exists():
+            st4_rain = rain_dir / "rain_monthly_st4_2026_09.json"
+            self.assertFalse(st4_rain.exists(), "Rain station 4 must be removed as it lacks a rain sensor")
+
+            st852087_rain = rain_dir / "rain_monthly_st852087_2026_09.json"
+            if st852087_rain.exists():
+                with open(st852087_rain, "r", encoding="utf-8") as f:
+                    rain_doc = json.load(f)
+                rain_records = rain_doc.get("data", [])
+                if rain_records:
+                    self.assertEqual(rain_records[0].get("quality_flag"), "SUSPECT_RAIN_SENSOR_OUTAGE")
+                    self.assertFalse(rain_records[0].get("usable_for_rainfall"))
 
 
 if __name__ == "__main__":

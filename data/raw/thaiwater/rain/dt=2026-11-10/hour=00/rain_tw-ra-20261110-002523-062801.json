@@ -1,0 +1,1638 @@
+{
+  "envelope_version": "1.0",
+  "batch_id": "tw-ra-20261110-002523-062801",
+  "data_type": "rain",
+  "is_mock": false,
+  "source_endpoint": "rain_24h_graph",
+  "ingested_at_utc": "2026-11-09T17:25:23.799689+00:00",
+  "ingested_at_bkk": "2026-11-10T00:25:23.799689+07:00",
+  "station_count": 14,
+  "record_count": 14,
+  "data": [
+    {
+      "api_station_id": 1,
+      "station_name_th": "คลองลาดพร้าว วัดบางบัว",
+      "latitude": 13.85402,
+      "longitude": 100.58746,
+      "rainfall_datetime": "2026-11-09 21:00",
+      "rain_24h_mm": 0.4,
+      "rain_24h_points": 22,
+      "rain_latest_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": 0.2
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": 0.2
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 2,
+      "station_name_th": "คลองแสนแสบ บางกะปิ",
+      "latitude": 13.76131,
+      "longitude": 100.61601,
+      "rainfall_datetime": "2026-11-09 21:00",
+      "rain_24h_mm": 4.8,
+      "rain_24h_points": 22,
+      "rain_latest_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": 4.8
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 3,
+      "station_name_th": "คลองลำปลาทิว ลาดกระบัง",
+      "latitude": 13.7407,
+      "longitude": 100.79468,
+      "rainfall_datetime": "2026-11-09 21:00",
+      "rain_24h_mm": 25.8,
+      "rain_24h_points": 22,
+      "rain_latest_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": 25.6
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": 0.2
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 5,
+      "station_name_th": "คลองมหาสวัสดิ บางกรวย-สวนผัก",
+      "latitude": 13.79965,
+      "longitude": 100.43863,
+      "rainfall_datetime": "2026-11-09 21:00",
+      "rain_24h_mm": 1.4,
+      "rain_24h_points": 22,
+      "rain_latest_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": 0.2
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": 1.0
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": 0.2
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 8,
+      "station_name_th": "คลองลาดพร้าว ปากคลอง2สายใต้",
+      "latitude": 13.93183,
+      "longitude": 100.63952,
+      "rainfall_datetime": "2026-11-09 21:00",
+      "rain_24h_mm": 39.0,
+      "rain_24h_points": 22,
+      "rain_latest_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": 8.6
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": 29.6
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": 0.8
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 10,
+      "station_name_th": "คลองภาษีเจริญ เพชรเกษม69",
+      "latitude": 13.69158,
+      "longitude": 100.38127,
+      "rainfall_datetime": "2026-11-09 21:00",
+      "rain_24h_mm": 2.0,
+      "rain_24h_points": 22,
+      "rain_latest_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": 2.0
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 852087,
+      "station_name_th": "อโศก",
+      "latitude": 13.74325,
+      "longitude": 100.562164,
+      "rainfall_datetime": "2026-11-09 21:00",
+      "rain_24h_mm": 2.2,
+      "rain_24h_points": 22,
+      "rain_latest_mm": 0.0,
+      "quality_flag": "SUSPECT_RAIN_SENSOR_OUTAGE",
+      "usable_for_rainfall": false,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": 2.2
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 1129393,
+      "station_name_th": "อาคารเลขที่ ๙๐๑",
+      "latitude": 13.85604,
+      "longitude": 100.57558,
+      "rainfall_datetime": "2026-11-09 21:00",
+      "rain_24h_mm": 20.5,
+      "rain_24h_points": 21,
+      "rain_latest_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": 3.5
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": 16.5
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": 0.5
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 528802,
+      "station_name_th": "ส.สามเสน",
+      "latitude": 13.78483,
+      "longitude": 100.50825,
+      "rainfall_datetime": "2026-11-09 21:00",
+      "rain_24h_mm": 2.5,
+      "rain_24h_points": 22,
+      "rain_latest_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": 2.0
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": 0.5
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 3712,
+      "station_name_th": "สนามบินดอนเมือง",
+      "latitude": 13.91917,
+      "longitude": 100.605,
+      "rainfall_datetime": "2026-11-10 00:00",
+      "rain_24h_mm": null,
+      "rain_24h_points": 0,
+      "rain_latest_mm": null,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 3710,
+      "station_name_th": "กรุงเทพฯ ท่าเรือคลองเตย",
+      "latitude": 13.70694,
+      "longitude": 100.56805,
+      "rainfall_datetime": "2026-11-10 00:00",
+      "rain_24h_mm": null,
+      "rain_24h_points": 0,
+      "rain_latest_mm": null,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 3709,
+      "station_name_th": "กรุงเทพฯ บางนา สกษ.",
+      "latitude": 13.66639,
+      "longitude": 100.60611,
+      "rainfall_datetime": "2026-11-10 00:00",
+      "rain_24h_mm": null,
+      "rain_24h_points": 0,
+      "rain_latest_mm": null,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 3711,
+      "station_name_th": "กรุงเทพมหานคร",
+      "latitude": 13.72639,
+      "longitude": 100.56,
+      "rainfall_datetime": "2026-11-10 00:00",
+      "rain_24h_mm": null,
+      "rain_24h_points": 0,
+      "rain_latest_mm": null,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "latitude": 13.707017,
+      "longitude": 100.496368,
+      "rainfall_datetime": "2026-11-09 21:00",
+      "rain_24h_mm": 3.0,
+      "rain_24h_points": 22,
+      "rain_latest_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true,
+      "window_start": "2026-11-09 00:00",
+      "window_end": "2026-11-10 00:00",
+      "series": [
+        {
+          "datetime": "2026-11-09 00:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 01:00",
+          "rain_mm": 2.5
+        },
+        {
+          "datetime": "2026-11-09 02:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 03:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 04:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 05:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 06:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 07:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 08:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 09:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 10:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 11:00",
+          "rain_mm": 0.5
+        },
+        {
+          "datetime": "2026-11-09 12:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 13:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 14:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 15:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 16:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 17:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 18:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 19:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 20:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 21:00",
+          "rain_mm": 0.0
+        },
+        {
+          "datetime": "2026-11-09 22:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-09 23:00",
+          "rain_mm": null
+        },
+        {
+          "datetime": "2026-11-10 00:00",
+          "rain_mm": null
+        }
+      ]
+    }
+  ],
+  "raw_response": {}
+}

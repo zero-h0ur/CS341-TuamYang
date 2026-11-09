@@ -86,6 +86,10 @@ class MockThaiWaterClient(ThaiWaterClient):
         }
 
     def fetch_monthly_rain(self, api_station_id: int, year: int, month: int) -> Dict[str, Any]:
+        meta = next((s for s in self._rain_stations if s["api_station_id"] == api_station_id), None)
+        quality_flag = meta.get("quality_flag", "OK") if meta else "OK"
+        usable_for_rainfall = meta.get("usable_for_rainfall", True) if meta else True
+
         records = []
         for day in range(1, 31):
             rain_val = 45.0 if (month == 9 and day in (24, 25, 26)) else 2.5
@@ -93,6 +97,8 @@ class MockThaiWaterClient(ThaiWaterClient):
                 "api_station_id": api_station_id,
                 "date": f"{year:04d}-{month:02d}-{day:02d}",
                 "rainfall_daily_mm": rain_val,
+                "quality_flag": quality_flag,
+                "usable_for_rainfall": usable_for_rainfall,
             })
         return {
             "source": "MOCK_RAIN_MONTHLY",
@@ -107,6 +113,8 @@ class MockThaiWaterClient(ThaiWaterClient):
 
     def fetch_24h_rain_station(self, api_station_id: int) -> Dict[str, Any]:
         meta = next((s for s in self._rain_stations if s["api_station_id"] == api_station_id), None)
+        quality_flag = meta.get("quality_flag", "OK") if meta else "OK"
+        usable_for_rainfall = meta.get("usable_for_rainfall", True) if meta else True
         now_bkk = datetime.now(BKK_TZ)
         series = []
         for i in range(36):
@@ -122,6 +130,8 @@ class MockThaiWaterClient(ThaiWaterClient):
             "rain_24h_mm": round(sum(p["rain_mm"] for p in last24), 1),
             "rain_24h_points": len(last24),
             "rain_latest_mm": round(series[-1]["rain_mm"], 1),
+            "quality_flag": quality_flag,
+            "usable_for_rainfall": usable_for_rainfall,
             "window_start": series[0]["datetime"],
             "window_end": series[-1]["datetime"],
             "series": series,

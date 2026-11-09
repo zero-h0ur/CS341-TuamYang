@@ -350,6 +350,8 @@ class ThaiWaterClient:
 
         meta = next((s for s in self._rain_stations if s["api_station_id"] == api_station_id), None)
         station_name = meta.get("station_name_th", "") if meta else ""
+        quality_flag = meta.get("quality_flag", "OK") if meta else "OK"
+        usable_for_rainfall = meta.get("usable_for_rainfall", True) if meta else True
 
         records = []
         for it in items:
@@ -367,6 +369,8 @@ class ThaiWaterClient:
                 "station_name_th": station_name,
                 "date": dt_str,
                 "rainfall_daily_mm": rain_mm,
+                "quality_flag": quality_flag,
+                "usable_for_rainfall": usable_for_rainfall,
             })
 
         return {
@@ -426,6 +430,9 @@ class ThaiWaterClient:
             if _parse_rain_dt(p.get("datetime")) and last_dt and _parse_rain_dt(p.get("datetime")) > last_dt - timedelta(hours=24)
         ] if last_dt else []
 
+        quality_flag = meta.get("quality_flag", "OK") if meta else "OK"
+        usable_for_rainfall = meta.get("usable_for_rainfall", True) if meta else True
+
         return {
             "api_station_id": api_station_id,
             "station_name_th": meta.get("station_name_th", "") if meta else "",
@@ -435,6 +442,8 @@ class ThaiWaterClient:
             "rain_24h_mm": round(sum(p["rain_mm"] for p in last24), 1) if last24 else None,
             "rain_24h_points": len(last24),
             "rain_latest_mm": round(last["rain_mm"], 1) if (last and last.get("rain_mm") is not None) else None,
+            "quality_flag": quality_flag,
+            "usable_for_rainfall": usable_for_rainfall,
             "window_start": series[0]["datetime"] if series else None,
             "window_end": series[-1]["datetime"] if series else None,
             "series": series,

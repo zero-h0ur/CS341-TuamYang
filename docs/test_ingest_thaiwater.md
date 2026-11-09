@@ -8,7 +8,7 @@
 
 | หมวดหมู่การทดสอบ | เกณฑ์การผ่าน (Acceptance Criteria) | วิธีการตรวจวัด | สถานะ |
 | :--- | :--- | :--- | :---: |
-| **1. Unit Tests** | ผ่านครบทุก Test (11/11 tests pass) ไม่พบ Error/Failure | `python3 -m unittest tests/test_ingest_thaiwater.py` | PASS |
+| **1. Unit Tests** | ผ่านครบทุก Test (16/16 tests pass) ไม่พบ Error/Failure | `python3 -m unittest tests/test_ingest_thaiwater.py` | PASS |
 | **2. EventBridge Scheduler** | มี 2 Rules สถานะ `ENABLED` ดึงระดับน้ำทุก 15 นาที และฝนทุก 1 ชม. | `aws events list-rules --name-prefix tuamyang` | PASS |
 | **3. Live Ingestion Lambda** | รันผ่านตรงตามเวลาจริง บันทึกไฟล์ลงทั้ง `incoming/` และ `raw/` | `aws lambda invoke` ทดสอบทั้ง `waterlevel` และ `rain` | PASS |
 | **4. Dual-Zone S3 Storage** | มีไฟล์ปรากฏใน `incoming/` และสำเนาถาวรใน `raw/` ตาม Partition `dt=YYYY-MM-DD` | `aws s3 ls` ตรวจสอบทั้ง 2 โซน | PASS |
@@ -28,20 +28,25 @@ python3 -m unittest tests/test_ingest_thaiwater.py -v
 
 ### ผลลัพธ์ที่ต้องแสดง:
 ```text
-test_backfill_all_null_batch_is_treated_as_empty ... ok
-test_backfill_checkpoint_resiliency ... ok
-test_backfill_ongoing_month_is_not_permanently_completed ... ok
-test_dual_zone_s3_paths ... ok
-test_fetch_historical_waterlevel_parameters ... ok
-test_fetch_waterlevel_parses_min_bank ... ok
+test_backfill_all_null_records_treated_as_empty ... ok
+test_backfill_below_non_null_threshold_rejected ... ok
+test_backfill_idempotency_success_criteria_1 ... ok
+test_backfill_ongoing_month_not_checkpointed ... ok
+test_create_envelope_schema ... ok
+test_fetch_24h_rain_station_series_and_24h_points ... ok
+test_fetch_historical_waterlevel_sends_tele_waterlevel_param ... ok
+test_historical_waterlevel_bank_divergence_corrected ... ok
 test_ingest_rain_partial_failure ... ok
-test_ingest_rain_stores_series_and_24h_sum ... ok
-test_ingest_waterlevel_success ... ok
-test_rain_24h_sum_calculation ... ok
-test_telemetry_resolution_verification ... ok
+test_ingest_rain_saves_to_raw_and_incoming ... ok
+test_ingest_waterlevel_saves_to_raw_and_incoming ... ok
+test_persisted_data_integrity_check ... ok
+test_phasi_charoen_station_10_flagged_as_suspect_datum ... ok
+test_real_rain_stations_metadata ... ok
+test_real_water_stations_metadata ... ok
+test_strict_fail_fast_on_api_error ... ok
 
 ----------------------------------------------------------------------
-Ran 11 tests in 0.055s
+Ran 16 tests in 0.220s
 
 OK
 ```

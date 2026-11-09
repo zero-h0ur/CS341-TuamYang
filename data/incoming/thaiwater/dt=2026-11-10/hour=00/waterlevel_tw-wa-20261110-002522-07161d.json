@@ -1,11 +1,11 @@
 {
   "envelope_version": "1.0",
-  "batch_id": "tw-wa-20261109-232909-858b5e",
+  "batch_id": "tw-wa-20261110-002522-07161d",
   "data_type": "waterlevel",
   "is_mock": false,
   "source_endpoint": "https://api-v3.thaiwater.net/api/v1/thaiwater30/public/waterlevel_load",
-  "ingested_at_utc": "2026-11-09T16:29:09.735649+00:00",
-  "ingested_at_bkk": "2026-11-09T23:29:09.735649+07:00",
+  "ingested_at_utc": "2026-11-09T17:25:22.522164+00:00",
+  "ingested_at_bkk": "2026-11-10T00:25:22.522164+07:00",
   "station_count": 8,
   "record_count": 8,
   "data": [
