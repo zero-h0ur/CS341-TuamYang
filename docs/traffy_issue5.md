@@ -78,13 +78,14 @@ Observed result: **794 reports on 2022-06-01 Bangkok time**. The padded UTC
 query returned 1,468 rows against an advertised total of 1,558, recorded as a
 source coverage warning. See `evidence/traffy/issue5/historical_smoke.json`.
 
-The owner subsequently requested a full download. The full-range Local runner
-targets 2022-06-01 through 2026-11-08 (1,622 Bangkok days), continues from
-verified outputs and checks the delivered files again before claiming completion.
-See `docs/traffy_full_backfill.md`. Runtime progress is in the ignored
-`data/checkpoints/traffy/runs/full_history/progress.json`; only a final audit with
-`range_complete=true` proves the requested range is complete. AWS configuration
-was explicitly deferred by the owner after STS reported no credentials.
+The full Local delivery is now verified for **2022-06-01 through 2026-11-09**:
+**1,623 Bangkok days, 1,513,782 reports, zero missing/invalid daily partitions**.
+The frozen first run covered 1,622 days through November 8. After midnight,
+November 9 was ingested as a closed day and the entire delivery was audited again.
+`evidence/traffy/full_backfill/summary.json` records `range_complete=true`, both
+output hashes/counts per date and raw provenance checks. The final audit used no
+network. See `docs/traffy_full_backfill.md` to reproduce it. AWS configuration
+remains explicitly deferred by the owner after STS reported no credentials.
 
 ## Precision over the full set of predicted positives
 
@@ -130,7 +131,7 @@ python -X utf8 -m scripts.review_traffy evaluate --labels data/review/traffy/hum
 | Issue task | Implementation and observed verification | Remaining external evidence |
 |---|---|---|
 | Daily Lambda, hourly polling in heavy rain | Daily CLI/event preserved; explicit hourly mode, cutoff, midnight catch-up and optional rule added; live Local smoke test has 56 reports | Deploy/invoke Lambda and enable/observe the schedule on the team's AWS account |
-| Backfill since mid-2022 | Defaults to 2022-06-01; bounded runs resume past verified dates; real 2022-06-01 smoke test has 794 reports | Run the full date range selected by the team; a one-day smoke check is not a multiyear download |
+| Backfill since mid-2022 | Full Local delivery verified for 2022-06-01 through 2026-11-09: 1,623 days, 1,513,782 reports, no daily gaps; reruns resume from verified outputs | Cloud upload/verification is deferred with AWS setup; preserve source coverage warnings |
 | Filter flood text despite blank category | Existing v1.0 text rules retained; no category is required for affirmative text; negation and preventive descriptions have checks | Review limitations with the team; an isolated ambiguous `ท่วม` mention remains reviewable instead of being silently treated as proven flooding |
 | UTC to Bangkok and 100-report precision | Time boundaries checked; the same seeded 100 reports retained; TP/FP/unresolved counts and full-denominator bounds reported | The owner reads the sample and marks the human review completed; unresolved positives must stay visible |
 | PR evidence | Original implementation and Issue #5 corrections share `feature/ingest-traffy` and PR #8; logical commits are preserved | Review the combined PR after external evidence is attached; shared storage still depends on the ThaiWater base branch |

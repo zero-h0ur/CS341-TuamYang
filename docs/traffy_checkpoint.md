@@ -9,7 +9,7 @@
 |---|---|---|
 | API + pagination + retry | `src/traffy_client.py` | raw response ทุกหน้าและ manifest |
 | รายวัน + Lambda | `src/ingest_traffy.py` | รัน Local ด้วยข้อมูลจริง, ทดสอบ Lambda/S3 ด้วย fixture |
-| backfill แบบต่อจาก checkpoint | `src/backfill_traffy.py` | 24–26 ก.ย. 2569 และหลักฐานรันซ้ำ |
+| backfill แบบต่อจาก checkpoint | `src/backfill_traffy.py`, `scripts/run_traffy_backfill.py` | ตรวจครบ 1,623 วัน ตั้งแต่ 1 มิ.ย. 2565 ถึง 9 พ.ย. 2569 รวม 1,513,782 รายงาน |
 | กรองข้อความ | `src/traffy_filter.py` | กติกาเวอร์ชัน v1.0 พร้อมเหตุผลต่อรายงาน |
 | ตรวจ 100 รายงาน | `scripts/review_traffy.py` | สุ่ม seed 341 และ AI อ่านตรวจครบ 100 ข้อความ |
 | แพ็ก Lambda | `scripts/package_traffy.py` | ZIP และ isolated import ผ่าน |
@@ -17,6 +17,7 @@
 
 สถานะหลักฐาน: **ทดสอบข้อมูลจริงบน Local แล้ว ยังไม่ได้ deploy หรือ invoke บน AWS จริง**
 การตรวจข้อความ 100 รายงานเป็น **AI review เบื้องต้น รอคนยืนยัน** ไม่มีการอ้างว่าคนตรวจแล้ว
+ผลตรวจย้อนหลังทั้งช่วงและวิธีตรวจซ้ำอยู่ใน `docs/traffy_full_backfill.md`
 
 ## 2. โครงสร้าง Pipeline ปัจจุบัน
 

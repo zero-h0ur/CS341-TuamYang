@@ -1,17 +1,18 @@
 # Complete the remaining Traffy Issue #5 work
 
 ## Status
-In progress. The user explicitly requested completion of Issue #5, then deferred
-AWS configuration. Continue the same issue on `feature/ingest-traffy`, preserving
-the user's request for one feature branch and one PR.
+Local history delivery complete: 1,623 Bangkok days and 1,513,782 reports, with
+zero audit gaps. AWS configuration remains deferred by the user. The user also
+confirmed the 100-report human review has not been done. Work remains on the
+single `feature/ingest-traffy` branch and PR #8.
 
 ## Summary
 Download and verify the full Bangkok-day history from 2022-06-01 through
 2026-11-08 (the frozen yesterday cutoff when this run started). Preserve the
 September review snapshot, existing raw provenance, and honest review labels.
 The calendar advanced to 2026-11-10 during download. After the frozen 1,622-day
-run finishes, ingest the newly closed 2026-11-09 day and audit the delivery range
-through that date (1,623 days) without racing the running date workers.
+run finished, the newly closed 2026-11-09 day was ingested (1,419 reports) and
+the delivery through that date was audited successfully without network calls.
 
 ## Clarifying Questions
 AWS STS returned NoCredentials. The user answered that AWS configuration should
@@ -32,8 +33,8 @@ The existing 100-report evaluation is AI provisional; human labels remain pendin
 - [x] Start real full-range Local ingestion using existing checkpoints.
 - [x] Add a controlled runner with at most four distinct-date writers and a
   shared API request limiter. Stop the sequential run before switching runners.
-- [ ] Verify every expected date, both output hashes, counts and raw references.
-- [ ] Record actual progress/completion and update the existing PR.
+- [x] Verify every expected date, both output hashes, counts and raw references.
+- [x] Record actual progress/completion and update the existing PR.
 - [ ] Deploy and invoke Lambda/S3 and observe schedules after AWS configuration
   is supplied. Deferred by the user's explicit instruction.
 - [ ] Score human labels if/when supplied; never invent a human review.
@@ -61,6 +62,10 @@ dashboard no longer aborts date ingestion. The download resumed from verified fi
 Test missing dates, damaged outputs, retries, concurrency bounds and graceful
 stopping. Run the existing Traffy/ThaiWater suite after implementation changes.
 Audit all expected days before reporting range_complete=true.
+The final full-range audit passed: 1,623/1,623 days; gap_count=0;
+range_complete=true. The final local Python regression suite passed 76/76 checks.
+Real text/time evidence also passed for every case-study row (9,614), and a
+deliberately corrupted epoch was rejected by the evidence checker.
 
 ## Risks
 Historical API totals exceed exposed rows; preserve coverage warnings. Source
