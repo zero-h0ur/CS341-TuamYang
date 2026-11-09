@@ -1,0 +1,15 @@
+{
+  "verified_at_utc": "2026-11-08T22:10:16.423417+00:00",
+  "command": [
+    "powershell",
+    "-NoProfile",
+    "-ExecutionPolicy",
+    "RemoteSigned",
+    "-File",
+    "tests/test_deploy_traffy.ps1"
+  ],
+  "environment": "AWS CLI mocked by the test harness; no live cloud operations",
+  "exit_code": 0,
+  "stdout": "Traffy Lambda ready: fixture-traffy (us-east-1). No invocation was performed.\nPASS: daily/hourly modes, cron, and failed target registration (mocked AWS only)",
+  "aws_deployed": false
+}

@@ -1,0 +1,6 @@
+{
+  "Name": "tuamyang-traffy-hourly",
+  "Description": "Optional heavy-rain polling at minute 0 of every hour; handler reads today's provisional Bangkok data",
+  "ScheduleExpression": "cron(0 * * * ? *)",
+  "State": "ENABLED"
+}
