@@ -1,0 +1,48 @@
+{
+  "generated_at_utc": "2026-11-09T17:09:18.180616+00:00",
+  "command": "python -X utf8 -m scripts.check_traffy_evidence --start 2026-09-24 --end 2026-09-26",
+  "environment": "Local real source snapshot; no AWS invocation",
+  "rule_version": "traffy-flood-v1.0",
+  "period_bkk_inclusive": [
+    "2026-09-24",
+    "2026-09-26"
+  ],
+  "source_partitions": [
+    {
+      "date_bkk": "2026-09-24",
+      "record_count": 1100,
+      "records_sha256": "fd938490b3333719904274705ad76ecbd7412422e36d5fc1d1ee6d0e880d5304"
+    },
+    {
+      "date_bkk": "2026-09-25",
+      "record_count": 2673,
+      "records_sha256": "734b0a30ad8bdc5d305de86edae9b423b6390dd6e88a839fa4a648edeafe3de4"
+    },
+    {
+      "date_bkk": "2026-09-26",
+      "record_count": 5841,
+      "records_sha256": "592d35f7dbdc993d2c05379e4f38ac6f1544b58da8fb9938f64b94f8d6636889"
+    }
+  ],
+  "all_report_count": 9614,
+  "reports_without_nonempty_category": 9614,
+  "classification_without_category": {
+    "non_flood": 2538,
+    "flood": 7021,
+    "uncertain": 55
+  },
+  "classification_all_reports": {
+    "non_flood": 2538,
+    "flood": 7021,
+    "uncertain": 55
+  },
+  "time_consistency_checked_count": 9614,
+  "time_consistency_failures": 0,
+  "timezone_checks": [
+    "source instant equals UTC and Bangkok instants",
+    "Bangkok offset is +07:00",
+    "epoch is unchanged",
+    "Bangkok date and hour match normalized time"
+  ],
+  "metric_boundary": "Counts show text-rule behavior and time conversion, not verified flood occurrence or human precision."
+}
