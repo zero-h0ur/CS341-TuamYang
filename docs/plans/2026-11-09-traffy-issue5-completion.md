@@ -42,6 +42,13 @@ request starts globally and do not run two writers for the same date. Write
 progress atomically; provide a stop file to finish in-flight days gracefully.
 Keep operational evidence free of full report text or credentials.
 
+## Grill-Me Outcome
+Not invoked: this continues the existing, explicitly authorized Issue #5 rather
+than selecting a new product architecture. The owner confirmed the full history
+scope, deferred AWS configuration and confirmed human review is not yet done.
+Concurrency, pacing, resume and integrity assumptions are covered by targeted
+offline checks and monitored during the real download.
+
 ## Validation
 The expanded offline suite passed 76/76 checks, including thirteen new history
 audit, damaged-output, retry, date ownership, pacing, graceful-stop and Windows
