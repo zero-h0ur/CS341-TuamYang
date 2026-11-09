@@ -243,6 +243,156 @@ class TestThaiWaterIngestion(unittest.TestCase):
         self.assertEqual(res["record_count"], 0)
         self.assertNotIn("wl_st1_2026_09", manager.checkpoints["completed_tasks"])
 
+    def test_backfill_below_non_null_threshold_rejected(self):
+        """Validates that a backfill with non-null ratio below 30% is rejected as EMPTY."""
+        manager = BackfillManager(backend="local")
+        manager.storage = self.storage
+        manager.checkpoint_path = Path(self.temp_dir) / "checkpoint.json"
+        manager.checkpoints = {"completed_tasks": {}, "failed_tasks": {}}
+
+        class LowCoverageClient(ThaiWaterClient):
+            def fetch_historical_waterlevel(self, *args, **kwargs):
+                # 10 non-null out of 100 slots = 10% (< 30% threshold)
+                records = []
+                for i in range(100):
+                    val = 1.5 if i < 10 else None
+                    records.append({"api_station_id": 1, "datetime": f"2026-09-01 {i:02d}:00", "waterlevel_msl": val})
+                return {
+                    "source": "mock",
+                    "status": "success",
+                    "is_mock": True,
+                    "records": records,
+                }
+
+        manager.client = LowCoverageClient()
+        res = manager.backfill_waterlevel_monthly(1, year=2026, month=9)
+        self.assertEqual(res["status"], "EMPTY")
+        self.assertEqual(res["record_count"], 10)
+        self.assertEqual(res["non_null_ratio"], 0.1)
+        self.assertNotIn("wl_st1_2026_09", manager.checkpoints["completed_tasks"])
+
+    def test_historical_waterlevel_bank_divergence_corrected(self):
+        """Verifies that API returning negative ground_level or divergent min_bank falls back to reference."""
+        client = ThaiWaterClient()
+        # Mock API returning -0.33 (ground level) instead of 2.2
+        client._request_json = lambda url: {
+            "data": {
+                "graph_data": [{"datetime": "2026-09-01 00:00", "value": "1.20"}],
+                "min_bank": -0.33,
+            }
+        }
+        res = client.fetch_historical_waterlevel(api_station_id=1, start_date="2026-09-01", end_date="2026-09-30")
+        self.assertEqual(res["records"][0]["min_bank_msl"], 2.2, "Must fall back to reference bank 2.2 when API returns negative ground level")
+        self.assertEqual(res["records"][0]["diff_wl_bank_m"], 1.0)
+
+    def test_phasi_charoen_station_10_flagged_as_suspect_datum(self):
+        """Verifies that Phasi Charoen (ID 10) is flagged as SUSPECT_DATUM_MISMATCH and unusable for freeboard."""
+        client = ThaiWaterClient()
+        # Mock API returning negative waterlevel -5.5m MSL
+        client._request_json = lambda url: {
+            "data": {
+                "graph_data": [{"datetime": "2026-09-01 00:00", "value": "-5.50"}],
+                "min_bank": 1.415,
+            }
+        }
+        res = client.fetch_historical_waterlevel(api_station_id=10, start_date="2026-09-01", end_date="2026-09-30")
+        rec = res["records"][0]
+        self.assertEqual(rec["quality_flag"], "SUSPECT_DATUM_MISMATCH")
+        self.assertFalse(rec["usable_for_freeboard"])
+        self.assertGreater(rec["diff_wl_bank_m"], 5.0)
+
+    def test_real_rain_stations_metadata(self):
+        """Verifies reference/stations_rain.json has exactly 14 valid Bangkok stations with verified coordinates."""
+        client = ThaiWaterClient()
+        stations = client.get_rain_stations()
+        self.assertEqual(len(stations), 14, "Expected 14 target Bangkok rain stations (station 4 removed due to no rain sensor)")
+
+        # Verify station 4 (Saphan Krungthep) was removed because it only measures waterlevel
+        self.assertNotIn(4, [s["api_station_id"] for s in stations])
+
+        # Verify station 852087 (Asok) is flagged as SUSPECT_RAIN_SENSOR_OUTAGE and unusable for rainfall
+        st_asok = next((s for s in stations if s["api_station_id"] == 852087), None)
+        self.assertIsNotNone(st_asok)
+        self.assertEqual(st_asok.get("quality_flag"), "SUSPECT_RAIN_SENSOR_OUTAGE")
+        self.assertFalse(st_asok.get("usable_for_rainfall"))
+
+        # Verify station 2 is real Saen Saep (Bang Kapi) station and not dummy rounded (13.72, 100.51)
+        st2 = next((s for s in stations if s["api_station_id"] == 2), None)
+        self.assertIsNotNone(st2)
+        self.assertEqual(st2["tele_station_oldcode"], "BKK008")
+        self.assertEqual(st2["station_name_th"], "คลองแสนแสบ บางกะปิ")
+        self.assertNotEqual((st2["latitude"], st2["longitude"]), (13.72, 100.51))
+        self.assertAlmostEqual(st2["latitude"], 13.76131, places=4)
+        self.assertAlmostEqual(st2["longitude"], 100.61601, places=4)
+
+        # Verify suspect non-Bangkok station IDs (20, 23, 24, 25, 26, 28, 29, 37) are removed
+        suspect_out_of_bkk = {20, 23, 24, 25, 26, 28, 29, 37}
+        actual_ids = {s["api_station_id"] for s in stations}
+        self.assertTrue(actual_ids.isdisjoint(suspect_out_of_bkk), "Suspect out-of-province IDs must not be in Bangkok rain reference")
+
+        for s in stations:
+            self.assertEqual(s.get("province_th"), "กรุงเทพมหานคร", f"Station {s['api_station_id']} must be in Bangkok")
+            self.assertIsInstance(s.get("latitude"), float)
+            self.assertIsInstance(s.get("longitude"), float)
+            # Bangkok bounding box check
+            self.assertTrue(13.5 <= s["latitude"] <= 14.1, f"Latitude {s['latitude']} out of Bangkok bounds")
+            self.assertTrue(100.3 <= s["longitude"] <= 100.95, f"Longitude {s['longitude']} out of Bangkok bounds")
+
+    def test_persisted_data_integrity_check(self):
+        """
+        Validates persisted files in data/ directory:
+        1. All 8 water stations are backfilled for Sep & Oct 2026.
+        2. Bang Bua (st 1) has >= 95% non-null readings, bank = 2.2, max Sep 24-26 ~ 2.82m.
+        3. Phasi Charoen (st 10) is flagged with SUSPECT_DATUM_MISMATCH and unusable for freeboard.
+        4. Samsen (2599) and Asok (852087) are backfilled with non-empty telemetry.
+        """
+        data_dir = Path(__file__).resolve().parent.parent / "data" / "raw" / "thaiwater" / "waterlevel"
+        sep_dir = data_dir / "dt=2026-09-01"
+        if not sep_dir.exists():
+            self.skipTest("Local data/ directory not yet populated with backfill data")
+
+        target_ids = [1, 3, 4, 5, 8, 10, 2599, 852087]
+        for sid in target_ids:
+            fpath = sep_dir / f"waterlevel_hist_st{sid}_2026_09.json"
+            self.assertTrue(fpath.exists(), f"Missing backfill file for station {sid} in Sep 2026: {fpath}")
+            with open(fpath, "r", encoding="utf-8") as f:
+                doc = json.load(f)
+            records = doc.get("data", [])
+            non_null = [r for r in records if r.get("waterlevel_msl") is not None]
+            self.assertGreater(len(non_null), 0, f"Station {sid} has 0 non-null records")
+
+            if sid == 1:
+                pct = len(non_null) / len(records)
+                self.assertGreaterEqual(pct, 0.95, f"Bang Bua non-null ratio ({pct:.1%}) must be >= 95%")
+                self.assertEqual(records[0]["min_bank_msl"], 2.2, "Bang Bua min_bank must be 2.2m MSL")
+                sep24_26 = [r["waterlevel_msl"] for r in non_null if "2026-09-24" <= r["datetime"][:10] <= "2026-09-26"]
+                self.assertTrue(bool(sep24_26), "Missing readings during storm period Sep 24-26")
+                max_wl = max(sep24_26)
+                self.assertAlmostEqual(max_wl, 2.82, delta=0.05, msg="Bang Bua storm peak must be ~2.82m")
+
+            if sid == 10:
+                self.assertEqual(records[0]["quality_flag"], "SUSPECT_DATUM_MISMATCH")
+                self.assertFalse(records[0]["usable_for_freeboard"])
+                self.assertTrue(any(r["waterlevel_msl"] < -1.0 for r in non_null))
+
+            if sid in (2599, 852087):
+                self.assertGreater(len(non_null), 500, f"Station {sid} should have >= 500 non-null readings")
+
+        # Check rain persisted files:
+        rain_dir = Path(__file__).resolve().parent.parent / "data" / "raw" / "thaiwater" / "rain" / "dt=2026-09-01"
+        if rain_dir.exists():
+            st4_rain = rain_dir / "rain_monthly_st4_2026_09.json"
+            self.assertFalse(st4_rain.exists(), "Rain station 4 must be removed as it lacks a rain sensor")
+
+            st852087_rain = rain_dir / "rain_monthly_st852087_2026_09.json"
+            if st852087_rain.exists():
+                with open(st852087_rain, "r", encoding="utf-8") as f:
+                    rain_doc = json.load(f)
+                rain_records = rain_doc.get("data", [])
+                if rain_records:
+                    self.assertEqual(rain_records[0].get("quality_flag"), "SUSPECT_RAIN_SENSOR_OUTAGE")
+                    self.assertFalse(rain_records[0].get("usable_for_rainfall"))
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -2,136 +2,170 @@
   {
     "api_station_id": 1,
     "tele_station_oldcode": "BKK021",
-    "station_name_th": "สถานีวัดน้ำ/ฝนคลองลาดพร้าว (วัดบางบัว)",
+    "station_name_th": "คลองลาดพร้าว วัดบางบัว",
     "province_th": "กรุงเทพมหานคร",
     "paired_water_station_id": 1,
     "latitude": 13.85402,
-    "longitude": 100.58746
+    "longitude": 100.58746,
+    "agency": "สสน.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
   },
   {
     "api_station_id": 2,
-    "tele_station_oldcode": "BKK002",
-    "station_name_th": "สถานีวัดฝนกรุงเทพฯ 2",
+    "tele_station_oldcode": "BKK008",
+    "station_name_th": "คลองแสนแสบ บางกะปิ",
     "province_th": "กรุงเทพมหานคร",
-    "paired_water_station_id": 4,
-    "latitude": 13.7200,
-    "longitude": 100.5100
+    "paired_water_station_id": 852087,
+    "latitude": 13.76131,
+    "longitude": 100.61601,
+    "agency": "สสน.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
   },
   {
     "api_station_id": 3,
     "tele_station_oldcode": "BKK009",
-    "station_name_th": "สถานีวัดน้ำ/ฝนคลองลำปลาทิว (ลาดกระบัง)",
+    "station_name_th": "คลองลำปลาทิว ลาดกระบัง",
     "province_th": "กรุงเทพมหานคร",
     "paired_water_station_id": 3,
     "latitude": 13.7407,
-    "longitude": 100.79468
-  },
-  {
-    "api_station_id": 4,
-    "tele_station_oldcode": "CPY015",
-    "station_name_th": "สถานีวัดน้ำ/ฝนสะพานกรุงเทพ",
-    "province_th": "กรุงเทพมหานคร",
-    "paired_water_station_id": 4,
-    "latitude": 13.700301,
-    "longitude": 100.49277
+    "longitude": 100.79468,
+    "agency": "สสน.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
   },
   {
     "api_station_id": 5,
     "tele_station_oldcode": "BKK003",
-    "station_name_th": "สถานีวัดน้ำ/ฝนคลองมหาสวัสดิ์",
+    "station_name_th": "คลองมหาสวัสดิ บางกรวย-สวนผัก",
     "province_th": "กรุงเทพมหานคร",
     "paired_water_station_id": 5,
     "latitude": 13.79965,
-    "longitude": 100.43863
+    "longitude": 100.43863,
+    "agency": "สสน.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
   },
   {
     "api_station_id": 8,
     "tele_station_oldcode": "BKK020",
-    "station_name_th": "สถานีวัดน้ำ/ฝนคลองหกวา (ปากคลอง 2 ใต้)",
+    "station_name_th": "คลองลาดพร้าว ปากคลอง2สายใต้",
     "province_th": "กรุงเทพมหานคร",
     "paired_water_station_id": 8,
     "latitude": 13.93183,
-    "longitude": 100.63952
+    "longitude": 100.63952,
+    "agency": "สสน.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
   },
   {
     "api_station_id": 10,
     "tele_station_oldcode": "BKK005",
-    "station_name_th": "สถานีวัดน้ำ/ฝนคลองภาษีเจริญ (เพชรเกษม 69)",
+    "station_name_th": "คลองภาษีเจริญ เพชรเกษม69",
     "province_th": "กรุงเทพมหานคร",
     "paired_water_station_id": 10,
     "latitude": 13.69158,
-    "longitude": 100.38127
+    "longitude": 100.38127,
+    "agency": "สสน.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
   },
   {
-    "api_station_id": 20,
-    "tele_station_oldcode": "BKK011",
-    "station_name_th": "สถานีวัดฝนเขตคลองเตย",
+    "api_station_id": 852087,
+    "tele_station_oldcode": "AIT001",
+    "station_name_th": "อโศก",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 852087,
+    "latitude": 13.74325,
+    "longitude": 100.562164,
+    "agency": "สสน.",
+    "quality_flag": "SUSPECT_RAIN_SENSOR_OUTAGE",
+    "usable_for_rainfall": false,
+    "flag_reason": "Reports 0.0 mm during citywide heavy storm on 2026-09-25/26 (suspected rain sensor failure)"
+  },
+  {
+    "api_station_id": 1129393,
+    "tele_station_oldcode": "HII001",
+    "station_name_th": "อาคารเลขที่ ๙๐๑",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 1,
+    "latitude": 13.85604,
+    "longitude": 100.57558,
+    "agency": "สสน.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
+  },
+  {
+    "api_station_id": 528802,
+    "tele_station_oldcode": "RF.DST.02",
+    "station_name_th": "ส.สามเสน",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 2599,
+    "latitude": 13.78483,
+    "longitude": 100.50825,
+    "agency": "สนน กทม.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
+  },
+  {
+    "api_station_id": 3712,
+    "tele_station_oldcode": "48456",
+    "station_name_th": "สนามบินดอนเมือง",
+    "province_th": "กรุงเทพมหานคร",
+    "paired_water_station_id": 8,
+    "latitude": 13.91917,
+    "longitude": 100.605,
+    "agency": "อต.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
+  },
+  {
+    "api_station_id": 3710,
+    "tele_station_oldcode": "48454",
+    "station_name_th": "กรุงเทพฯ ท่าเรือคลองเตย",
     "province_th": "กรุงเทพมหานคร",
     "paired_water_station_id": 4,
-    "latitude": 13.7153,
-    "longitude": 100.5694
+    "latitude": 13.70694,
+    "longitude": 100.56805,
+    "agency": "อต.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
   },
   {
-    "api_station_id": 23,
-    "tele_station_oldcode": "BKK007",
-    "station_name_th": "สถานีวัดฝนเขตบางใหญ่/ทวีวัฒนา",
-    "province_th": "นนทบุรี/กรุงเทพฯ",
-    "paired_water_station_id": 5,
-    "latitude": 13.8200,
-    "longitude": 100.4000
-  },
-  {
-    "api_station_id": 24,
-    "tele_station_oldcode": "BKK014",
-    "station_name_th": "สถานีวัดฝนเขตดอนเมือง/สายไหม",
+    "api_station_id": 3709,
+    "tele_station_oldcode": "48453",
+    "station_name_th": "กรุงเทพฯ บางนา สกษ.",
     "province_th": "กรุงเทพมหานคร",
-    "paired_water_station_id": 8,
-    "latitude": 13.9136,
-    "longitude": 100.5906
+    "paired_water_station_id": 4,
+    "latitude": 13.66639,
+    "longitude": 100.60611,
+    "agency": "อต.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
   },
   {
-    "api_station_id": 25,
-    "tele_station_oldcode": "BKK016",
-    "station_name_th": "สถานีวัดฝนเขตบางเขน",
-    "province_th": "กรุงเทพมหานคร",
-    "paired_water_station_id": 1,
-    "latitude": 13.8732,
-    "longitude": 100.5971
-  },
-  {
-    "api_station_id": 26,
-    "tele_station_oldcode": "BKK017",
-    "station_name_th": "สถานีวัดฝนเขตจตุจักร",
-    "province_th": "กรุงเทพมหานคร",
-    "paired_water_station_id": 1,
-    "latitude": 13.8285,
-    "longitude": 100.5598
-  },
-  {
-    "api_station_id": 28,
-    "tele_station_oldcode": "BKK018",
-    "station_name_th": "สถานีวัดฝนเขตบางกะปิ",
+    "api_station_id": 3711,
+    "tele_station_oldcode": "48455",
+    "station_name_th": "กรุงเทพมหานคร",
     "province_th": "กรุงเทพมหานคร",
     "paired_water_station_id": 852087,
-    "latitude": 13.7658,
-    "longitude": 100.6477
+    "latitude": 13.72639,
+    "longitude": 100.56,
+    "agency": "อต.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
   },
   {
-    "api_station_id": 29,
-    "tele_station_oldcode": "BKK019",
-    "station_name_th": "สถานีวัดฝนเขตมีนบุรี",
+    "api_station_id": 528848,
+    "tele_station_oldcode": "RF.TBR.02",
+    "station_name_th": "ส.คลองสำเหร่",
     "province_th": "กรุงเทพมหานคร",
-    "paired_water_station_id": 852087,
-    "latitude": 13.8138,
-    "longitude": 100.7483
-  },
-  {
-    "api_station_id": 37,
-    "tele_station_oldcode": "BKK015",
-    "station_name_th": "สถานีวัดฝนคลองหกวา (ลำลูกกา)",
-    "province_th": "ปทุมธานี/กรุงเทพฯ",
-    "paired_water_station_id": 8,
-    "latitude": 13.9300,
-    "longitude": 100.6800
+    "paired_water_station_id": 4,
+    "latitude": 13.707017,
+    "longitude": 100.496368,
+    "agency": "สนน กทม.",
+    "quality_flag": "OK",
+    "usable_for_rainfall": true
   }
 ]

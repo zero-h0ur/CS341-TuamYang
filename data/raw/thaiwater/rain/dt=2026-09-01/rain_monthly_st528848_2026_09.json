@@ -1,0 +1,254 @@
+{
+  "envelope_version": "1.0",
+  "batch_type": "historical_backfill",
+  "data_type": "rain_monthly",
+  "is_mock": false,
+  "api_station_id": 528848,
+  "year": 2026,
+  "month": 9,
+  "record_count": 25,
+  "total_slots": 30,
+  "created_at_utc": "2026-11-09T17:24:21.684189+00:00",
+  "data": [
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-01",
+      "rainfall_daily_mm": 2.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-02",
+      "rainfall_daily_mm": null,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-03",
+      "rainfall_daily_mm": 3.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-04",
+      "rainfall_daily_mm": 2.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-05",
+      "rainfall_daily_mm": 45.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-06",
+      "rainfall_daily_mm": 4.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-07",
+      "rainfall_daily_mm": 30.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-08",
+      "rainfall_daily_mm": 0.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-09",
+      "rainfall_daily_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-10",
+      "rainfall_daily_mm": 62.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-11",
+      "rainfall_daily_mm": 19.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-12",
+      "rainfall_daily_mm": 0.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-13",
+      "rainfall_daily_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-14",
+      "rainfall_daily_mm": 1.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-15",
+      "rainfall_daily_mm": 56.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-16",
+      "rainfall_daily_mm": 5.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-17",
+      "rainfall_daily_mm": 0.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-18",
+      "rainfall_daily_mm": 4.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-19",
+      "rainfall_daily_mm": 27.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-20",
+      "rainfall_daily_mm": 4.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-21",
+      "rainfall_daily_mm": 3.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-22",
+      "rainfall_daily_mm": 4.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-23",
+      "rainfall_daily_mm": 12.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-24",
+      "rainfall_daily_mm": 25.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-25",
+      "rainfall_daily_mm": null,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-26",
+      "rainfall_daily_mm": 16.0,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-27",
+      "rainfall_daily_mm": 15.5,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-28",
+      "rainfall_daily_mm": null,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-29",
+      "rainfall_daily_mm": null,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    },
+    {
+      "api_station_id": 528848,
+      "station_name_th": "ส.คลองสำเหร่",
+      "date": "2026-09-30",
+      "rainfall_daily_mm": null,
+      "quality_flag": "OK",
+      "usable_for_rainfall": true
+    }
+  ]
+}

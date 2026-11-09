@@ -23,7 +23,13 @@ from typing import Any, Dict, List, Optional, Tuple
 # Ensure project root in sys.path
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
-from config.config import CHECKPOINT_FILE, RAIN_PREFIX, WATERLEVEL_PREFIX
+from config.config import (
+    CHECKPOINT_FILE,
+    MIN_RAIN_NON_NULL_RATIO,
+    MIN_WATERLEVEL_NON_NULL_RATIO,
+    RAIN_PREFIX,
+    WATERLEVEL_PREFIX,
+)
 from src.storage import get_storage
 from src.thaiwater_client import ThaiWaterAPIError, ThaiWaterClient
 from src.utils.logger import log_ingestion_metric, setup_logger
@@ -101,9 +107,22 @@ class BackfillManager:
             return {"status": "FAILED", "task_key": task_key, "error": str(e)}
 
         non_null_records = [r for r in records if r.get("waterlevel_msl") not in (None, "")]
-        if not non_null_records:
-            logger.warning(f"[EMPTY] Task {task_key} returned 0 non-null records (all {len(records)} slots empty). Not writing file and not marking as completed.")
-            return {"status": "EMPTY", "task_key": task_key, "record_count": 0, "slots": len(records)}
+        total_slots = len(records)
+        non_null_ratio = (len(non_null_records) / total_slots) if total_slots > 0 else 0.0
+
+        if not non_null_records or non_null_ratio < MIN_WATERLEVEL_NON_NULL_RATIO:
+            logger.warning(
+                f"[EMPTY/BELOW_THRESHOLD] Task {task_key} returned {len(non_null_records)}/{total_slots} non-null records "
+                f"({non_null_ratio:.1%}), below required threshold {MIN_WATERLEVEL_NON_NULL_RATIO:.1%}. "
+                f"Not writing file and not marking as completed."
+            )
+            return {
+                "status": "EMPTY",
+                "task_key": task_key,
+                "record_count": len(non_null_records),
+                "slots": total_slots,
+                "non_null_ratio": round(non_null_ratio, 4),
+            }
 
         envelope = {
             "envelope_version": "1.0",
@@ -179,9 +198,22 @@ class BackfillManager:
             return {"status": "FAILED", "task_key": task_key, "error": str(e)}
 
         non_null_records = [r for r in records if r.get("rainfall_daily_mm") not in (None, "")]
-        if not non_null_records:
-            logger.warning(f"[EMPTY] Task {task_key} returned 0 non-null records (all {len(records)} days empty). Not writing file and not marking as completed.")
-            return {"status": "EMPTY", "task_key": task_key, "record_count": 0, "slots": len(records)}
+        total_slots = len(records)
+        non_null_ratio = (len(non_null_records) / total_slots) if total_slots > 0 else 0.0
+
+        if not non_null_records or non_null_ratio < MIN_RAIN_NON_NULL_RATIO:
+            logger.warning(
+                f"[EMPTY/BELOW_THRESHOLD] Task {task_key} returned {len(non_null_records)}/{total_slots} non-null records "
+                f"({non_null_ratio:.1%}), below required threshold {MIN_RAIN_NON_NULL_RATIO:.1%}. "
+                f"Not writing file and not marking as completed."
+            )
+            return {
+                "status": "EMPTY",
+                "task_key": task_key,
+                "record_count": len(non_null_records),
+                "slots": total_slots,
+                "non_null_ratio": round(non_null_ratio, 4),
+            }
 
         envelope = {
             "envelope_version": "1.0",

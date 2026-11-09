@@ -20,6 +20,8 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
 from config.config import (
+    BANK_HEIGHT_TOLERANCE_M,
+    OUTLIER_FREEBOARD_DIFF_M,
     RAIN_24H_GRAPH_ENDPOINT,
     RAIN_MONTHLY_GRAPH_ENDPOINT,
     RAIN_STATIONS_FILE,
@@ -152,7 +154,19 @@ class ThaiWaterClient:
                 except (ValueError, TypeError):
                     mb_api = None
 
-            min_bank = mb_api if mb_api is not None else meta.get("min_bank_msl")
+            ref_bank = meta.get("min_bank_msl")
+            # Validation: discard negative ground_level and fallback to reference
+            if mb_api is not None and mb_api <= 0:
+                mb_api = ref_bank
+            elif mb_api is not None and ref_bank is not None:
+                if abs(mb_api - ref_bank) > BANK_HEIGHT_TOLERANCE_M:
+                    logger.warning(
+                        f"Station {meta['api_station_id']} API min_bank ({mb_api}) diverges from reference ({ref_bank}) "
+                        f"by > {BANK_HEIGHT_TOLERANCE_M}m. Using reference."
+                    )
+                    mb_api = ref_bank
+
+            min_bank = mb_api if mb_api is not None else ref_bank
 
             diff_raw = item.get("diff_wl_bank")
             diff_api = None
@@ -173,6 +187,13 @@ class ThaiWaterClient:
 
             diff_bank = diff_api if diff_api is not None else derived_diff
             diff_source = "api" if diff_api is not None else "derived"
+
+            # Check quality flag and usability for freeboard
+            quality_flag = meta.get("quality_flag", "NORMAL")
+            usable_for_freeboard = meta.get("usable_for_freeboard", True)
+            if diff_bank is not None and abs(diff_bank) > OUTLIER_FREEBOARD_DIFF_M:
+                quality_flag = "SUSPECT_DATUM_MISMATCH"
+                usable_for_freeboard = False
 
             left_raw = st.get("left_bank")
             left_msl = float(left_raw) if left_raw not in (None, "") else meta.get("left_bank_msl")
@@ -213,6 +234,8 @@ class ThaiWaterClient:
                 "ground_level_msl": ground_msl,
                 "diff_wl_bank_m": diff_bank,
                 "diff_source": diff_source,
+                "quality_flag": quality_flag,
+                "usable_for_freeboard": usable_for_freeboard,
             })
 
         return results, matched_raw
@@ -245,8 +268,28 @@ class ThaiWaterClient:
                 min_bank = float(api_min_bank)
             except (ValueError, TypeError):
                 min_bank = None
-        if min_bank is None and meta:
-            min_bank = meta.get("min_bank_msl")
+
+        ref_bank = meta.get("min_bank_msl") if meta else None
+        # Validation: discard non-positive bank (ground_level) and ensure consistency with reference
+        if min_bank is not None and min_bank <= 0:
+            logger.warning(
+                f"Station {api_station_id} returned non-positive min_bank ({min_bank}). "
+                f"Falling back to reference bank {ref_bank}."
+            )
+            min_bank = ref_bank
+        elif min_bank is not None and ref_bank is not None:
+            if abs(min_bank - ref_bank) > BANK_HEIGHT_TOLERANCE_M:
+                logger.warning(
+                    f"Station {api_station_id} API min_bank ({min_bank}) diverges from reference ({ref_bank}) "
+                    f"by > {BANK_HEIGHT_TOLERANCE_M}m. Using reference bank."
+                )
+                min_bank = ref_bank
+
+        if min_bank is None:
+            min_bank = ref_bank
+
+        quality_flag_meta = meta.get("quality_flag", "NORMAL") if meta else "NORMAL"
+        usable_for_freeboard_meta = meta.get("usable_for_freeboard", True) if meta else True
 
         records = []
         for it in raw_items:
@@ -261,6 +304,13 @@ class ThaiWaterClient:
 
             diff_bank = round(min_bank - wl_msl, 3) if (min_bank is not None and wl_msl is not None) else None
 
+            # Detect datum mismatch or excessive freeboard divergence
+            record_quality = quality_flag_meta
+            record_usable = usable_for_freeboard_meta
+            if diff_bank is not None and abs(diff_bank) > OUTLIER_FREEBOARD_DIFF_M:
+                record_quality = "SUSPECT_DATUM_MISMATCH"
+                record_usable = False
+
             records.append({
                 "api_station_id": api_station_id,
                 "datetime": dt_str,
@@ -268,6 +318,8 @@ class ThaiWaterClient:
                 "min_bank_msl": min_bank,
                 "diff_wl_bank_m": diff_bank,
                 "diff_source": "derived",
+                "quality_flag": record_quality,
+                "usable_for_freeboard": record_usable,
             })
 
         non_null_count = sum(1 for r in records if r["waterlevel_msl"] is not None)
@@ -298,6 +350,8 @@ class ThaiWaterClient:
 
         meta = next((s for s in self._rain_stations if s["api_station_id"] == api_station_id), None)
         station_name = meta.get("station_name_th", "") if meta else ""
+        quality_flag = meta.get("quality_flag", "OK") if meta else "OK"
+        usable_for_rainfall = meta.get("usable_for_rainfall", True) if meta else True
 
         records = []
         for it in items:
@@ -315,6 +369,8 @@ class ThaiWaterClient:
                 "station_name_th": station_name,
                 "date": dt_str,
                 "rainfall_daily_mm": rain_mm,
+                "quality_flag": quality_flag,
+                "usable_for_rainfall": usable_for_rainfall,
             })
 
         return {
@@ -374,6 +430,9 @@ class ThaiWaterClient:
             if _parse_rain_dt(p.get("datetime")) and last_dt and _parse_rain_dt(p.get("datetime")) > last_dt - timedelta(hours=24)
         ] if last_dt else []
 
+        quality_flag = meta.get("quality_flag", "OK") if meta else "OK"
+        usable_for_rainfall = meta.get("usable_for_rainfall", True) if meta else True
+
         return {
             "api_station_id": api_station_id,
             "station_name_th": meta.get("station_name_th", "") if meta else "",
@@ -383,6 +442,8 @@ class ThaiWaterClient:
             "rain_24h_mm": round(sum(p["rain_mm"] for p in last24), 1) if last24 else None,
             "rain_24h_points": len(last24),
             "rain_latest_mm": round(last["rain_mm"], 1) if (last and last.get("rain_mm") is not None) else None,
+            "quality_flag": quality_flag,
+            "usable_for_rainfall": usable_for_rainfall,
             "window_start": series[0]["datetime"] if series else None,
             "window_end": series[-1]["datetime"] if series else None,
             "series": series,
