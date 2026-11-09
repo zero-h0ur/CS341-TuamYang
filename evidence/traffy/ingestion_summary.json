@@ -1,5 +1,5 @@
 {
-  "verified_at_utc": "2026-11-09T16:02:11.068527+00:00",
+  "verified_at_utc": "2026-11-09T17:09:18.142398+00:00",
   "environment": "Local Python; public Traffy endpoint; not a deployed AWS invocation",
   "period_bkk_inclusive": [
     "2026-09-24",
@@ -78,6 +78,7 @@
   "replay": {
     "network_used": false,
     "new_objects": 0,
+    "storage_scope": "requested Bangkok-day Traffy partitions",
     "days": [
       {
         "date_bkk": "2026-09-24",

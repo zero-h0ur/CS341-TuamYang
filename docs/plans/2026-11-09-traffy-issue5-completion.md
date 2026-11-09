@@ -9,6 +9,9 @@ the user's request for one feature branch and one PR.
 Download and verify the full Bangkok-day history from 2022-06-01 through
 2026-11-08 (the frozen yesterday cutoff when this run started). Preserve the
 September review snapshot, existing raw provenance, and honest review labels.
+The calendar advanced to 2026-11-10 during download. After the frozen 1,622-day
+run finishes, ingest the newly closed 2026-11-09 day and audit the delivery range
+through that date (1,623 days) without racing the running date workers.
 
 ## Clarifying Questions
 AWS STS returned NoCredentials. The user answered that AWS configuration should

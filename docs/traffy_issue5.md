@@ -109,6 +109,16 @@ seed/count/snapshot. Human evaluation requires a nonempty reviewer name, valid
 labels/rationales for every sampled ID and explicit `status: "completed"`.
 The existing human template is left untouched and pending.
 
+The owner confirmed human review has not yet been performed. A local working
+copy combines each frozen description with its blank label/rationale fields at
+`data/review/traffy/human_review_100_with_text.json`; see `docs/traffy_review_100.md`.
+Real-data checks also verified all 9,614 case-study records have empty categories:
+text rules produce 7,021 flood, 2,538 non-flood and 55 uncertain classifications.
+Every UTC/Bangkok instant, epoch, Bangkok date and hour matched the source.
+These behavior/time checks are recorded in
+`evidence/traffy/real_text_time_checks.json`; they do not establish human precision.
+Regenerate them with `python -X utf8 -m scripts.check_traffy_evidence`.
+
 ```powershell
 python -X utf8 -m scripts.review_traffy evaluate --labels evidence/traffy/ai_review_labels.json
 # After personally checking the unchanged full-text sample:
