@@ -134,9 +134,9 @@ python -X utf8 -m scripts.review_traffy evaluate --labels data/review/traffy/hum
 | Backfill since mid-2022 | Full Local delivery verified for 2022-06-01 through 2026-11-09: 1,623 days, 1,513,782 reports, no daily gaps; reruns resume from verified outputs | Cloud upload/verification is deferred with AWS setup; preserve source coverage warnings |
 | Filter flood text despite blank category | Existing v1.0 text rules retained; no category is required for affirmative text; negation and preventive descriptions have checks | Review limitations with the team; an isolated ambiguous `ท่วม` mention remains reviewable instead of being silently treated as proven flooding |
 | UTC to Bangkok and 100-report precision | Time boundaries checked; the same seeded 100 reports retained; TP/FP/unresolved counts and full-denominator bounds reported | The owner reads the sample and marks the human review completed; unresolved positives must stay visible |
-| PR evidence | Original implementation and Issue #5 corrections share `feature/ingest-traffy` and PR #8; logical commits are preserved | Review the combined PR after external evidence is attached; shared storage still depends on the ThaiWater base branch |
+| PR evidence | Original implementation and Issue #5 corrections share `feature/ingest-traffy`; PR #8 merged into the ThaiWater branch. ThaiWater is now in `main` via PR #7, and Traffy has been integrated with that latest `main` for a direct PR to `main`; logical commits are preserved | AWS deployment and human-review evidence remain pending |
 
-Local verification: **76 Python checks pass** (65 Traffy and 11 ThaiWater),
+Local verification after integration with `main`: **81 Python checks pass** (65 Traffy and 16 ThaiWater),
 the minimal Lambda ZIP imports from an isolated process, and the deployment
 argument mock passes both schedule modes and a target failure scenario.
 Recorded evidence is under `evidence/traffy/issue5/`; human labels and the

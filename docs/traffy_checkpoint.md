@@ -33,9 +33,10 @@ flowchart LR
     G --> H[ส่งต่อ Spatial join / Validation / Curated ของทีม]
 ```
 
-ใช้ `src/storage.py` จาก branch ThaiWater ร่วมกัน รองรับทั้ง Local และ S3
-งาน Traffy อยู่บน `feature/ingest-traffy` ซึ่งต่อจาก `feature/ingest-thaiwater`
-เพื่อใช้โครงสร้างร่วมกัน PR จึงควรเทียบกับ branch ThaiWater จนกว่างานฐานจะเข้า main
+ใช้ `src/storage.py` ร่วมกับ ThaiWater รองรับทั้ง Local และ S3
+งาน ThaiWater เข้า `main` ผ่าน PR #7 แล้ว และ `feature/ingest-traffy` รวม `main` ล่าสุดแล้ว
+PR สำหรับนำงาน Traffy เข้าโครงการจึงใช้ `main` เป็นฐานโดยตรง
+ส่วน PR #8 เดิมเป็นประวัติการรวม Traffy เข้า `feature/ingest-thaiwater`
 
 ## 3. รันบนเครื่อง
 
