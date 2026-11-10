@@ -66,59 +66,177 @@ python -X utf8 -m unittest tests.test_validation -v     # 46 tests, ไม่ต
 python -X utf8 -m unittest discover -s tests             # ทั้ง repo
 ```
 
-## Deploy (ผ่าน template.yaml ของ #11)
+## Deploy (ผ่าน template.yaml ของ #11 v2)
 
-ใส่ใน slot `HasStateMachineDefinition` ของ `template.yaml` หลัง PR Phase 1 ของ #11 merge แล้ว (ชื่อ parameter/condition ปรับตามของจริงใน template):
+ใส่ resource ข้างล่างใน `template.yaml` หลัง PR Phase 1 ของ #11 merge แล้ว ใช้ parameter / condition ตามสเปก v2 ของ #11:
+`ExistingRoleName`, `EnableStateMachine`, `CreateDataBucket`, `DataBucketName` และ condition `UseExistingRole`, `CreateCustomRoles`, `ShouldCreateDataBucket`, `HasStateMachineDefinition`
+
+ต้องเพิ่ม condition นี้ 1 ตัว:
+
+```yaml
+Conditions:
+  CreatePipelineRoles: !And [!Condition CreateCustomRoles, !Condition HasStateMachineDefinition]
+```
+
+Resources:
 
 ```yaml
   PipelineStepFunction:
     Type: AWS::Serverless::Function
+    Condition: HasStateMachineDefinition
     Properties:
       FunctionName: !Sub tuamyang-${Stage}-pipeline-step
       Handler: src.validation.pipeline.lambda_handler
-      CodeUri: .aws-sam/stage/thaiwater/      # ต้องมี src/ config/ reference/ เหมือน ingest_thaiwater
+      CodeUri: .aws-sam/stage/thaiwater/          # src/ config/ reference/ ชุดเดียวกับ ingest_thaiwater
       Runtime: python3.12
       Timeout: 120
-      MemorySize: 512                          # Traffy วันเดียว ~6 MB JSON
+      MemorySize: 512                              # Traffy 1 วัน ~6 MB JSON
       Environment:
         Variables:
           STORAGE_BACKEND: s3
-          S3_BUCKET_NAME: !Ref DataBucketName
-      Role: !If [UseExistingRole, !Sub "arn:aws:iam::${AWS::AccountId}:role/${ExistingLambdaRoleName}", !Ref AWS::NoValue]
-      Policies:                                # SAM ไม่ใช้ Policies เมื่อระบุ Role (dev/LabRole)
-        - S3CrudPolicy: {BucketName: !Ref DataBucketName}
+          S3_BUCKET_NAME: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+      Role: !If
+        - UseExistingRole
+        - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ExistingRoleName}"
+        - !GetAtt PipelineStepFunctionRole.Arn
+
+  PipelineStepFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Condition: HasStateMachineDefinition
+    Properties:
+      LogGroupName: !Sub /aws/lambda/tuamyang-${Stage}-pipeline-step
+      RetentionInDays: 30
 
   PipelineStateMachine:
     Type: AWS::Serverless::StateMachine
+    Condition: HasStateMachineDefinition
     Properties:
       Name: !Sub tuamyang-${Stage}-pipeline
+      Type: STANDARD
       DefinitionUri: statemachine/pipeline.asl.json
       DefinitionSubstitutions:
         PipelineFunctionArn: !GetAtt PipelineStepFunction.Arn
-      Role: !If [UseExistingRole, !Sub "arn:aws:iam::${AWS::AccountId}:role/${ExistingLambdaRoleName}", !Ref AWS::NoValue]
+      Role: !If
+        - UseExistingRole
+        - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ExistingRoleName}"
+        - !GetAtt PipelineStateMachineRole.Arn
+      # ไม่ใช้ Events: ของ SAM เพราะจะสร้าง IAM role ให้ rule เอง (พังบน Learner Lab, D6)
+
+  PipelineIncomingRule:
+    Type: AWS::Events::Rule
+    Condition: HasStateMachineDefinition
+    Properties:
+      Name: !Sub tuamyang-${Stage}-pipeline-incoming
+      Description: Start the batch pipeline for every new object under incoming/
+      EventPattern:
+        source: [aws.s3]
+        detail-type: [Object Created]
+        detail:
+          bucket:
+            name: [!If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]]
+          object:
+            key: [{prefix: incoming/}]
+      Targets:
+        - Id: tuamyang-pipeline
+          Arn: !Ref PipelineStateMachine           # Ref ของ state machine = ARN
+          RoleArn: !If
+            - UseExistingRole
+            - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ExistingRoleName}"
+            - !GetAtt StateMachineEventBridgeRole.Arn
+
+  # --- role ของ prod เท่านั้น (dev ใช้ LabRole) ไม่ตั้ง RoleName เพื่อใช้แค่ CAPABILITY_IAM ---
+  PipelineStepFunctionRole:
+    Type: AWS::IAM::Role
+    Condition: CreatePipelineRoles
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: {Service: lambda.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
       Policies:
-        - LambdaInvokePolicy: {FunctionName: !Ref PipelineStepFunction}
-      Events:
-        IncomingObject:
-          Type: EventBridgeRule
-          Properties:
-            Pattern:
-              source: [aws.s3]
-              detail-type: [Object Created]
-              detail:
-                bucket: {name: [!Ref DataBucketName]}
-                object: {key: [{prefix: incoming/}]}
+        - PolicyName: pipeline-s3
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:ListBucket                # ให้ HeadObject ตอบ 404 แทน 403
+                Resource: !Sub ["arn:aws:s3:::${Bucket}", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+              - Effect: Allow
+                Action: s3:GetObject
+                Resource:
+                  - !Sub ["arn:aws:s3:::${Bucket}/incoming/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+                  - !Sub ["arn:aws:s3:::${Bucket}/checkpoints/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+                  - !Sub ["arn:aws:s3:::${Bucket}/processed/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+                  - !Sub ["arn:aws:s3:::${Bucket}/trusted/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+              - Effect: Allow
+                Action: s3:PutObject
+                Resource:
+                  - !Sub ["arn:aws:s3:::${Bucket}/processed/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+                  - !Sub ["arn:aws:s3:::${Bucket}/trusted/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+                  - !Sub ["arn:aws:s3:::${Bucket}/quarantine/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+
+  PipelineStateMachineRole:
+    Type: AWS::IAM::Role
+    Condition: CreatePipelineRoles
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: {Service: states.amazonaws.com}
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: invoke-pipeline-step
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource:
+                  - !GetAtt PipelineStepFunction.Arn
+                  - !Sub "${PipelineStepFunction.Arn}:*"
+
+  StateMachineEventBridgeRole:
+    Type: AWS::IAM::Role
+    Condition: CreatePipelineRoles
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: {Service: events.amazonaws.com}
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: start-pipeline
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: states:StartExecution
+                Resource: !Ref PipelineStateMachine
 ```
 
+ตรวจด้วย `cfn-lint` 1.60 ใน template จำลองที่มี parameter/condition ตาม v2 แล้ว เหลือคำเตือน W1031 1 ข้อ: ถ้า `CreateDataBucket=false` และ `DataBucketName=""` ARN ของ bucket จะว่าง กรณีนี้ไม่เกิดตาม `samconfig.toml` ของ v2 (prod สร้าง bucket, dev ระบุชื่อ bucket)
+
 หมายเหตุ:
-- Learner Lab สร้าง IAM role ไม่ได้: state machine และ EventBridge rule ต้องใช้ LabRole ด้วย ไม่ใช่แค่ Lambda. event `EventBridgeRule` ของ SAM จะสร้าง role ให้ rule เอง ถ้า dev deploy ไม่ผ่านเพราะเรื่องนี้ ให้แยกเป็น `AWS::Events::Rule` ที่ระบุ `RoleArn` = LabRole แทน (ยังไม่ได้ทดสอบใน Learner Lab)
-- bucket ต้องเปิด EventBridge notification (`NotificationConfiguration.EventBridgeConfiguration.EventBridgeEnabled: true`, D8 ใน #11)
-- `TuamYangCfnExecutionRole` ต้องมีสิทธิ์ `states:*` บน `tuamyang-*` ก่อน merge ไม่งั้น CD ล้ม AccessDenied
+- ทุก resource ปิดด้วย `HasStateMachineDefinition` เปิดด้วย `EnableStateMachine=true` ใน `parameter_overrides`
+- Role ทั้ง 3 จุด (Lambda, state machine, EventBridge rule) ใช้ `ExistingRoleName` ตาม D6 ของ #11 ใน dev ใช้ LabRole ได้ทั้งหมด ไม่มี resource ไหนที่ SAM สร้าง IAM role ให้เอง
+- เช็กใน Learner Lab ก่อน deploy dev ว่า LabRole ให้ `states.amazonaws.com` และ `events.amazonaws.com` assume ได้:
+  `aws iam get-role --role-name LabRole --query "Role.AssumeRolePolicyDocument.Statement[].Principal.Service" --output json`
+- bucket ต้องเปิด EventBridge notification ใน prod template ทำให้ (D7) ส่วน bucket ใน dev ที่สร้างด้วย `aws s3 mb` ต้องเปิดเองครั้งเดียว:
+  `aws s3api put-bucket-notification-configuration --bucket <ชื่อ bucket> --notification-configuration '{"EventBridgeConfiguration": {}}'`
+  (คำสั่งนี้แทนที่ notification config เดิมทั้งหมดของ bucket)
+- Rule ไม่ต้องกรองไฟล์ marker: ThaiWater เขียน 1 ไฟล์ต่อ batch, Traffy เขียน 1 ไฟล์ต่อรอบ, ไฟล์อื่นใต้ `incoming/` CheckBatch ข้ามให้เอง
+- `TuamYangCfnExecutionRole` ต้องมีสิทธิ์ `states:*`, `events:*Rule`/`events:*Targets`, `iam:*Role*` และ `iam:PassRole` บน `tuamyang-*` (ใส่ใน bootstrap รอบแรกแล้วตาม v2)
 - ค่าใช้จ่าย: waterlevel ทุก 15 นาที + ฝนทุกชั่วโมง ≈ 3,600 execution/เดือน × ~6 transition ≈ 22,000 transition เกิน free 4,000 ของ Standard workflow ราว $0.45/เดือน (หักจากเครดิต Free plan)
 - ตรวจ ASL กับ AWS ได้ใน Learner Lab: `aws stepfunctions validate-state-machine-definition --definition file://statemachine/pipeline.asl.json` (ต้องแทน `${PipelineFunctionArn}` ก่อน)
 
 ## ยังเหลือ
 
 - [ ] deploy ใน Learner Lab ของตัวเองแล้วเก็บหลักฐานจาก S3 จริง (execution graph, `_SUCCESS.json`, ไฟล์ใน `quarantine/`)
-- [ ] ใส่ resource ข้างบนใน `template.yaml` หลัง #11 Phase 1 merge
+- [ ] ใส่ resource ข้างบนใน `template.yaml` หลัง #11 Phase 1 merge และตั้ง `EnableStateMachine=true`
 - [ ] ตกลงกับ #2 เรื่อง schema ของ `trusted/` (คอลัมน์ใน JSONL) สำหรับ Glue table
