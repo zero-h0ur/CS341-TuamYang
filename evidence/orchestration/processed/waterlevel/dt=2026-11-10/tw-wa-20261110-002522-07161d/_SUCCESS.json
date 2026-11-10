@@ -1,0 +1,16 @@
+{
+  "status": "SUCCESS",
+  "batch_id": "tw-wa-20261110-002522-07161d",
+  "dataset": "waterlevel",
+  "dt": "2026-11-10",
+  "source_key": "incoming/thaiwater/dt=2026-11-10/hour=00/waterlevel_tw-wa-20261110-002522-07161d.json",
+  "trusted_key": "trusted/waterlevel/dt=2026-11-10/tw-wa-20261110-002522-07161d.jsonl",
+  "row_count": 8,
+  "validation_status": "WARN",
+  "warnings": [
+    "freshness"
+  ],
+  "report_key": "processed/waterlevel/dt=2026-11-10/tw-wa-20261110-002522-07161d/validation_report.json",
+  "validator_version": "tuamyang-validate-v1.0",
+  "published_at_utc": "2026-11-10T09:06:34.672555+00:00"
+}

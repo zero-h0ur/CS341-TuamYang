@@ -1,0 +1,17 @@
+{
+  "status": "SUCCESS",
+  "batch_id": "tw-ra-20261110-002523-062801",
+  "dataset": "rain",
+  "dt": "2026-11-10",
+  "source_key": "incoming/thaiwater/dt=2026-11-10/hour=00/rain_tw-ra-20261110-002523-062801.json",
+  "trusted_key": "trusted/rain/dt=2026-11-10/tw-ra-20261110-002523-062801.jsonl",
+  "row_count": 350,
+  "validation_status": "WARN",
+  "warnings": [
+    "freshness",
+    "all_usable_stations_reporting"
+  ],
+  "report_key": "processed/rain/dt=2026-11-10/tw-ra-20261110-002523-062801/validation_report.json",
+  "validator_version": "tuamyang-validate-v1.0",
+  "published_at_utc": "2026-11-10T09:06:34.668822+00:00"
+}
