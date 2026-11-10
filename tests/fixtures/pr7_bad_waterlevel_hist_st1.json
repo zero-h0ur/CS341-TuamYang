@@ -1,0 +1,688 @@
+{
+ "envelope_version": "1.0",
+ "batch_type": "historical_backfill",
+ "data_type": "waterlevel",
+ "is_mock": false,
+ "api_station_id": 1,
+ "year": 2026,
+ "month": 9,
+ "start_date": "2026-09-01",
+ "end_date": "2026-09-30",
+ "record_count": 96,
+ "created_at_utc": "2026-10-31T16:23:44.000365+00:00",
+ "data": [
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 00:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 00:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 00:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 00:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 01:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 01:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 01:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 01:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 02:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 02:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 02:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 02:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 03:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 03:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 03:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 03:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 04:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 04:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 04:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 04:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 05:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 05:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 05:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 05:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 06:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 06:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 06:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 06:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 07:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 07:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 07:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 07:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 08:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 08:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 08:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 08:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 09:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 09:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 09:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 09:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 10:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 10:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 10:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 10:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 11:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 11:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 11:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 11:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 12:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 12:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 12:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 12:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 13:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 13:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 13:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 13:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 14:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 14:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 14:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 14:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 15:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 15:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 15:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 15:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 16:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 16:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 16:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 16:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 17:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 17:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 17:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 17:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 18:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 18:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 18:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 18:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 19:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 19:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 19:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 19:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 20:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 20:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 20:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 20:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 21:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 21:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 21:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 21:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 22:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 22:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 22:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 22:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 23:00",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 23:15",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 23:30",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  },
+  {
+   "api_station_id": 1,
+   "datetime": "2026-09-01 23:45",
+   "waterlevel_msl": null,
+   "min_bank_msl": -0.33,
+   "diff_wl_bank_m": null
+  }
+ ],
+ "_fixture_note": "First day of data/raw/thaiwater/waterlevel/dt=2026-09-01/waterlevel_hist_st1_2026_09.json at commit f1d66ba (PR #7 before fix): 15-min null grid, min_bank = ground level"
+}
