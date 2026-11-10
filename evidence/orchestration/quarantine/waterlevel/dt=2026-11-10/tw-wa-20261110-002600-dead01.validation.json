@@ -1,0 +1,269 @@
+{
+  "validator_version": "tuamyang-validate-v1.0",
+  "status": "FAIL",
+  "data_type": "waterlevel",
+  "batch_id": "tw-wa-20261110-002600-dead01",
+  "ingested_at_bkk": "2026-11-10T00:25:22.522164+07:00",
+  "checked_at_utc": "2026-11-10T09:06:34.673509+00:00",
+  "record_count": 8,
+  "summary": {
+    "fail": 1,
+    "warn": 3,
+    "pass": 18
+  },
+  "checks": [
+    {
+      "rule": "envelope_required_fields",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "Envelope has all required fields"
+    },
+    {
+      "rule": "envelope_version",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "envelope_version must be '1.0' (got '1.0')"
+    },
+    {
+      "rule": "data_type_matches",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "data_type must be 'waterlevel' (got 'waterlevel')"
+    },
+    {
+      "rule": "data_is_list",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "`data` is a list"
+    },
+    {
+      "rule": "record_count_matches",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "record_count=8 vs len(data)=8"
+    },
+    {
+      "rule": "not_mock",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "Mock/fixture batches are never published (is_mock must be false)"
+    },
+    {
+      "rule": "ingested_at_parseable",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "ingested_at_bkk is a valid ISO timestamp"
+    },
+    {
+      "rule": "non_empty",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "Batch has at least one record"
+    },
+    {
+      "rule": "record_required_fields",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "Every record has api_station_id, timestamp_epoch, waterlevel_datetime, waterlevel_msl, min_bank_msl, usable_for_freeboard"
+    },
+    {
+      "rule": "station_in_reference",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "Every station is one of the 8 reference stations (reference/stations_water.json)"
+    },
+    {
+      "rule": "unique_station_time",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "No duplicate (api_station_id, timestamp_epoch) in one batch"
+    },
+    {
+      "rule": "waterlevel_non_null_ratio",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "Non-null waterlevel ratio 1.00 >= 0.3"
+    },
+    {
+      "rule": "bank_matches_reference",
+      "passed": false,
+      "severity": "FAIL",
+      "detail": "min_bank_msl within 0.05 m of reference",
+      "examples": [
+        {
+          "station": 2599,
+          "min_bank_msl": -14.52,
+          "reference": 2.26
+        },
+        {
+          "station": 4,
+          "min_bank_msl": -15.697,
+          "reference": 2.16
+        },
+        {
+          "station": 5,
+          "min_bank_msl": -3.101,
+          "reference": 2.07
+        },
+        {
+          "station": 3,
+          "min_bank_msl": -3.171,
+          "reference": 0.62
+        },
+        {
+          "station": 8,
+          "min_bank_msl": -1.01,
+          "reference": 1.97
+        }
+      ],
+      "count": 8
+    },
+    {
+      "rule": "epoch_matches_local_time",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "timestamp_epoch equals waterlevel_datetime (Asia/Bangkok)"
+    },
+    {
+      "rule": "no_future_readings",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "No reading more than 15 min after ingestion time"
+    },
+    {
+      "rule": "freshness",
+      "passed": false,
+      "severity": "WARN",
+      "detail": "Reading age <= 1.0 h at ingestion",
+      "examples": [
+        {
+          "station": 2599,
+          "lag_hours": 3.42
+        },
+        {
+          "station": 4,
+          "lag_hours": 2.42
+        },
+        {
+          "station": 5,
+          "lag_hours": 2.59
+        },
+        {
+          "station": 3,
+          "lag_hours": 2.42
+        },
+        {
+          "station": 8,
+          "lag_hours": 2.42
+        }
+      ],
+      "count": 8
+    },
+    {
+      "rule": "reading_on_interval_grid",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "Reading time on the 10-min grid (hourly for C.12)"
+    },
+    {
+      "rule": "waterlevel_plausible_range",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "Usable waterlevel within (-3.0, 5.0) m MSL"
+    },
+    {
+      "rule": "freeboard_consistent",
+      "passed": false,
+      "severity": "WARN",
+      "detail": "diff_wl_bank_m equals min_bank_msl - waterlevel_msl (+/-0.05 m)",
+      "examples": [
+        {
+          "station": 2599,
+          "diff_wl_bank_m": 1.21,
+          "expected": -15.57
+        },
+        {
+          "station": 4,
+          "diff_wl_bank_m": 1.98,
+          "expected": -15.877
+        },
+        {
+          "station": 5,
+          "diff_wl_bank_m": 0.62,
+          "expected": -4.551
+        },
+        {
+          "station": 3,
+          "diff_wl_bank_m": 0.53,
+          "expected": -3.271
+        },
+        {
+          "station": 8,
+          "diff_wl_bank_m": 0.69,
+          "expected": -2.29
+        }
+      ],
+      "count": 7
+    },
+    {
+      "rule": "freeboard_not_outlier",
+      "passed": false,
+      "severity": "WARN",
+      "detail": "|freeboard| <= 5.0 m for usable stations",
+      "examples": [
+        {
+          "station": 2599,
+          "freeboard": -15.57
+        },
+        {
+          "station": 4,
+          "freeboard": -15.877
+        }
+      ],
+      "count": 2
+    },
+    {
+      "rule": "unusable_has_quality_flag",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "Stations excluded from freeboard carry a non-OK quality_flag"
+    },
+    {
+      "rule": "all_reference_stations_present",
+      "passed": true,
+      "severity": "PASS",
+      "detail": "All 8 reference stations reported in this batch"
+    }
+  ],
+  "record_flags": {
+    "2599": [
+      "STALE_READING",
+      "FREEBOARD_OUTLIER"
+    ],
+    "4": [
+      "STALE_READING",
+      "FREEBOARD_OUTLIER"
+    ],
+    "5": [
+      "STALE_READING"
+    ],
+    "3": [
+      "STALE_READING"
+    ],
+    "8": [
+      "STALE_READING"
+    ],
+    "1": [
+      "STALE_READING"
+    ],
+    "852087": [
+      "STALE_READING"
+    ],
+    "10": [
+      "STALE_READING"
+    ]
+  },
+  "source_key": "incoming/thaiwater/dt=2026-11-10/hour=00/waterlevel_tw-wa-20261110-002600-dead01.json",
+  "dataset": "waterlevel",
+  "dt": "2026-11-10"
+}

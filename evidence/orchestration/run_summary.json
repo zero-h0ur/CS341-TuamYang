@@ -1,0 +1,68 @@
+[
+  {
+    "key": "incoming/thaiwater/dt=2026-11-10/hour=00/rain_tw-ra-20261110-002459-9b2cb6.json",
+    "dataset": "rain",
+    "batch_id": "tw-ra-20261110-002459-9b2cb6",
+    "final_state": "Published",
+    "validation_status": "WARN",
+    "row_count": 350,
+    "failures": [],
+    "warnings": [
+      "freshness",
+      "all_usable_stations_reporting"
+    ],
+    "trusted_key": "trusted/rain/dt=2026-11-10/tw-ra-20261110-002459-9b2cb6.jsonl",
+    "quarantine_key": null,
+    "marker_key": "processed/rain/dt=2026-11-10/tw-ra-20261110-002459-9b2cb6/_SUCCESS.json"
+  },
+  {
+    "key": "incoming/thaiwater/dt=2026-11-10/hour=00/rain_tw-ra-20261110-002523-062801.json",
+    "dataset": "rain",
+    "batch_id": "tw-ra-20261110-002523-062801",
+    "final_state": "Published",
+    "validation_status": "WARN",
+    "row_count": 350,
+    "failures": [],
+    "warnings": [
+      "freshness",
+      "all_usable_stations_reporting"
+    ],
+    "trusted_key": "trusted/rain/dt=2026-11-10/tw-ra-20261110-002523-062801.jsonl",
+    "quarantine_key": null,
+    "marker_key": "processed/rain/dt=2026-11-10/tw-ra-20261110-002523-062801/_SUCCESS.json"
+  },
+  {
+    "key": "incoming/thaiwater/dt=2026-11-10/hour=00/waterlevel_tw-wa-20261110-002522-07161d.json",
+    "dataset": "waterlevel",
+    "batch_id": "tw-wa-20261110-002522-07161d",
+    "final_state": "Published",
+    "validation_status": "WARN",
+    "row_count": 8,
+    "failures": [],
+    "warnings": [
+      "freshness"
+    ],
+    "trusted_key": "trusted/waterlevel/dt=2026-11-10/tw-wa-20261110-002522-07161d.jsonl",
+    "quarantine_key": null,
+    "marker_key": "processed/waterlevel/dt=2026-11-10/tw-wa-20261110-002522-07161d/_SUCCESS.json"
+  },
+  {
+    "key": "incoming/thaiwater/dt=2026-11-10/hour=00/waterlevel_tw-wa-20261110-002600-dead01.json",
+    "dataset": "waterlevel",
+    "batch_id": "tw-wa-20261110-002600-dead01",
+    "final_state": "BatchQuarantined",
+    "validation_status": "FAIL",
+    "row_count": null,
+    "failures": [
+      "bank_matches_reference"
+    ],
+    "warnings": [
+      "freshness",
+      "freeboard_consistent",
+      "freeboard_not_outlier"
+    ],
+    "trusted_key": null,
+    "quarantine_key": "quarantine/waterlevel/dt=2026-11-10/waterlevel_tw-wa-20261110-002600-dead01.json",
+    "marker_key": "processed/waterlevel/dt=2026-11-10/tw-wa-20261110-002600-dead01/_QUARANTINED.json"
+  }
+]

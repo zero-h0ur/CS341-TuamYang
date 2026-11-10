@@ -1,0 +1,242 @@
+{
+  "Comment": "CS341-TuamYang batch pipeline (Issue #1). Trigger: EventBridge S3 Object Created under incoming/. One Lambda (src.validation.pipeline.lambda_handler) runs every step; ${PipelineFunctionArn} is filled by DefinitionSubstitutions in template.yaml.",
+  "StartAt": "CheckBatch",
+  "States": {
+    "CheckBatch": {
+      "Type": "Task",
+      "Comment": "Parse the S3 key, find batch_id, skip if processed/<dataset>/dt=<d>/<batch_id>/_SUCCESS.json or _QUARANTINED.json exists. Traffy: wait until its manifest is no longer RUNNING.",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${PipelineFunctionArn}",
+        "Payload": {
+          "step": "check",
+          "event.$": "$"
+        }
+      },
+      "ResultSelector": {
+        "batch.$": "$.Payload"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["BatchNotReady"],
+          "IntervalSeconds": 30,
+          "MaxAttempts": 6,
+          "BackoffRate": 1.5
+        },
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "PipelineError"
+        }
+      ],
+      "Next": "IsNewBatch"
+    },
+    "IsNewBatch": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.batch.skip",
+          "BooleanEquals": true,
+          "Next": "Skipped"
+        },
+        {
+          "Variable": "$.batch.already_processed",
+          "BooleanEquals": true,
+          "Next": "Skipped"
+        }
+      ],
+      "Default": "ValidateBatch"
+    },
+    "ValidateBatch": {
+      "Type": "Task",
+      "Comment": "Run src/validation/rules.py and write processed/.../validation_report.json. Status PASS | WARN | FAIL.",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${PipelineFunctionArn}",
+        "Payload": {
+          "step": "validate",
+          "batch.$": "$.batch"
+        }
+      },
+      "ResultSelector": {
+        "batch.$": "$.Payload"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "PipelineError"
+        }
+      ],
+      "Next": "ValidationPassed"
+    },
+    "ValidationPassed": {
+      "Type": "Choice",
+      "Choices": [
+        {
+          "Variable": "$.batch.validation_status",
+          "StringEquals": "FAIL",
+          "Next": "QuarantineBatch"
+        }
+      ],
+      "Default": "TransformBatch"
+    },
+    "QuarantineBatch": {
+      "Type": "Task",
+      "Comment": "Copy the envelope and its report to quarantine/<dataset>/dt=<d>/ and write _QUARANTINED.json. Nothing reaches trusted/.",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${PipelineFunctionArn}",
+        "Payload": {
+          "step": "quarantine",
+          "batch.$": "$.batch"
+        }
+      },
+      "ResultSelector": {
+        "batch.$": "$.Payload"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "PipelineError"
+        }
+      ],
+      "Next": "BatchQuarantined"
+    },
+    "BatchQuarantined": {
+      "Type": "Fail",
+      "Error": "ValidationFailed",
+      "Cause": "Batch failed validation and was moved to quarantine/. See processed/<dataset>/dt=<d>/<batch_id>/validation_report.json."
+    },
+    "TransformBatch": {
+      "Type": "Task",
+      "Comment": "Flatten the envelope to JSON Lines in trusted/<dataset>/dt=<d>/ (Athena-readable). Curated khwaeng x hour SQL is issue #2 and reads trusted/.",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${PipelineFunctionArn}",
+        "Payload": {
+          "step": "transform",
+          "batch.$": "$.batch"
+        }
+      },
+      "ResultSelector": {
+        "batch.$": "$.Payload"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "PipelineError"
+        }
+      ],
+      "Next": "PublishBatch"
+    },
+    "PublishBatch": {
+      "Type": "Task",
+      "Comment": "Write processed/<dataset>/dt=<d>/<batch_id>/_SUCCESS.json (idempotency marker, row count, warnings).",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${PipelineFunctionArn}",
+        "Payload": {
+          "step": "publish",
+          "batch.$": "$.batch"
+        }
+      },
+      "ResultSelector": {
+        "batch.$": "$.Payload"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "PipelineError"
+        }
+      ],
+      "Next": "VerifyBatch"
+    },
+    "VerifyBatch": {
+      "Type": "Task",
+      "Comment": "Re-read trusted/ and _SUCCESS.json: row count and batch_id must match.",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "FunctionName": "${PipelineFunctionArn}",
+        "Payload": {
+          "step": "verify",
+          "batch.$": "$.batch"
+        }
+      },
+      "ResultSelector": {
+        "batch.$": "$.Payload"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": ["Lambda.ServiceException", "Lambda.AWSLambdaException", "Lambda.SdkClientException", "Lambda.TooManyRequestsException"],
+          "IntervalSeconds": 2,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Catch": [
+        {
+          "ErrorEquals": ["States.ALL"],
+          "ResultPath": "$.error",
+          "Next": "PipelineError"
+        }
+      ],
+      "Next": "Published"
+    },
+    "Published": {
+      "Type": "Succeed"
+    },
+    "Skipped": {
+      "Type": "Succeed",
+      "Comment": "Not a batch file, or already processed (idempotent replay)."
+    },
+    "PipelineError": {
+      "Type": "Fail",
+      "Error": "PipelineError",
+      "Cause": "A pipeline step raised an error. See $.error in the execution history."
+    }
+  }
+}

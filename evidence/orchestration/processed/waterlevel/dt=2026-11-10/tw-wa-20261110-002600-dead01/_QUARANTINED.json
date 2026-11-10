@@ -1,0 +1,12 @@
+{
+  "status": "QUARANTINED",
+  "batch_id": "tw-wa-20261110-002600-dead01",
+  "source_key": "incoming/thaiwater/dt=2026-11-10/hour=00/waterlevel_tw-wa-20261110-002600-dead01.json",
+  "quarantine_key": "quarantine/waterlevel/dt=2026-11-10/waterlevel_tw-wa-20261110-002600-dead01.json",
+  "report_key": "processed/waterlevel/dt=2026-11-10/tw-wa-20261110-002600-dead01/validation_report.json",
+  "failures": [
+    "bank_matches_reference"
+  ],
+  "validator_version": "tuamyang-validate-v1.0",
+  "quarantined_at_utc": "2026-11-10T09:06:34.674527+00:00"
+}
