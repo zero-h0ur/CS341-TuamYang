@@ -25,4 +25,5 @@ data/staged/traffy/
 data/checkpoints/traffy/
 data/review/traffy/
 dist/
+.aws-sam/
 
