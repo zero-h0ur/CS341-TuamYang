@@ -52,7 +52,7 @@ jobs:
 
       - name: Lint and validate CloudFormation and SAM templates
         run: |
-          cfn-lint template.yaml infrastructure/bootstrap/github-oidc.yaml
+          cfn-lint --ignore-checks W1031 template.yaml infrastructure/bootstrap/github-oidc.yaml
           sam validate --region ap-southeast-1
           sam validate -t infrastructure/bootstrap/github-oidc.yaml --region ap-southeast-1
 

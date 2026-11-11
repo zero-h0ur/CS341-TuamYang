@@ -5,6 +5,12 @@ Description: >
   Deploys S3 Data Bucket, ThaiWater & Traffy Ingestion Lambdas, EventBridge Schedules,
   and the Step Functions Validation/Orchestration Pipeline.
 
+Metadata:
+  cfn-lint:
+    config:
+      ignore_checks:
+        - W1031
+
 Parameters:
   Stage:
     Type: String

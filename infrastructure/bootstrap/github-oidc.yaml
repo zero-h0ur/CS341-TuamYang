@@ -49,7 +49,7 @@ Resources:
     Type: AWS::IAM::Role
     Properties:
       RoleName: TuamYangGitHubDeployerRole
-      Description: Assumed by GitHub Actions OIDC in environment production to deploy tuamyang-prod
+      Description: !Sub "Assumed by GitHub Actions OIDC in environment ${GitHubEnvironment} to deploy tuamyang-prod"
       MaxSessionDuration: 3600
       AssumeRolePolicyDocument:
         Version: "2012-10-17"
