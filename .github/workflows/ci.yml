@@ -56,7 +56,7 @@ jobs:
           AWS_ACCESS_KEY_ID: offline-ci-check
           AWS_SECRET_ACCESS_KEY: offline-ci-check
         run: |
-          cfn-lint --ignore-checks W1031 template.yaml infrastructure/bootstrap/github-oidc.yaml
+          cfn-lint template.yaml infrastructure/bootstrap/github-oidc.yaml --ignore-checks W1031
           sam validate --region ap-southeast-1
 
       - name: Build SAM application
