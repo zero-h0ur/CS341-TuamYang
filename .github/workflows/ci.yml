@@ -51,10 +51,13 @@ jobs:
           fi
 
       - name: Lint and validate CloudFormation and SAM templates
+        env:
+          AWS_DEFAULT_REGION: ap-southeast-1
+          AWS_ACCESS_KEY_ID: offline-ci-check
+          AWS_SECRET_ACCESS_KEY: offline-ci-check
         run: |
           cfn-lint --ignore-checks W1031 template.yaml infrastructure/bootstrap/github-oidc.yaml
           sam validate --region ap-southeast-1
-          sam validate -t infrastructure/bootstrap/github-oidc.yaml --region ap-southeast-1
 
       - name: Build SAM application
         run: sam build
