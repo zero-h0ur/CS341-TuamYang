@@ -142,6 +142,35 @@ class TestSamTemplateContract(unittest.TestCase):
         self.assertIsNone(re.search(r"\b\d{12}\b", self.text))
 
 
+class TestSamConfigContract(unittest.TestCase):
+    """Seam B (5.3): samconfig.toml contract for dev (Learner Lab) and prod."""
+
+    def test_samconfig_dev_and_prod_environments(self):
+        import tomllib
+
+        config_path = PROJECT_ROOT / "samconfig.toml"
+        self.assertTrue(config_path.is_file(), "samconfig.toml must exist")
+        data = tomllib.loads(config_path.read_text(encoding="utf-8"))
+
+        dev_params = data["dev"]["deploy"]["parameters"]
+        self.assertEqual(dev_params["stack_name"], "tuamyang-dev")
+        self.assertEqual(dev_params["region"], "us-east-1")
+        self.assertEqual(dev_params["capabilities"], "CAPABILITY_IAM")
+        self.assertIn('Stage="dev"', dev_params["parameter_overrides"])
+        self.assertIn('ExistingRoleName="LabRole"', dev_params["parameter_overrides"])
+        self.assertIn('CreateDataBucket="true"', dev_params["parameter_overrides"])
+        self.assertIn('EnableStateMachine="true"', dev_params["parameter_overrides"])
+
+        prod_params = data["prod"]["deploy"]["parameters"]
+        self.assertEqual(prod_params["stack_name"], "tuamyang-prod")
+        self.assertEqual(prod_params["region"], "ap-southeast-1")
+        self.assertEqual(prod_params["capabilities"], "CAPABILITY_IAM")
+        self.assertIn('Stage="prod"', prod_params["parameter_overrides"])
+        self.assertIn('ExistingRoleName=""', prod_params["parameter_overrides"])
+        self.assertIn('CreateDataBucket="true"', prod_params["parameter_overrides"])
+        self.assertIn('EnableStateMachine="true"', prod_params["parameter_overrides"])
+
+
 if __name__ == "__main__":
     unittest.main()
 
