@@ -1,0 +1,178 @@
+{
+  "question": "Q2: How does low canal freeboard relate to flood reports in nearby subdistricts?",
+  "tier_metrics": {
+    "CRITICAL_OVERFLOW": {
+      "khwaeng_hours": 912,
+      "total_reports": 2710,
+      "flood_reports": 2350,
+      "flood_ratio_pct": 86.72,
+      "uncertain_reports": 17,
+      "non_flood_reports": 343
+    },
+    "HIGH_ALERT": {
+      "khwaeng_hours": 940,
+      "total_reports": 2845,
+      "flood_reports": 2400,
+      "flood_ratio_pct": 84.36,
+      "uncertain_reports": 12,
+      "non_flood_reports": 433
+    },
+    "NORMAL": {
+      "khwaeng_hours": 661,
+      "total_reports": 911,
+      "flood_reports": 232,
+      "flood_ratio_pct": 25.47,
+      "uncertain_reports": 6,
+      "non_flood_reports": 673
+    },
+    "NO_TELEMETRY": {
+      "khwaeng_hours": 188,
+      "total_reports": 649,
+      "flood_reports": 576,
+      "flood_ratio_pct": 88.75,
+      "uncertain_reports": 5,
+      "non_flood_reports": 68
+    },
+    "SUSPECT_DATUM": {
+      "khwaeng_hours": 319,
+      "total_reports": 543,
+      "flood_reports": 367,
+      "flood_ratio_pct": 67.59,
+      "uncertain_reports": 6,
+      "non_flood_reports": 170
+    },
+    "WATCH": {
+      "khwaeng_hours": 952,
+      "total_reports": 1956,
+      "flood_reports": 1096,
+      "flood_ratio_pct": 56.03,
+      "uncertain_reports": 9,
+      "non_flood_reports": 851
+    }
+  },
+  "daily_progression": {
+    "2026-09-24": {
+      "total_reports": 1100,
+      "flood_reports": 113,
+      "flood_ratio_pct": 10.27,
+      "overflow_khwaeng_hours": 0
+    },
+    "2026-09-25": {
+      "total_reports": 2673,
+      "flood_reports": 1894,
+      "flood_ratio_pct": 70.86,
+      "overflow_khwaeng_hours": 322
+    },
+    "2026-09-26": {
+      "total_reports": 5841,
+      "flood_reports": 5014,
+      "flood_ratio_pct": 85.84,
+      "overflow_khwaeng_hours": 590
+    }
+  },
+  "top_10_khwaeng_sep_26": [
+    {
+      "khet": "สวนหลวง",
+      "khwaeng": "สวนหลวง",
+      "water_station_name": "อโศก",
+      "min_freeboard_m": 0.17,
+      "total_reports": 315,
+      "flood_reports": 284,
+      "flood_ratio_pct": 90.16
+    },
+    {
+      "khet": "ประเวศ",
+      "khwaeng": "ประเวศ",
+      "water_station_name": "อโศก",
+      "min_freeboard_m": 0.17,
+      "total_reports": 278,
+      "flood_reports": 258,
+      "flood_ratio_pct": 92.81
+    },
+    {
+      "khet": "บางกะปิ",
+      "khwaeng": "คลองจั่น",
+      "water_station_name": "อโศก",
+      "min_freeboard_m": 0.17,
+      "total_reports": 280,
+      "flood_reports": 243,
+      "flood_ratio_pct": 86.79
+    },
+    {
+      "khet": "บึงกุ่ม",
+      "khwaeng": "คลองกุ่ม",
+      "water_station_name": "คลองลาดพร้าว วัดบางบัว",
+      "min_freeboard_m": -0.624,
+      "total_reports": 227,
+      "flood_reports": 214,
+      "flood_ratio_pct": 94.27
+    },
+    {
+      "khet": "บางกะปิ",
+      "khwaeng": "หัวหมาก",
+      "water_station_name": "อโศก",
+      "min_freeboard_m": 0.17,
+      "total_reports": 210,
+      "flood_reports": 187,
+      "flood_ratio_pct": 89.05
+    },
+    {
+      "khet": "พระโขนง",
+      "khwaeng": "บางจาก",
+      "water_station_name": "อโศก",
+      "min_freeboard_m": 0.17,
+      "total_reports": 195,
+      "flood_reports": 182,
+      "flood_ratio_pct": 93.33
+    },
+    {
+      "khet": "ลาดกระบัง",
+      "khwaeng": "คลองสองต้นนุ่น",
+      "water_station_name": "คลองลำปลาทิว ลาดกระบัง",
+      "min_freeboard_m": -0.004,
+      "total_reports": 168,
+      "flood_reports": 151,
+      "flood_ratio_pct": 89.88
+    },
+    {
+      "khet": "หลักสี่",
+      "khwaeng": "ทุ่งสองห้อง",
+      "water_station_name": "คลองลาดพร้าว วัดบางบัว",
+      "min_freeboard_m": -0.624,
+      "total_reports": 152,
+      "flood_reports": 140,
+      "flood_ratio_pct": 92.11
+    },
+    {
+      "khet": "บางเขน",
+      "khwaeng": "ท่าแร้ง",
+      "water_station_name": "คลองลาดพร้าว วัดบางบัว",
+      "min_freeboard_m": -0.624,
+      "total_reports": 128,
+      "flood_reports": 118,
+      "flood_ratio_pct": 92.19
+    },
+    {
+      "khet": "ไม่ระบุ",
+      "khwaeng": "ลาดพร้าว",
+      "water_station_name": "คลองลาดพร้าว วัดบางบัว",
+      "min_freeboard_m": -0.624,
+      "total_reports": 116,
+      "flood_reports": 110,
+      "flood_ratio_pct": 94.83
+    }
+  ],
+  "key_findings": [
+    "Under CRITICAL_OVERFLOW (Freeboard <= 0m), flood reports constitute 86.72% of citizen complaints (2,350/2,710).",
+    "Under HIGH_ALERT (0 < Freeboard <= 0.5m), flood reports constitute 84.36% of complaints (2,400/2,845).",
+    "Under WATCH (0.5 < Freeboard <= 1.0m), flood reports constitute 56.03% of complaints.",
+    "Under NORMAL conditions (Freeboard > 1.0m, excluding Station 10 datum mismatch), flood reports drop to 25.47% of complaints.",
+    "Across the 3-day progression: Flood report proportion escalated from 10.27% (Sep 24) -> 70.86% (Sep 25) -> 85.84% (Sep 26)."
+  ],
+  "limitations": [
+    "Citizen report timestamps reflect submission time, not the exact onset of inundation.",
+    "Multiple reports often describe the same clogged drain or localized street ponding.",
+    "Public search API returns fewer exposed rows than the advertised advisory total (discrepancy of 40-69 rows/day).",
+    "Station 10 (Khlong Phasi Charoen) exhibits a vertical datum mismatch (waterlevel -6.5m to -1.7m vs bank 1.42m) and is isolated under SUSPECT_DATUM (usable_for_freeboard=false) so it does not bias NORMAL freeboard tiers."
+  ]
+}

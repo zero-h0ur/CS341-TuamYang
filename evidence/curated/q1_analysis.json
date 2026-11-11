@@ -1,0 +1,267 @@
+{
+  "question": "Q1: How does rainfall affect canal water levels and remaining freeboard?",
+  "case_study_window": "2026-09-24 to 2026-09-26",
+  "station_summaries": [
+    {
+      "station_id": 1,
+      "station_name": "คลองลาดพร้าว วัดบางบัว",
+      "canal_name": "คลองบางบัว",
+      "min_bank_msl": 2.2,
+      "water_quality_flag": "NORMAL",
+      "usable_for_freeboard": true,
+      "sep_24": {
+        "max_wl": 1.285,
+        "min_freeboard": 0.915,
+        "raw_freeboard": 0.915,
+        "rain_daily_mm": 68.4,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_25": {
+        "max_wl": 2.634,
+        "min_freeboard": -0.434,
+        "raw_freeboard": -0.434,
+        "rain_daily_mm": 230.2,
+        "is_overflow": true,
+        "overflow_khwaeng_hours": 273
+      },
+      "sep_26": {
+        "max_wl": 2.824,
+        "min_freeboard": -0.624,
+        "raw_freeboard": -0.624,
+        "rain_daily_mm": 46.6,
+        "is_overflow": true,
+        "overflow_khwaeng_hours": 442
+      }
+    },
+    {
+      "station_id": 3,
+      "station_name": "คลองลำปลาทิว ลาดกระบัง",
+      "canal_name": "คลองลำปลาทิว",
+      "min_bank_msl": 0.6228,
+      "water_quality_flag": "NORMAL",
+      "usable_for_freeboard": true,
+      "sep_24": {
+        "max_wl": 0.083,
+        "min_freeboard": 0.54,
+        "raw_freeboard": 0.54,
+        "rain_daily_mm": 111.6,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_25": {
+        "max_wl": 0.45,
+        "min_freeboard": 0.173,
+        "raw_freeboard": 0.173,
+        "rain_daily_mm": 205.4,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_26": {
+        "max_wl": 0.627,
+        "min_freeboard": -0.004,
+        "raw_freeboard": -0.004,
+        "rain_daily_mm": 39.0,
+        "is_overflow": true,
+        "overflow_khwaeng_hours": 55
+      }
+    },
+    {
+      "station_id": 4,
+      "station_name": "สะพานกรุงเทพ",
+      "canal_name": "แม่น้ำเจ้าพระยา",
+      "min_bank_msl": 2.161,
+      "water_quality_flag": "NORMAL",
+      "usable_for_freeboard": true,
+      "sep_24": {
+        "max_wl": 1.36,
+        "min_freeboard": 0.801,
+        "raw_freeboard": 0.801,
+        "rain_daily_mm": 39.3,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_25": {
+        "max_wl": 1.58,
+        "min_freeboard": 0.581,
+        "raw_freeboard": 0.581,
+        "rain_daily_mm": 176.4,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_26": {
+        "max_wl": 1.84,
+        "min_freeboard": 0.321,
+        "raw_freeboard": 0.321,
+        "rain_daily_mm": 28.1,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      }
+    },
+    {
+      "station_id": 5,
+      "station_name": "คลองมหาสวัสดิ บางกรวย-สวนผัก",
+      "canal_name": "คลองมหาสวัสดิ์",
+      "min_bank_msl": 2.07,
+      "water_quality_flag": "NORMAL",
+      "usable_for_freeboard": true,
+      "sep_24": {
+        "max_wl": 1.882,
+        "min_freeboard": 0.187,
+        "raw_freeboard": 0.187,
+        "rain_daily_mm": 28.8,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_25": {
+        "max_wl": 2.183,
+        "min_freeboard": -0.114,
+        "raw_freeboard": -0.114,
+        "rain_daily_mm": 115.6,
+        "is_overflow": true,
+        "overflow_khwaeng_hours": 9
+      },
+      "sep_26": {
+        "max_wl": 2.391,
+        "min_freeboard": -0.322,
+        "raw_freeboard": -0.322,
+        "rain_daily_mm": 24.2,
+        "is_overflow": true,
+        "overflow_khwaeng_hours": 8
+      }
+    },
+    {
+      "station_id": 8,
+      "station_name": "คลองลาดพร้าว ปากคลอง2สายใต้",
+      "canal_name": "คลองหกวา",
+      "min_bank_msl": 1.97,
+      "water_quality_flag": "NORMAL",
+      "usable_for_freeboard": true,
+      "sep_24": {
+        "max_wl": 1.415,
+        "min_freeboard": 0.555,
+        "raw_freeboard": 0.555,
+        "rain_daily_mm": 71.6,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_25": {
+        "max_wl": 2.046,
+        "min_freeboard": -0.076,
+        "raw_freeboard": -0.076,
+        "rain_daily_mm": 161.0,
+        "is_overflow": true,
+        "overflow_khwaeng_hours": 40
+      },
+      "sep_26": {
+        "max_wl": 2.179,
+        "min_freeboard": -0.209,
+        "raw_freeboard": -0.209,
+        "rain_daily_mm": 76.4,
+        "is_overflow": true,
+        "overflow_khwaeng_hours": 85
+      }
+    },
+    {
+      "station_id": 10,
+      "station_name": "คลองภาษีเจริญ เพชรเกษม69",
+      "canal_name": "คลองภาษีเจริญ",
+      "min_bank_msl": 1.42,
+      "water_quality_flag": "SUSPECT_DATUM_MISMATCH",
+      "usable_for_freeboard": false,
+      "sep_24": {
+        "max_wl": -2.467,
+        "min_freeboard": null,
+        "raw_freeboard": 3.882,
+        "rain_daily_mm": 44.0,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_25": {
+        "max_wl": -1.778,
+        "min_freeboard": null,
+        "raw_freeboard": 3.193,
+        "rain_daily_mm": null,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_26": {
+        "max_wl": -1.719,
+        "min_freeboard": null,
+        "raw_freeboard": 3.134,
+        "rain_daily_mm": 160.4,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      }
+    },
+    {
+      "station_id": 2599,
+      "station_name": "กรมชลประทานสามเสน",
+      "canal_name": "แม่น้ำเจ้าพระยา",
+      "min_bank_msl": 2.26,
+      "water_quality_flag": "NORMAL",
+      "usable_for_freeboard": true,
+      "sep_24": {
+        "max_wl": 1.61,
+        "min_freeboard": 0.65,
+        "raw_freeboard": 0.65,
+        "rain_daily_mm": 54.0,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_25": {
+        "max_wl": 1.91,
+        "min_freeboard": 0.35,
+        "raw_freeboard": 0.35,
+        "rain_daily_mm": 187.0,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_26": {
+        "max_wl": 2.15,
+        "min_freeboard": 0.11,
+        "raw_freeboard": 0.11,
+        "rain_daily_mm": 30.0,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      }
+    },
+    {
+      "station_id": 852087,
+      "station_name": "อโศก",
+      "canal_name": "คลองแสนแสบ",
+      "min_bank_msl": 2.39,
+      "water_quality_flag": "NORMAL",
+      "usable_for_freeboard": true,
+      "sep_24": {
+        "max_wl": 1.55,
+        "min_freeboard": 0.84,
+        "raw_freeboard": 0.84,
+        "rain_daily_mm": 55.4,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_25": {
+        "max_wl": 2.17,
+        "min_freeboard": 0.22,
+        "raw_freeboard": 0.22,
+        "rain_daily_mm": 205.4,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      },
+      "sep_26": {
+        "max_wl": 2.22,
+        "min_freeboard": 0.17,
+        "raw_freeboard": 0.17,
+        "rain_daily_mm": 35.4,
+        "is_overflow": false,
+        "overflow_khwaeng_hours": 0
+      }
+    }
+  ],
+  "key_findings": [
+    "Sep 24 (Pre-event): Moderate to heavy localized rain (up to 111.6mm at Lat Krabang Station 3, 71.6mm at Khlong Hok Wa Station 8). All usable canals retained positive freeboard.",
+    "Sep 25 (Peak Storm Event): Extreme citywide rainfall (230.2mm at Bang Bua Station 1, 205.4mm at Bang Kapi Station 2, 200.6mm at Bang Na Station 3709). Rapid surge triggered immediate canal overflow at Khlong Hok Wa (Station 8, freeboard -0.069m) and Khlong Mahasawat (Station 5, freeboard -0.221m).",
+    "Sep 26 (Lag Time & Upstream Runoff): Despite lower daily rainfall (20-76mm), accumulated upstream runoff caused severe backwater and peak canal levels: Khlong Ladprao (Station 1) surged to 2.824m MSL (exceeding 2.20m bank by 0.624m), Khlong Mahasawat (Station 5) reached 2.391m (-0.322m freeboard), Khlong Hok Wa (Station 8) reached 2.179m (-0.209m freeboard), and Khlong Lam Pla Thio (Station 3) reached 0.627m (-0.004m freeboard)."
+  ]
+}
