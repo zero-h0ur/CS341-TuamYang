@@ -313,6 +313,57 @@ class TestCdProdWorkflowContract(unittest.TestCase):
                 )
 
 
+class TestCicdDocsContract(unittest.TestCase):
+    """Seam B (5.7): docs/cicd_setup.md, docs/cicd_team_guide.md, and README.md links."""
+
+    def test_docs_exist_have_no_draft_badge_and_are_linked_from_readme(self):
+        import re
+
+        setup_doc = PROJECT_ROOT / "docs" / "cicd_setup.md"
+        team_doc = PROJECT_ROOT / "docs" / "cicd_team_guide.md"
+        readme = PROJECT_ROOT / "README.md"
+
+        self.assertTrue(setup_doc.is_file(), "docs/cicd_setup.md must exist")
+        self.assertTrue(team_doc.is_file(), "docs/cicd_team_guide.md must exist")
+
+        setup_text = setup_doc.read_text(encoding="utf-8")
+        team_text = team_doc.read_text(encoding="utf-8")
+        readme_text = readme.read_text(encoding="utf-8")
+
+        # Must not contain Draft badge or hardcoded 12-digit AWS account IDs
+        for name, content in (("cicd_setup.md", setup_text), ("cicd_team_guide.md", team_text)):
+            self.assertNotIn("DRAFT", content.upper(), f"{name} must not have a Draft marker")
+            self.assertIsNone(
+                re.search(r"\b\d{12}\b", content), f"{name} must not hardcode AWS account ID"
+            )
+
+        # Verify key topics in cicd_setup.md
+        for term in (
+            "TuamYangGitHubDeployerRole",
+            "TuamYangCfnExecutionRole",
+            "AWS_DEPLOYER_ROLE_ARN",
+            "AWS_CFN_EXECUTION_ROLE_ARN",
+            "CreateOidcProvider=false",
+            "cicd_team_guide.md",
+        ):
+            self.assertIn(term, setup_text, f"cicd_setup.md missing {term}")
+
+        # Verify key topics in cicd_team_guide.md
+        for term in (
+            "sam deploy --config-env dev",
+            "sam deploy --config-env prod",
+            "CreateDataBucket=false",
+            "PhurinKaewpuangsek",
+            "zero-h0ur",
+            "cicd_setup.md",
+        ):
+            self.assertIn(term, team_text, f"cicd_team_guide.md missing {term}")
+
+        # Verify README.md links both documents
+        self.assertIn("docs/cicd_setup.md", readme_text)
+        self.assertIn("docs/cicd_team_guide.md", readme_text)
+
+
 if __name__ == "__main__":
     unittest.main()
 
