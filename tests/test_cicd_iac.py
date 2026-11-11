@@ -248,6 +248,71 @@ class TestCiWorkflowContract(unittest.TestCase):
         self.assertNotIn("pull_request:", traffy_wf)
 
 
+class TestCdProdWorkflowContract(unittest.TestCase):
+    """Seam B (5.6): .github/workflows/cd-prod.yml contract and hard safety rules."""
+
+    def test_cd_prod_workflow_triggers_oidc_and_smoke_checks(self):
+        import re
+
+        cd_path = PROJECT_ROOT / ".github" / "workflows" / "cd-prod.yml"
+        self.assertTrue(cd_path.is_file(), ".github/workflows/cd-prod.yml must exist")
+        text = cd_path.read_text(encoding="utf-8")
+
+        # Triggers & paths
+        self.assertIn("push:", text)
+        self.assertIn("workflow_dispatch:", text)
+        self.assertNotIn("pull_request:", text)
+        for path_filter in (
+            "template.yaml",
+            "samconfig.toml",
+            "src/**",
+            "config/**",
+            "reference/**",
+            "scripts/stage_lambda.py",
+            "statemachine/**",
+            ".github/workflows/cd-prod.yml",
+        ):
+            self.assertIn(path_filter, text, f"Missing path filter {path_filter}")
+
+        # Permissions, Concurrency, Environment
+        self.assertIn("id-token: write", text)
+        self.assertIn("contents: read", text)
+        self.assertIn("group: deploy-prod", text)
+        self.assertIn("cancel-in-progress: false", text)
+        self.assertIn("deploy-prod:", text)
+        self.assertIn("environment: production", text)
+
+        # OIDC + SAM Deploy + Smoke verification
+        self.assertIn("vars.AWS_DEPLOYER_ROLE_ARN", text)
+        self.assertIn("vars.AWS_CFN_EXECUTION_ROLE_ARN", text)
+        self.assertIn("ap-southeast-1", text)
+        self.assertIn("python -X utf8 scripts/stage_lambda.py", text)
+        self.assertIn("sam deploy", text)
+        self.assertIn("--config-env prod", text)
+        self.assertIn("--no-confirm-changeset", text)
+        self.assertIn("--no-fail-on-empty-changeset", text)
+        self.assertIn("--invocation-type DryRun", text)
+        self.assertIn("ENABLED", text)
+
+        # Hard safety rules
+        self.assertNotIn("--config-env dev", text)
+        self.assertNotIn("delete-stack", text)
+        self.assertNotIn("s3 rm", text)
+        self.assertNotIn("s3 rb", text)
+        self.assertNotIn("backfill", text.lower())
+        self.assertIsNone(re.search(r"\b\d{12}\b", text))
+
+    def test_no_workflow_deploys_to_dev(self):
+        wf_dir = PROJECT_ROOT / ".github" / "workflows"
+        for wf in wf_dir.glob("*.yml"):
+            content = wf.read_text(encoding="utf-8")
+            self.assertNotIn("--config-env dev", content, f"{wf.name} must not deploy to dev")
+            if wf.name != "cd-prod.yml":
+                self.assertNotIn(
+                    "--config-env prod", content, f"{wf.name} must not deploy to prod"
+                )
+
+
 if __name__ == "__main__":
     unittest.main()
 
