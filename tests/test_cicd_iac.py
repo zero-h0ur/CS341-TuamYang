@@ -219,6 +219,35 @@ class TestBootstrapOidcContract(unittest.TestCase):
         self.assertIsNone(re.search(r"\b\d{12}\b", text))
 
 
+class TestCiWorkflowContract(unittest.TestCase):
+    """Seam B (5.5): .github/workflows/ci.yml contract and test_traffy.yml deduplication."""
+
+    def test_ci_workflow_has_ci_job_and_required_steps_without_aws_deploy(self):
+        ci_path = PROJECT_ROOT / ".github" / "workflows" / "ci.yml"
+        self.assertTrue(ci_path.is_file(), ".github/workflows/ci.yml must exist")
+        text = ci_path.read_text(encoding="utf-8")
+
+        self.assertIn("pull_request:", text)
+        self.assertIn("push:", text)
+        self.assertIn("\n  ci:\n", text)
+        self.assertIn("python -X utf8 -m unittest discover -s tests -v", text)
+        self.assertIn("./tests/test_deploy_traffy.ps1", text)
+        self.assertIn("python -X utf8 -m scripts.package_traffy", text)
+        self.assertIn("python -X utf8 scripts/stage_lambda.py", text)
+        self.assertIn("sam validate", text)
+        self.assertIn("sam build", text)
+
+        # Hard rules: never deploy in CI
+        self.assertNotIn("sam deploy", text)
+        self.assertNotIn("--config-env", text)
+
+    def test_traffy_workflow_does_not_duplicate_pull_request_trigger(self):
+        traffy_wf = (PROJECT_ROOT / ".github" / "workflows" / "test_traffy.yml").read_text(
+            encoding="utf-8"
+        )
+        self.assertNotIn("pull_request:", traffy_wf)
+
+
 if __name__ == "__main__":
     unittest.main()
 
