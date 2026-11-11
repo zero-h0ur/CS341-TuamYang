@@ -67,5 +67,81 @@ class TestStageLambda(unittest.TestCase):
         self.assertIn(".aws-sam/", lines)
 
 
+class TestSamTemplateContract(unittest.TestCase):
+    """Seam B (5.2): template.yaml contract with Issue #11 and docs/orchestration_validation.md."""
+
+    def setUp(self):
+        self.template_path = PROJECT_ROOT / "template.yaml"
+        self.assertTrue(self.template_path.is_file(), "template.yaml must exist")
+        self.text = self.template_path.read_text(encoding="utf-8")
+
+    def test_required_parameters_and_conditions_match_orchestration_validation_doc(self):
+        required_params = (
+            "Stage:",
+            "DataBucketName:",
+            "CreateDataBucket:",
+            "ExistingRoleName:",
+            "EnableTraffyHourly:",
+            "EnableStateMachine:",
+        )
+        for param in required_params:
+            self.assertIn(param, self.text, f"Missing parameter {param}")
+
+        required_conditions = (
+            "ShouldCreateDataBucket:",
+            "HasCustomDataBucketName:",
+            "UseExistingRole:",
+            "CreateCustomRoles:",
+            "ShouldEnableTraffyHourly:",
+            "HasStateMachineDefinition:",
+            "CreatePipelineRoles:",
+        )
+        for cond in required_conditions:
+            self.assertIn(cond, self.text, f"Missing condition {cond}")
+
+    def test_required_resources_and_normalized_names_present(self):
+        required_resources = (
+            "DataBucket:",
+            "IngestThaiWaterFunction:",
+            "IngestThaiWaterFunctionLogGroup:",
+            "IngestThaiWaterFunctionRole:",
+            "IngestTraffyFunction:",
+            "IngestTraffyFunctionLogGroup:",
+            "IngestTraffyFunctionRole:",
+            "PipelineStepFunction:",
+            "PipelineStepFunctionLogGroup:",
+            "PipelineStateMachine:",
+            "PipelineIncomingRule:",
+            "PipelineStepFunctionRole:",
+            "PipelineStateMachineRole:",
+            "StateMachineEventBridgeRole:",
+        )
+        for res in required_resources:
+            self.assertIn(res, self.text, f"Missing resource {res}")
+
+        normalized_names = (
+            "tuamyang-${Stage}-data-${AWS::AccountId}",
+            "tuamyang-${Stage}-ingest-thaiwater",
+            "tuamyang-${Stage}-ingest-traffy",
+            "tuamyang-${Stage}-pipeline-step",
+            "tuamyang-${Stage}-pipeline",
+            "tuamyang-${Stage}-thaiwater-waterlevel-15min",
+            "tuamyang-${Stage}-thaiwater-rain-1hr",
+            "tuamyang-${Stage}-traffy-daily",
+            "tuamyang-${Stage}-traffy-hourly",
+            "tuamyang-${Stage}-pipeline-incoming",
+        )
+        for name in normalized_names:
+            self.assertIn(name, self.text, f"Missing normalized resource name {name}")
+
+        # Verify EventBridge notification on S3 DataBucket and no ScheduleV2
+        self.assertIn("EventBridgeEnabled: true", self.text)
+        self.assertNotIn("ScheduleV2", self.text)
+        # Verify no hardcoded 12-digit AWS account IDs
+        import re
+        self.assertIsNone(re.search(r"\b\d{12}\b", self.text))
+
+
 if __name__ == "__main__":
     unittest.main()
+

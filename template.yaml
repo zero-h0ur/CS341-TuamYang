@@ -1,0 +1,423 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: >
+  CS341-TuamYang Bangkok Flood Risk Data Pipeline (Issue #11 v2.1 + PR #12).
+  Deploys S3 Data Bucket, ThaiWater & Traffy Ingestion Lambdas, EventBridge Schedules,
+  and the Step Functions Validation/Orchestration Pipeline.
+
+Parameters:
+  Stage:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - prod
+    Description: Deployment stage (dev for Learner Lab, prod for Production account)
+
+  DataBucketName:
+    Type: String
+    Default: ""
+    Description: >
+      Optional custom S3 bucket name. Leave empty to use the normalized default
+      tuamyang-${Stage}-data-${AWS::AccountId}.
+
+  CreateDataBucket:
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: >
+      Whether CloudFormation should create the S3 data bucket. Set to "false"
+      along with DataBucketName if pointing to a pre-existing bucket.
+
+  ExistingRoleName:
+    Type: String
+    Default: ""
+    Description: >
+      Pre-existing IAM role name (e.g. LabRole in AWS Academy Learner Lab).
+      Leave empty in prod so CloudFormation creates least-privilege IAM roles.
+
+  EnableTraffyHourly:
+    Type: String
+    Default: "false"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Whether to enable the hourly provisional Traffy polling schedule
+
+  EnableStateMachine:
+    Type: String
+    Default: "true"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: Whether to deploy the Step Functions validation pipeline (Issue #1 / PR #12)
+
+Conditions:
+  ShouldCreateDataBucket: !Equals [!Ref CreateDataBucket, "true"]
+  HasCustomDataBucketName: !Not [!Equals [!Ref DataBucketName, ""]]
+  UseExistingRole: !Not [!Equals [!Ref ExistingRoleName, ""]]
+  CreateCustomRoles: !Equals [!Ref ExistingRoleName, ""]
+  ShouldEnableTraffyHourly: !Equals [!Ref EnableTraffyHourly, "true"]
+  HasStateMachineDefinition: !Equals [!Ref EnableStateMachine, "true"]
+  CreatePipelineRoles: !And [!Condition CreateCustomRoles, !Condition HasStateMachineDefinition]
+
+Resources:
+  # ---------------------------------------------------------------------------
+  # S3 Data Lake Bucket (Raw / Incoming / Staged / Processed / Trusted / Quarantine)
+  # ---------------------------------------------------------------------------
+  DataBucket:
+    Type: AWS::S3::Bucket
+    Condition: ShouldCreateDataBucket
+    DeletionPolicy: Retain
+    UpdateReplacePolicy: Retain
+    Properties:
+      BucketName: !If
+        - HasCustomDataBucketName
+        - !Ref DataBucketName
+        - !Sub "tuamyang-${Stage}-data-${AWS::AccountId}"
+      BucketEncryption:
+        ServerSideEncryptionConfiguration:
+          - ServerSideEncryptionByDefault:
+              SSEAlgorithm: AES256
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      NotificationConfiguration:
+        EventBridgeConfiguration:
+          EventBridgeEnabled: true
+
+  # ---------------------------------------------------------------------------
+  # ThaiWater Ingestion Lambda + Schedules + LogGroup + Least-privilege Role
+  # ---------------------------------------------------------------------------
+  IngestThaiWaterFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub tuamyang-${Stage}-ingest-thaiwater
+      Description: Ingests real-time water level (15m) and rainfall (1h) from ThaiWater API
+      Handler: src.ingest_thaiwater.lambda_handler
+      CodeUri: .aws-sam/stage/thaiwater/
+      Runtime: python3.12
+      Timeout: 300
+      MemorySize: 256
+      Environment:
+        Variables:
+          STORAGE_BACKEND: s3
+          S3_BUCKET_NAME: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+      Role: !If
+        - UseExistingRole
+        - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ExistingRoleName}"
+        - !GetAtt IngestThaiWaterFunctionRole.Arn
+      Events:
+        WaterLevelSchedule:
+          Type: Schedule
+          Properties:
+            Name: !Sub tuamyang-${Stage}-thaiwater-waterlevel-15min
+            Description: Trigger ingest_thaiwater waterlevel every 15 minutes
+            Schedule: rate(15 minutes)
+            State: ENABLED
+            Input: '{"type":"waterlevel"}'
+        RainSchedule:
+          Type: Schedule
+          Properties:
+            Name: !Sub tuamyang-${Stage}-thaiwater-rain-1hr
+            Description: Trigger ingest_thaiwater rain every 1 hour
+            Schedule: rate(1 hour)
+            State: ENABLED
+            Input: '{"type":"rain"}'
+
+  IngestThaiWaterFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/tuamyang-${Stage}-ingest-thaiwater
+      RetentionInDays: 30
+
+  IngestThaiWaterFunctionRole:
+    Type: AWS::IAM::Role
+    Condition: CreateCustomRoles
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: {Service: lambda.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: thaiwater-ingest-s3
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:ListBucket
+                Resource: !Sub
+                  - "arn:aws:s3:::${Bucket}"
+                  - Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource:
+                  - !Sub
+                    - "arn:aws:s3:::${Bucket}/incoming/*"
+                    - Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+                  - !Sub
+                    - "arn:aws:s3:::${Bucket}/raw/*"
+                    - Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+                  - !Sub
+                    - "arn:aws:s3:::${Bucket}/checkpoints/*"
+                    - Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+
+  # ---------------------------------------------------------------------------
+  # Traffy Fondue Ingestion Lambda + Schedules + LogGroup + Least-privilege Role
+  # ---------------------------------------------------------------------------
+  IngestTraffyFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: !Sub tuamyang-${Stage}-ingest-traffy
+      Description: Ingests daily closed-day (and optional hourly provisional) Bangkok Traffy Fondue reports
+      Handler: src.ingest_traffy.lambda_handler
+      CodeUri: .aws-sam/stage/traffy/
+      Runtime: python3.12
+      Timeout: 300
+      MemorySize: 256
+      Environment:
+        Variables:
+          STORAGE_BACKEND: s3
+          S3_BUCKET_NAME: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+      Role: !If
+        - UseExistingRole
+        - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ExistingRoleName}"
+        - !GetAtt IngestTraffyFunctionRole.Arn
+      Events:
+        TraffyDailySchedule:
+          Type: Schedule
+          Properties:
+            Name: !Sub tuamyang-${Stage}-traffy-daily
+            Description: Ingest yesterday in Bangkok at 01:15 Asia/Bangkok (18:15 UTC)
+            Schedule: cron(15 18 * * ? *)
+            State: ENABLED
+            Input: '{"mode":"daily","storage_backend":"s3","force":true}'
+        TraffyHourlySchedule:
+          Type: Schedule
+          Properties:
+            Name: !Sub tuamyang-${Stage}-traffy-hourly
+            Description: Optional heavy-rain polling at minute 0 of every hour
+            Schedule: cron(0 * * * ? *)
+            State: !If [ShouldEnableTraffyHourly, ENABLED, DISABLED]
+            Input: '{"mode":"hourly","storage_backend":"s3"}'
+
+  IngestTraffyFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Sub /aws/lambda/tuamyang-${Stage}-ingest-traffy
+      RetentionInDays: 30
+
+  IngestTraffyFunctionRole:
+    Type: AWS::IAM::Role
+    Condition: CreateCustomRoles
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: {Service: lambda.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: traffy-ingest-s3
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:ListBucket
+                Resource: !Sub
+                  - "arn:aws:s3:::${Bucket}"
+                  - Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                Resource:
+                  - !Sub
+                    - "arn:aws:s3:::${Bucket}/incoming/*"
+                    - Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+                  - !Sub
+                    - "arn:aws:s3:::${Bucket}/raw/*"
+                    - Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+                  - !Sub
+                    - "arn:aws:s3:::${Bucket}/staged/*"
+                    - Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+                  - !Sub
+                    - "arn:aws:s3:::${Bucket}/checkpoints/*"
+                    - Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+
+  # ---------------------------------------------------------------------------
+  # Orchestration + Validation Pipeline (Issue #1 / PR #12)
+  # Matches docs/orchestration_validation.md snippet
+  # ---------------------------------------------------------------------------
+  PipelineStepFunction:
+    Type: AWS::Serverless::Function
+    Condition: HasStateMachineDefinition
+    Properties:
+      FunctionName: !Sub tuamyang-${Stage}-pipeline-step
+      Handler: src.validation.pipeline.lambda_handler
+      CodeUri: .aws-sam/stage/thaiwater/          # src/ config/ reference/ ชุดเดียวกับ ingest_thaiwater
+      Runtime: python3.12
+      Timeout: 120
+      MemorySize: 512                              # Traffy 1 วัน ~6 MB JSON
+      Environment:
+        Variables:
+          STORAGE_BACKEND: s3
+          S3_BUCKET_NAME: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+      Role: !If
+        - UseExistingRole
+        - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ExistingRoleName}"
+        - !GetAtt PipelineStepFunctionRole.Arn
+
+  PipelineStepFunctionLogGroup:
+    Type: AWS::Logs::LogGroup
+    Condition: HasStateMachineDefinition
+    Properties:
+      LogGroupName: !Sub /aws/lambda/tuamyang-${Stage}-pipeline-step
+      RetentionInDays: 30
+
+  PipelineStateMachine:
+    Type: AWS::Serverless::StateMachine
+    Condition: HasStateMachineDefinition
+    Properties:
+      Name: !Sub tuamyang-${Stage}-pipeline
+      Type: STANDARD
+      DefinitionUri: statemachine/pipeline.asl.json
+      DefinitionSubstitutions:
+        PipelineFunctionArn: !GetAtt PipelineStepFunction.Arn
+      Role: !If
+        - UseExistingRole
+        - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ExistingRoleName}"
+        - !GetAtt PipelineStateMachineRole.Arn
+      # ไม่ใช้ Events: ของ SAM เพราะจะสร้าง IAM role ให้ rule เอง (พังบน Learner Lab, D6)
+
+  PipelineIncomingRule:
+    Type: AWS::Events::Rule
+    Condition: HasStateMachineDefinition
+    Properties:
+      Name: !Sub tuamyang-${Stage}-pipeline-incoming
+      Description: Start the batch pipeline for every new object under incoming/
+      EventPattern:
+        source: [aws.s3]
+        detail-type: [Object Created]
+        detail:
+          bucket:
+            name: [!If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]]
+          object:
+            key: [{prefix: incoming/}]
+      Targets:
+        - Id: tuamyang-pipeline
+          Arn: !Ref PipelineStateMachine           # Ref ของ state machine = ARN
+          RoleArn: !If
+            - UseExistingRole
+            - !Sub "arn:aws:iam::${AWS::AccountId}:role/${ExistingRoleName}"
+            - !GetAtt StateMachineEventBridgeRole.Arn
+
+  # --- role ของ prod เท่านั้น (dev ใช้ LabRole) ไม่ตั้ง RoleName เพื่อใช้แค่ CAPABILITY_IAM ---
+  PipelineStepFunctionRole:
+    Type: AWS::IAM::Role
+    Condition: CreatePipelineRoles
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: {Service: lambda.amazonaws.com}
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: pipeline-s3
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: s3:ListBucket                # ให้ HeadObject ตอบ 404 แทน 403
+                Resource: !Sub ["arn:aws:s3:::${Bucket}", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+              - Effect: Allow
+                Action: s3:GetObject
+                Resource:
+                  - !Sub ["arn:aws:s3:::${Bucket}/incoming/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+                  - !Sub ["arn:aws:s3:::${Bucket}/checkpoints/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+                  - !Sub ["arn:aws:s3:::${Bucket}/processed/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+                  - !Sub ["arn:aws:s3:::${Bucket}/trusted/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+              - Effect: Allow
+                Action: s3:PutObject
+                Resource:
+                  - !Sub ["arn:aws:s3:::${Bucket}/processed/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+                  - !Sub ["arn:aws:s3:::${Bucket}/trusted/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+                  - !Sub ["arn:aws:s3:::${Bucket}/quarantine/*", {Bucket: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]}]
+
+  PipelineStateMachineRole:
+    Type: AWS::IAM::Role
+    Condition: CreatePipelineRoles
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: {Service: states.amazonaws.com}
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: invoke-pipeline-step
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: lambda:InvokeFunction
+                Resource:
+                  - !GetAtt PipelineStepFunction.Arn
+                  - !Sub "${PipelineStepFunction.Arn}:*"
+
+  StateMachineEventBridgeRole:
+    Type: AWS::IAM::Role
+    Condition: CreatePipelineRoles
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal: {Service: events.amazonaws.com}
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: start-pipeline
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Effect: Allow
+                Action: states:StartExecution
+                Resource: !Ref PipelineStateMachine
+
+Outputs:
+  DataBucketNameOutput:
+    Description: S3 Data Lake Bucket Name
+    Value: !If [ShouldCreateDataBucket, !Ref DataBucket, !Ref DataBucketName]
+
+  IngestThaiWaterFunctionArn:
+    Description: ARN of the ThaiWater Ingestion Lambda Function
+    Value: !GetAtt IngestThaiWaterFunction.Arn
+
+  IngestTraffyFunctionArn:
+    Description: ARN of the Traffy Ingestion Lambda Function
+    Value: !GetAtt IngestTraffyFunction.Arn
+
+  PipelineStepFunctionArn:
+    Condition: HasStateMachineDefinition
+    Description: ARN of the Validation Pipeline Step Lambda Function
+    Value: !GetAtt PipelineStepFunction.Arn
+
+  PipelineStateMachineArn:
+    Condition: HasStateMachineDefinition
+    Description: ARN of the Validation & Orchestration Step Functions State Machine
+    Value: !Ref PipelineStateMachine
