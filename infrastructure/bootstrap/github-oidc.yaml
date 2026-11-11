@@ -1,0 +1,285 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Description: >
+  CS341-TuamYang IAM Bootstrap for GitHub Actions OIDC Deployment (Issue #11 D3/D4/5.4).
+  Creates TuamYangGitHubDeployerRole (assumed via GitHub OIDC in environment 'production')
+  and TuamYangCfnExecutionRole (CloudFormation service role for stack tuamyang-prod).
+
+Parameters:
+  CreateOidcProvider:
+    Type: String
+    Default: "false"
+    AllowedValues:
+      - "true"
+      - "false"
+    Description: >
+      Set to "false" when the AWS account already has an IAM OIDC provider for
+      token.actions.githubusercontent.com (e.g. shared with perimeter).
+
+  GitHubOrg:
+    Type: String
+    Default: zero-h0ur
+    Description: GitHub repository owner / organization
+
+  GitHubRepo:
+    Type: String
+    Default: CS341-TuamYang
+    Description: GitHub repository name
+
+  GitHubEnvironment:
+    Type: String
+    Default: production
+    Description: GitHub Environment name allowed to assume the deployer role
+
+Conditions:
+  ShouldCreateOidcProvider: !Equals [!Ref CreateOidcProvider, "true"]
+
+Resources:
+  GitHubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Condition: ShouldCreateOidcProvider
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList:
+        - sts.amazonaws.com
+      ThumbprintList:
+        - 6938fd4d98bab03faadb97b34396831e3780aea1
+        - 1c58a3a8518e8759bf075b76b750d4f2df264fcd
+
+  TuamYangGitHubDeployerRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: TuamYangGitHubDeployerRole
+      Description: Assumed by GitHub Actions OIDC in environment production to deploy tuamyang-prod
+      MaxSessionDuration: 3600
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Federated: !If
+                - ShouldCreateOidcProvider
+                - !GetAtt GitHubOidcProvider.Arn
+                - !Sub "arn:aws:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com"
+            Action: sts:AssumeRoleWithWebIdentity
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                token.actions.githubusercontent.com:sub:
+                  - !Sub "repo:${GitHubOrg}/${GitHubRepo}:environment:production"
+                  - !Sub "repo:${GitHubOrg}@*/${GitHubRepo}@*:environment:production"
+      Policies:
+        - PolicyName: TuamYangGitHubDeployerPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: CloudFormationStackManagement
+                Effect: Allow
+                Action:
+                  - cloudformation:CreateStack
+                  - cloudformation:UpdateStack
+                  - cloudformation:DeleteStack
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:ExecuteChangeSet
+                  - cloudformation:DeleteChangeSet
+                  - cloudformation:DescribeChangeSet
+                  - cloudformation:ListChangeSets
+                  - cloudformation:DescribeStacks
+                  - cloudformation:DescribeStackEvents
+                  - cloudformation:DescribeStackResources
+                  - cloudformation:DescribeStackResource
+                  - cloudformation:GetTemplate
+                  - cloudformation:GetTemplateSummary
+                  - cloudformation:SetStackPolicy
+                Resource:
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/tuamyang-*/*"
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/aws-sam-cli-managed-default/*"
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31"
+              - Sid: CloudFormationGlobalReadValidate
+                Effect: Allow
+                Action:
+                  - cloudformation:ValidateTemplate
+                  - cloudformation:GetTemplateSummary
+                  - cloudformation:ListStacks
+                  - cloudformation:DescribeStacks
+                Resource: "*"
+              - Sid: SamCliManagedArtifactBucket
+                Effect: Allow
+                Action:
+                  - s3:CreateBucket
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                  - s3:GetBucketPolicy
+                  - s3:PutBucketPolicy
+                  - s3:DeleteBucketPolicy
+                  - s3:GetBucketTagging
+                  - s3:PutBucketTagging
+                  - s3:GetEncryptionConfiguration
+                  - s3:PutBucketEncryption
+                  - s3:GetBucketPublicAccessBlock
+                  - s3:PutBucketPublicAccessBlock
+                  - s3:GetBucketVersioning
+                  - s3:PutBucketVersioning
+                  - s3:GetLifecycleConfiguration
+                  - s3:PutLifecycleConfiguration
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                  - s3:DeleteObject
+                  - s3:AbortMultipartUpload
+                  - s3:ListBucketMultipartUploads
+                Resource:
+                  - "arn:aws:s3:::aws-sam-cli-managed-default-*"
+                  - "arn:aws:s3:::aws-sam-cli-managed-default-*/*"
+              - Sid: PassCfnExecutionRole
+                Effect: Allow
+                Action: iam:PassRole
+                Resource: !GetAtt TuamYangCfnExecutionRole.Arn
+                Condition:
+                  StringEquals:
+                    iam:PassedToService: cloudformation.amazonaws.com
+              - Sid: PostDeploySmokeVerification
+                Effect: Allow
+                Action:
+                  - lambda:InvokeFunction
+                  - lambda:GetFunction
+                  - lambda:GetFunctionConfiguration
+                  - events:DescribeRule
+                  - events:ListTargetsByRule
+                  - states:DescribeStateMachine
+                  - s3:GetBucketNotification
+                  - s3:ListBucket
+                Resource:
+                  - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:tuamyang-*"
+                  - !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/tuamyang-*"
+                  - !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:tuamyang-*"
+                  - "arn:aws:s3:::tuamyang-*"
+
+  TuamYangCfnExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: TuamYangCfnExecutionRole
+      Description: CloudFormation Execution Role for CS341-TuamYang stack (tuamyang-prod)
+      AssumeRolePolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: cloudformation.amazonaws.com
+            Action: sts:AssumeRole
+      Policies:
+        - PolicyName: TuamYangCfnExecutionPolicy
+          PolicyDocument:
+            Version: "2012-10-17"
+            Statement:
+              - Sid: ServerlessTransform
+                Effect: Allow
+                Action:
+                  - cloudformation:CreateChangeSet
+                  - cloudformation:DescribeStacks
+                Resource:
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:aws:transform/Serverless-2016-10-31"
+                  - !Sub "arn:aws:cloudformation:${AWS::Region}:${AWS::AccountId}:stack/tuamyang-*/*"
+              - Sid: S3DataAndSamArtifactBuckets
+                Effect: Allow
+                Action:
+                  - s3:CreateBucket
+                  - s3:DeleteBucket
+                  - s3:ListBucket
+                  - s3:GetBucketLocation
+                  - s3:GetBucketPolicy
+                  - s3:PutBucketPolicy
+                  - s3:DeleteBucketPolicy
+                  - s3:GetEncryptionConfiguration
+                  - s3:PutBucketEncryption
+                  - s3:GetBucketPublicAccessBlock
+                  - s3:PutBucketPublicAccessBlock
+                  - s3:GetBucketNotification
+                  - s3:PutBucketNotification
+                  - s3:GetBucketTagging
+                  - s3:PutBucketTagging
+                  - s3:DeleteBucketTagging
+                  - s3:GetObject
+                  - s3:GetObjectVersion
+                  - s3:PutObject
+                Resource:
+                  - "arn:aws:s3:::tuamyang-*"
+                  - "arn:aws:s3:::tuamyang-*/*"
+                  - "arn:aws:s3:::aws-sam-cli-managed-default-*"
+                  - "arn:aws:s3:::aws-sam-cli-managed-default-*/*"
+              - Sid: LambdaManagement
+                Effect: Allow
+                Action:
+                  - lambda:*
+                Resource:
+                  - !Sub "arn:aws:lambda:${AWS::Region}:${AWS::AccountId}:function:tuamyang-*"
+              - Sid: CloudWatchLogsManagement
+                Effect: Allow
+                Action:
+                  - logs:CreateLogGroup
+                  - logs:DeleteLogGroup
+                  - logs:DescribeLogGroups
+                  - logs:PutRetentionPolicy
+                  - logs:DeleteRetentionPolicy
+                  - logs:TagResource
+                  - logs:UntagResource
+                  - logs:TagLogGroup
+                  - logs:UntagLogGroup
+                  - logs:ListTagsLogGroup
+                  - logs:ListTagsForResource
+                Resource:
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/tuamyang-*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/tuamyang-*:*"
+                  - !Sub "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:*"
+              - Sid: StepFunctionsManagement
+                Effect: Allow
+                Action:
+                  - states:*
+                Resource:
+                  - !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:stateMachine:tuamyang-*"
+                  - !Sub "arn:aws:states:${AWS::Region}:${AWS::AccountId}:execution:tuamyang-*:*"
+              - Sid: EventBridgeRulesManagement
+                Effect: Allow
+                Action:
+                  - events:PutRule
+                  - events:PutTargets
+                  - events:DeleteRule
+                  - events:RemoveTargets
+                  - events:DescribeRule
+                  - events:EnableRule
+                  - events:DisableRule
+                  - events:TagResource
+                  - events:UntagResource
+                  - events:ListTagsForResource
+                  - events:ListTargetsByRule
+                Resource:
+                  - !Sub "arn:aws:events:${AWS::Region}:${AWS::AccountId}:rule/tuamyang-*"
+              - Sid: IamRolesForTuamYangStack
+                Effect: Allow
+                Action:
+                  - iam:CreateRole
+                  - iam:DeleteRole
+                  - iam:GetRole
+                  - iam:UpdateRole
+                  - iam:UpdateAssumeRolePolicy
+                  - iam:PutRolePolicy
+                  - iam:DeleteRolePolicy
+                  - iam:GetRolePolicy
+                  - iam:ListRolePolicies
+                  - iam:AttachRolePolicy
+                  - iam:DetachRolePolicy
+                  - iam:ListAttachedRolePolicies
+                  - iam:TagRole
+                  - iam:UntagRole
+                  - iam:PassRole
+                Resource:
+                  - !Sub "arn:aws:iam::${AWS::AccountId}:role/tuamyang-*"
+
+Outputs:
+  DeployerRoleArn:
+    Description: ARN of TuamYangGitHubDeployerRole (set as GitHub Environment variable AWS_DEPLOYER_ROLE_ARN)
+    Value: !GetAtt TuamYangGitHubDeployerRole.Arn
+
+  CfnExecutionRoleArn:
+    Description: ARN of TuamYangCfnExecutionRole (set as GitHub Environment variable AWS_CFN_EXECUTION_ROLE_ARN)
+    Value: !GetAtt TuamYangCfnExecutionRole.Arn

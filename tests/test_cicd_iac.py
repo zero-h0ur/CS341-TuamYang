@@ -171,6 +171,54 @@ class TestSamConfigContract(unittest.TestCase):
         self.assertIn('EnableStateMachine="true"', prod_params["parameter_overrides"])
 
 
+class TestBootstrapOidcContract(unittest.TestCase):
+    """Seam B (5.4): infrastructure/bootstrap/github-oidc.yaml contract."""
+
+    def test_bootstrap_template_roles_trust_and_permissions(self):
+        import re
+
+        oidc_path = PROJECT_ROOT / "infrastructure" / "bootstrap" / "github-oidc.yaml"
+        self.assertTrue(oidc_path.is_file(), "infrastructure/bootstrap/github-oidc.yaml must exist")
+        text = oidc_path.read_text(encoding="utf-8")
+
+        for param in ("CreateOidcProvider:", "GitHubOrg:", "GitHubRepo:"):
+            self.assertIn(param, text)
+
+        for resource in ("TuamYangGitHubDeployerRole:", "TuamYangCfnExecutionRole:"):
+            self.assertIn(resource, text)
+
+        # Verify OIDC trust policy subjects and audience
+        self.assertIn("token.actions.githubusercontent.com:aud", text)
+        self.assertIn("sts.amazonaws.com", text)
+        self.assertIn("token.actions.githubusercontent.com:sub", text)
+        self.assertIn("environment:production", text)
+
+        # Verify required permissions on TuamYangCfnExecutionRole for Issue #1 (PR #12)
+        for action in (
+            "states:*",
+            "events:PutRule",
+            "events:PutTargets",
+            "events:DeleteRule",
+            "events:RemoveTargets",
+            "events:DescribeRule",
+            "iam:CreateRole",
+            "iam:DeleteRole",
+            "iam:PutRolePolicy",
+            "iam:DeleteRolePolicy",
+            "iam:AttachRolePolicy",
+            "iam:DetachRolePolicy",
+            "iam:PassRole",
+        ):
+            self.assertIn(action, text, f"Missing required IAM permission {action}")
+
+        # Verify required Outputs
+        self.assertIn("DeployerRoleArn:", text)
+        self.assertIn("CfnExecutionRoleArn:", text)
+
+        # Verify no hardcoded 12-digit AWS account IDs
+        self.assertIsNone(re.search(r"\b\d{12}\b", text))
+
+
 if __name__ == "__main__":
     unittest.main()
 
