@@ -1,0 +1,48 @@
+{
+  "total_curated_khwaeng_hourly_rows": 3972,
+  "total_traffy_reports_evaluated": 9614,
+  "missing_data_audit": {
+    "null_waterlevel_percentage": 6.04,
+    "null_rain_percentage": 10.83,
+    "telemetry_gaps_noted": [
+      "Station 5 (Khlong Mahasawat): Contains 1,513 valid telemetry points out of 4,320 monthly slots in Sep 2026 (294/432 in Sep 24-26).",
+      "Rain Stations 10 (Phasi Charoen), 528802 (Samsen), and 528848 (Samre): Missing daily rainfall on Sep 25.",
+      "Rain Station 1129393 (Building 901): Missing daily rainfall on Sep 26 (recorded 187.0mm on Sep 25)."
+    ]
+  },
+  "sensor_outliers_audit": {
+    "detected_outlier_count": 319,
+    "waterlevel_datum_mismatch": {
+      "station_id": 10,
+      "station_name": "คลองภาษีเจริญ เพชรเกษม69",
+      "quality_flag": "SUSPECT_DATUM_MISMATCH",
+      "usable_for_freeboard": false,
+      "observed_waterlevel_range_msl": [
+        -6.149,
+        -1.719
+      ],
+      "min_bank_msl": 1.42,
+      "handling": "Isolated into risk_tier='SUSPECT_DATUM' with min_freeboard_m=null (raw_freeboard_m preserved for audit) per schema_contract.md."
+    },
+    "rain_sensor_outage": {
+      "station_id": 852087,
+      "station_name": "อโศก",
+      "quality_flag": "SUSPECT_RAIN_SENSOR_OUTAGE",
+      "usable_for_rainfall": false,
+      "handling": "Excluded from nearest rain station assignment; inner-city khwaengs route to verified Station 3711 (169.4mm on Sep 25) and Station 2 (205.4mm on Sep 25)."
+    }
+  },
+  "stale_stations_audit": {
+    "stale_station_id": 2599,
+    "stale_station_code": "C.12",
+    "stale_station_name": "กรมชลประทานสามเสน",
+    "cadence": "Hourly (24 readings/day vs 144 for other 7 telemetric stations)",
+    "observed_lag": "> 2 hours behind real-time during live ingestion (69/72 hours reported during Sep 24-26)."
+  },
+  "spatial_join_coverage": {
+    "valid_coordinate_rate_pct": 100.0,
+    "khwaeng_extraction_match_pct": 99.07,
+    "khet_extraction_match_pct": 89.55,
+    "unmatched_reports_count": 89
+  }
+}

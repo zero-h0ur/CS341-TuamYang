@@ -24,5 +24,8 @@ data/incoming/traffy/
 data/staged/traffy/
 data/checkpoints/traffy/
 data/review/traffy/
+data/trusted/traffy/
+data/processed/traffy/
+data/quarantine/traffy/
 dist/
 
