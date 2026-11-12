@@ -1,0 +1,105 @@
+name: CD - Production (SAM)
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "template.yaml"
+      - "samconfig.toml"
+      - "src/**"
+      - "config/**"
+      - "reference/**"
+      - "scripts/stage_lambda.py"
+      - "statemachine/**"
+      - ".github/workflows/cd-prod.yml"
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: read
+
+concurrency:
+  group: deploy-prod
+  cancel-in-progress: false
+
+jobs:
+  deploy-prod:
+    name: deploy-prod
+    runs-on: ubuntu-latest
+    environment: production
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: Configure AWS Credentials via OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_DEPLOYER_ROLE_ARN }}
+          aws-region: ap-southeast-1
+
+      - name: Stage Lambda bundles and build SAM application
+        run: |
+          python -X utf8 scripts/stage_lambda.py
+          sam build
+
+      - name: Deploy stack tuamyang-prod to ap-southeast-1
+        run: |
+          sam deploy \
+            --config-env prod \
+            --no-confirm-changeset \
+            --no-fail-on-empty-changeset \
+            --role-arn ${{ vars.AWS_CFN_EXECUTION_ROLE_ARN }}
+
+      - name: Post-deploy smoke verification
+        run: |
+          set -euo pipefail
+
+          STACK_STATUS=$(aws cloudformation describe-stacks \
+            --stack-name tuamyang-prod \
+            --region ap-southeast-1 \
+            --query "Stacks[0].StackStatus" \
+            --output text)
+          echo "Stack tuamyang-prod status: ${STACK_STATUS}"
+          if [[ "${STACK_STATUS}" != "CREATE_COMPLETE" && "${STACK_STATUS}" != "UPDATE_COMPLETE" ]]; then
+            echo "ERROR: Unexpected stack status ${STACK_STATUS}"
+            exit 1
+          fi
+
+          for fn in tuamyang-prod-ingest-thaiwater tuamyang-prod-ingest-traffy tuamyang-prod-pipeline-step; do
+            echo "DryRun invoking ${fn}..."
+            aws lambda invoke \
+              --function-name "${fn}" \
+              --invocation-type DryRun \
+              --region ap-southeast-1 \
+              /dev/null
+          done
+
+          for rule in \
+            tuamyang-prod-thaiwater-waterlevel-15min \
+            tuamyang-prod-thaiwater-rain-1hr \
+            tuamyang-prod-traffy-daily \
+            tuamyang-prod-pipeline-incoming; do
+            RULE_STATE=$(aws events describe-rule \
+              --name "${rule}" \
+              --region ap-southeast-1 \
+              --query "State" \
+              --output text)
+            echo "Rule ${rule} state: ${RULE_STATE}"
+            if [[ "${RULE_STATE}" != "ENABLED" ]]; then
+              echo "ERROR: Rule ${rule} is not ENABLED (got ${RULE_STATE})"
+              exit 1
+            fi
+          done
+
+          echo "All post-deploy smoke checks passed."

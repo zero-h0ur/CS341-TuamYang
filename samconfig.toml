@@ -1,0 +1,33 @@
+version = 0.1
+
+# "dev" = personal AWS Academy Learner Lab sandbox (us-east-1).
+# Teammates deploy here manually with:
+#   python -X utf8 scripts/stage_lambda.py && sam build && sam deploy --config-env dev
+# Creates a unique bucket tuamyang-dev-data-${AWS::AccountId} with EventBridge enabled.
+# To reuse an existing bucket instead, append:
+#   --parameter-overrides Stage=dev ExistingRoleName=LabRole CreateDataBucket=false DataBucketName=cs341-tuamyang-data EnableStateMachine=true
+[dev.deploy.parameters]
+stack_name = "tuamyang-dev"
+resolve_s3 = true
+s3_prefix = "tuamyang-dev"
+region = "us-east-1"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
+parameter_overrides = "Stage=\"dev\" ExistingRoleName=\"LabRole\" CreateDataBucket=\"true\" EnableStateMachine=\"true\""
+
+[dev.global.parameters]
+region = "us-east-1"
+
+# "prod" = AWS Production Account (Free Tier, ap-southeast-1).
+# Deployed exclusively by GitHub Actions CD (.github/workflows/cd-prod.yml) via OIDC.
+[prod.deploy.parameters]
+stack_name = "tuamyang-prod"
+resolve_s3 = true
+s3_prefix = "tuamyang-prod"
+region = "ap-southeast-1"
+capabilities = "CAPABILITY_IAM"
+image_repositories = []
+parameter_overrides = "Stage=\"prod\" ExistingRoleName=\"\" CreateDataBucket=\"true\" EnableStateMachine=\"true\""
+
+[prod.global.parameters]
+region = "ap-southeast-1"

@@ -1,0 +1,63 @@
+name: CI
+
+on:
+  pull_request:
+    branches:
+      - main
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  ci:
+    name: ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Set up AWS SAM CLI
+        uses: aws-actions/setup-sam@v2
+        with:
+          use-installer: true
+
+      - name: Install cfn-lint
+        run: python -X utf8 -m pip install --upgrade pip cfn-lint
+
+      - name: Run full unit test suite
+        run: python -X utf8 -m unittest discover -s tests -v
+
+      - name: Check Traffy deployment argument wiring with mocked AWS
+        shell: pwsh
+        run: ./tests/test_deploy_traffy.ps1
+
+      - name: Build Traffy standalone archive check
+        run: python -X utf8 -m scripts.package_traffy
+
+      - name: Stage Lambda bundles and verify clean staging
+        run: |
+          python -X utf8 scripts/stage_lambda.py
+          if [ -d ".aws-sam/stage/thaiwater/data" ] || [ -d ".aws-sam/stage/traffy/data" ]; then
+            echo "ERROR: data/ directory leaked into .aws-sam/stage/"
+            exit 1
+          fi
+
+      - name: Lint and validate CloudFormation and SAM templates
+        env:
+          AWS_DEFAULT_REGION: ap-southeast-1
+          AWS_ACCESS_KEY_ID: offline-ci-check
+          AWS_SECRET_ACCESS_KEY: offline-ci-check
+        run: |
+          cfn-lint template.yaml infrastructure/bootstrap/github-oidc.yaml --ignore-checks W1031
+          sam validate --region ap-southeast-1
+
+      - name: Build SAM application
+        run: sam build

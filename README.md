@@ -1,6 +1,12 @@
 # CS341-TuamYang
 CS341 Term Project: Bangkok flood risk data pipeline (water level vs bank height + Traffy Fondue flood reports, by khwaeng)
 
+## CI/CD, Infrastructure as Code (AWS SAM) & Orchestration
+
+- [คู่มือการใช้งาน CI/CD & AWS SAM สำหรับทีม (`dev` Learner Lab / `prod`)](docs/cicd_team_guide.md)
+- [คู่มือตั้งค่า Admin Bootstrap & GitHub OIDC (`ap-southeast-1`)](docs/cicd_setup.md)
+- [Orchestration + Validation Pipeline (Step Functions & กติกาตรวจข้อมูล)](docs/orchestration_validation.md)
+
 ## Traffy ingestion - Checkpoint (สมาชิก 2)
 
 ดึงข้อมูล Traffy รายวัน/ย้อนหลัง เก็บข้อมูลจริง ตรวจข้อความน้ำท่วม และส่งข้อมูลให้ทีมทำ spatial join และ Q2 ต่อ

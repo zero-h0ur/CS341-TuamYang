@@ -28,4 +28,5 @@ data/trusted/traffy/
 data/processed/traffy/
 data/quarantine/traffy/
 dist/
+.aws-sam/
 
