@@ -80,7 +80,7 @@ ORDER BY
 -- (Low Freeboard -> Flood Complaints in Nearby Subdistricts)
 -- ------------------------------------------------------------------------------
 
--- Q2.1: สรุปสัดส่วนรายงานน้ำท่วมจำแนกตามระดับความเสี่ยงของระยะพ้นตลิ่ง (Risk Tier)
+-- Q2.1: สรุปสัดส่วนรายงานน้ำท่วมจำแนกตามระดับความเสี่ยงของระยะพ้นตลิ่ง (Risk Tier — ทั้ง กทม. Pooled 3 วัน)
 SELECT
     risk_tier,
     CASE
@@ -104,7 +104,49 @@ GROUP BY
 ORDER BY
     flood_report_ratio_pct DESC;
 
--- Q2.2: พัฒนาการรายวัน เปรียบเทียบสัดส่วนรายงานน้ำท่วมกับจำนวนชั่วโมงที่น้ำล้นตลิ่ง
+-- Q2.2: สรุปสัดส่วนรายงานน้ำท่วมเฉพาะแขวงที่อยู่ใกล้สถานีวัดน้ำ (water_station_dist_km <= 2.0 km)
+SELECT
+    risk_tier,
+    count(*) AS khwaeng_hours_count,
+    sum(total_reports) AS total_reports,
+    sum(flood_reports) AS flood_reports,
+    sum(uncertain_reports) AS uncertain_reports,
+    sum(non_flood_reports) AS non_flood_reports,
+    round(cast(sum(flood_reports) AS DOUBLE) / nullif(sum(total_reports), 0) * 100, 2) AS flood_report_ratio_pct
+FROM curated.khwaeng_hourly
+WHERE dt IN ('2026-09-24', '2026-09-25', '2026-09-26')
+    AND water_station_dist_km <= 2.0
+GROUP BY
+    risk_tier
+ORDER BY
+    flood_report_ratio_pct DESC;
+
+-- Q2.3: เปรียบเทียบตาม Risk Tier ภายในวันเดียวกัน (Within-Day Comparison ลดผลกระทบ Confounding จากวันพายุฝน)
+SELECT
+    dt,
+    risk_tier,
+    count(*) AS khwaeng_hours_all,
+    sum(total_reports) AS total_reports_all,
+    sum(flood_reports) AS flood_reports_all,
+    round(cast(sum(flood_reports) AS DOUBLE) / nullif(sum(total_reports), 0) * 100, 2) AS flood_ratio_all_pct,
+    count(CASE WHEN water_station_dist_km <= 2.0 THEN 1 END) AS khwaeng_hours_within_2km,
+    sum(CASE WHEN water_station_dist_km <= 2.0 THEN total_reports ELSE 0 END) AS total_reports_within_2km,
+    sum(CASE WHEN water_station_dist_km <= 2.0 THEN flood_reports ELSE 0 END) AS flood_reports_within_2km,
+    round(
+        cast(sum(CASE WHEN water_station_dist_km <= 2.0 THEN flood_reports ELSE 0 END) AS DOUBLE)
+        / nullif(sum(CASE WHEN water_station_dist_km <= 2.0 THEN total_reports ELSE 0 END), 0) * 100,
+        2
+    ) AS flood_ratio_within_2km_pct
+FROM curated.khwaeng_hourly
+WHERE dt IN ('2026-09-24', '2026-09-25', '2026-09-26')
+GROUP BY
+    dt,
+    risk_tier
+ORDER BY
+    dt,
+    flood_ratio_all_pct DESC;
+
+-- Q2.4: พัฒนาการรายวัน เปรียบเทียบสัดส่วนรายงานน้ำท่วมกับจำนวนชั่วโมงที่น้ำล้นตลิ่ง
 SELECT
     dt,
     sum(total_reports) AS daily_total_reports,
@@ -118,7 +160,7 @@ GROUP BY
 ORDER BY
     dt;
 
--- Q2.3: รายชื่อ 10 แขวงแรกที่ได้รับผลกระทบจากน้ำท่วมสูงสุดในวันที่ฝนตกหนักสุด (2026-09-26)
+-- Q2.5: รายชื่อ 10 แขวงแรกที่ได้รับผลกระทบจากน้ำท่วมสูงสุดในวันที่ฝนตกหนักสุด (2026-09-26)
 SELECT
     khet,
     khwaeng,

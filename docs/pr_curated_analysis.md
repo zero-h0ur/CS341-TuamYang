@@ -18,9 +18,11 @@ Owner: @nustapark6709650334 (นายณัฐภาคย์ ไกรวิ�
   - `sql/data_quality_checks.sql`: Query ตรวจสอบคุณภาพข้อมูล (Missing, Outliers/Datum Mismatch, Stale data, Join rate)
 - **ผลการวิเคราะห์กรณีศึกษา 24–26 ก.ย. 2569 (จาก 9,614 รายงาน Traffy, 3,972 แถว Curated)** —
   - **Q1:** พายุฝนหนักสุดวันที่ 25 ก.ย. (สูงสุด 230.2 mm ที่วัดบางบัว, 205.4 mm ที่บางกะปิ) ทำให้คลองหกวาล้นตลิ่งทันที (-0.069 m) และเกิด Lag Time ของน้ำหลากตอนบนทำให้คลองลาดพร้าวขึ้นแตะจุดสูงสุด 2.824 m MSL (ล้นตลิ่ง 0.624 m) ในวันที่ 26 ก.ย.
-  - **Q2:** สัดส่วนเรื่องร้องเรียนน้ำท่วมเพิ่มขึ้นเป็นขั้นบันไดตามความเสี่ยงระยะพ้นตลิ่ง: `NORMAL` (**25.47%**) $\rightarrow$ `WATCH` (**56.03%**) $\rightarrow$ `HIGH_ALERT` (**84.36%**) $\rightarrow$ `CRITICAL_OVERFLOW` (**86.72%**)
-  - **Data Quality:** พิกัดสมบูรณ์ 100%, สกัดชื่อแขวงสำเร็จ 99.07%, แยก `SUSPECT_DATUM_MISMATCH` (ID 10) และ `SUSPECT_RAIN_SENSOR_OUTAGE` (ID 852087) ครบถ้วน
-- **Unit Tests:** เพิ่มชุดทดสอบ `tests/test_curated.py` (7 tests) ทดสอบผ่าน **100% (134/134 tests ทั่วทั้งโปรเจกต์)** โดยไม่พึ่งพาไฟล์ PII ที่ถูก gitignore
+  - **Q2:**
+    - ภาพรวมทั้ง กทม. (Pooled 3 วัน): `NORMAL` (**22.67%**) $\rightarrow$ `WATCH` (**54.06%**) $\rightarrow$ `HIGH_ALERT` (**84.23%**) $\rightarrow$ `CRITICAL_OVERFLOW` (**86.92%**) และ `NO_TELEMETRY` (**88.07%**) โดยระบุข้อจำกัดเรื่อง **Temporal Confounding จากวันพายุฝน** (สัดส่วนรายวัน 10.27% $\rightarrow$ 70.86% $\rightarrow$ 85.84%)
+    - เมื่อจำกัดเฉพาะแขวงใกล้สถานี (`water_station_dist_km <= 2.0 km`, 372 แถว): `CRITICAL_OVERFLOW` (**82.78%**, 89 แถว) > `HIGH_ALERT` (**71.19%**, 74 แถว) > `WATCH` (**33.78%**, 96 แถว) > `NORMAL` (**16.28%**, 71 แถว) และเปรียบเทียบภายในวันเดียวกัน (Within-day) ในวันที่ 26 ก.ย. (`CRITICAL_OVERFLOW` 85.83% vs `NORMAL` 11.76%)
+  - **Data Quality & Limitations:** พิกัดสมบูรณ์ 100%, สกัดชื่อแขวงจาก `address` สำเร็จ 99.07% (ได้ 237 คู่แขวง/เขต, 51 เขต จากจริง 180/50 — เตรียมเปลี่ยนเป็น Spatial Join กับ Polygon ของ Issue #3 หลัง Checkpoint), คำนวณ `khwaeng_centers` จากพิกัดเฉลี่ยทุกชั่วโมงรวมกัน และระบุลักษณะ Sparse Grid (เฉพาะชั่วโมงที่มีรายงาน $\ge 1$ รายการ)
+- **Unit Tests:** เพิ่มชุดทดสอบ `tests/test_curated.py` (8 tests) ทดสอบผ่าน **100% (135/135 tests ทั่วทั้งโปรเจกต์)** โดยไม่พึ่งพาไฟล์ PII ที่ถูก gitignore
 
 ## Deliverables & Evidence
 - ตารางผลลัพธ์: `data/curated/khwaeng_hourly/` (`dt=2026-09-{24,25,26}/khwaeng_hourly.jsonl` และ `khwaeng_hourly.csv`, รวม 3,972 แถว)

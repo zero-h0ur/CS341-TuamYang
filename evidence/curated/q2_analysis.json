@@ -2,53 +2,374 @@
   "question": "Q2: How does low canal freeboard relate to flood reports in nearby subdistricts?",
   "tier_metrics": {
     "CRITICAL_OVERFLOW": {
-      "khwaeng_hours": 912,
-      "total_reports": 2710,
-      "flood_reports": 2350,
-      "flood_ratio_pct": 86.72,
-      "uncertain_reports": 17,
-      "non_flood_reports": 343
+      "khwaeng_hours": 861,
+      "total_reports": 2615,
+      "flood_reports": 2273,
+      "flood_ratio_pct": 86.92,
+      "uncertain_reports": 15,
+      "non_flood_reports": 327
     },
     "HIGH_ALERT": {
-      "khwaeng_hours": 940,
-      "total_reports": 2845,
-      "flood_reports": 2400,
-      "flood_ratio_pct": 84.36,
-      "uncertain_reports": 12,
-      "non_flood_reports": 433
+      "khwaeng_hours": 1032,
+      "total_reports": 3050,
+      "flood_reports": 2569,
+      "flood_ratio_pct": 84.23,
+      "uncertain_reports": 13,
+      "non_flood_reports": 468
     },
     "NORMAL": {
-      "khwaeng_hours": 661,
-      "total_reports": 911,
-      "flood_reports": 232,
-      "flood_ratio_pct": 25.47,
+      "khwaeng_hours": 610,
+      "total_reports": 825,
+      "flood_reports": 187,
+      "flood_ratio_pct": 22.67,
       "uncertain_reports": 6,
-      "non_flood_reports": 673
+      "non_flood_reports": 632
     },
     "NO_TELEMETRY": {
-      "khwaeng_hours": 188,
-      "total_reports": 649,
-      "flood_reports": 576,
-      "flood_ratio_pct": 88.75,
-      "uncertain_reports": 5,
-      "non_flood_reports": 68
+      "khwaeng_hours": 179,
+      "total_reports": 612,
+      "flood_reports": 539,
+      "flood_ratio_pct": 88.07,
+      "uncertain_reports": 6,
+      "non_flood_reports": 67
     },
     "SUSPECT_DATUM": {
-      "khwaeng_hours": 319,
-      "total_reports": 543,
-      "flood_reports": 367,
-      "flood_ratio_pct": 67.59,
+      "khwaeng_hours": 381,
+      "total_reports": 651,
+      "flood_reports": 447,
+      "flood_ratio_pct": 68.66,
       "uncertain_reports": 6,
-      "non_flood_reports": 170
+      "non_flood_reports": 198
     },
     "WATCH": {
-      "khwaeng_hours": 952,
-      "total_reports": 1956,
-      "flood_reports": 1096,
-      "flood_ratio_pct": 56.03,
+      "khwaeng_hours": 909,
+      "total_reports": 1861,
+      "flood_reports": 1006,
+      "flood_ratio_pct": 54.06,
       "uncertain_reports": 9,
-      "non_flood_reports": 851
+      "non_flood_reports": 846
     }
+  },
+  "near_station_tier_metrics_2km": {
+    "CRITICAL_OVERFLOW": {
+      "khwaeng_hours": 89,
+      "total_reports": 180,
+      "flood_reports": 149,
+      "flood_ratio_pct": 82.78,
+      "uncertain_reports": 2,
+      "non_flood_reports": 29
+    },
+    "HIGH_ALERT": {
+      "khwaeng_hours": 74,
+      "total_reports": 118,
+      "flood_reports": 84,
+      "flood_ratio_pct": 71.19,
+      "uncertain_reports": 1,
+      "non_flood_reports": 33
+    },
+    "NORMAL": {
+      "khwaeng_hours": 71,
+      "total_reports": 86,
+      "flood_reports": 14,
+      "flood_ratio_pct": 16.28,
+      "uncertain_reports": 3,
+      "non_flood_reports": 69
+    },
+    "NO_TELEMETRY": {
+      "khwaeng_hours": 12,
+      "total_reports": 22,
+      "flood_reports": 16,
+      "flood_ratio_pct": 72.73,
+      "uncertain_reports": 0,
+      "non_flood_reports": 6
+    },
+    "SUSPECT_DATUM": {
+      "khwaeng_hours": 30,
+      "total_reports": 44,
+      "flood_reports": 32,
+      "flood_ratio_pct": 72.73,
+      "uncertain_reports": 0,
+      "non_flood_reports": 12
+    },
+    "WATCH": {
+      "khwaeng_hours": 96,
+      "total_reports": 148,
+      "flood_reports": 50,
+      "flood_ratio_pct": 33.78,
+      "uncertain_reports": 1,
+      "non_flood_reports": 97
+    }
+  },
+  "within_day_tier_metrics": {
+    "2026-09-24": {
+      "HIGH_ALERT": {
+        "khwaeng_hours": 3,
+        "total_reports": 3,
+        "flood_reports": 0,
+        "flood_ratio_pct": 0.0,
+        "uncertain_reports": 0,
+        "non_flood_reports": 3
+      },
+      "NORMAL": {
+        "khwaeng_hours": 343,
+        "total_reports": 456,
+        "flood_reports": 34,
+        "flood_ratio_pct": 7.46,
+        "uncertain_reports": 0,
+        "non_flood_reports": 422
+      },
+      "NO_TELEMETRY": {
+        "khwaeng_hours": 2,
+        "total_reports": 2,
+        "flood_reports": 0,
+        "flood_ratio_pct": 0.0,
+        "uncertain_reports": 0,
+        "non_flood_reports": 2
+      },
+      "SUSPECT_DATUM": {
+        "khwaeng_hours": 68,
+        "total_reports": 90,
+        "flood_reports": 11,
+        "flood_ratio_pct": 12.22,
+        "uncertain_reports": 1,
+        "non_flood_reports": 78
+      },
+      "WATCH": {
+        "khwaeng_hours": 388,
+        "total_reports": 549,
+        "flood_reports": 68,
+        "flood_ratio_pct": 12.39,
+        "uncertain_reports": 0,
+        "non_flood_reports": 481
+      }
+    },
+    "2026-09-25": {
+      "CRITICAL_OVERFLOW": {
+        "khwaeng_hours": 289,
+        "total_reports": 623,
+        "flood_reports": 496,
+        "flood_ratio_pct": 79.61,
+        "uncertain_reports": 3,
+        "non_flood_reports": 124
+      },
+      "HIGH_ALERT": {
+        "khwaeng_hours": 475,
+        "total_reports": 1074,
+        "flood_reports": 862,
+        "flood_ratio_pct": 80.26,
+        "uncertain_reports": 5,
+        "non_flood_reports": 207
+      },
+      "NORMAL": {
+        "khwaeng_hours": 137,
+        "total_reports": 179,
+        "flood_reports": 43,
+        "flood_ratio_pct": 24.02,
+        "uncertain_reports": 4,
+        "non_flood_reports": 132
+      },
+      "NO_TELEMETRY": {
+        "khwaeng_hours": 20,
+        "total_reports": 78,
+        "flood_reports": 72,
+        "flood_ratio_pct": 92.31,
+        "uncertain_reports": 1,
+        "non_flood_reports": 5
+      },
+      "SUSPECT_DATUM": {
+        "khwaeng_hours": 126,
+        "total_reports": 206,
+        "flood_reports": 122,
+        "flood_ratio_pct": 59.22,
+        "uncertain_reports": 1,
+        "non_flood_reports": 83
+      },
+      "WATCH": {
+        "khwaeng_hours": 263,
+        "total_reports": 513,
+        "flood_reports": 299,
+        "flood_ratio_pct": 58.28,
+        "uncertain_reports": 1,
+        "non_flood_reports": 213
+      }
+    },
+    "2026-09-26": {
+      "CRITICAL_OVERFLOW": {
+        "khwaeng_hours": 572,
+        "total_reports": 1992,
+        "flood_reports": 1777,
+        "flood_ratio_pct": 89.21,
+        "uncertain_reports": 12,
+        "non_flood_reports": 203
+      },
+      "HIGH_ALERT": {
+        "khwaeng_hours": 554,
+        "total_reports": 1973,
+        "flood_reports": 1707,
+        "flood_ratio_pct": 86.52,
+        "uncertain_reports": 8,
+        "non_flood_reports": 258
+      },
+      "NORMAL": {
+        "khwaeng_hours": 130,
+        "total_reports": 190,
+        "flood_reports": 110,
+        "flood_ratio_pct": 57.89,
+        "uncertain_reports": 2,
+        "non_flood_reports": 78
+      },
+      "NO_TELEMETRY": {
+        "khwaeng_hours": 157,
+        "total_reports": 532,
+        "flood_reports": 467,
+        "flood_ratio_pct": 87.78,
+        "uncertain_reports": 5,
+        "non_flood_reports": 60
+      },
+      "SUSPECT_DATUM": {
+        "khwaeng_hours": 187,
+        "total_reports": 355,
+        "flood_reports": 314,
+        "flood_ratio_pct": 88.45,
+        "uncertain_reports": 4,
+        "non_flood_reports": 37
+      },
+      "WATCH": {
+        "khwaeng_hours": 258,
+        "total_reports": 799,
+        "flood_reports": 639,
+        "flood_ratio_pct": 79.97,
+        "uncertain_reports": 8,
+        "non_flood_reports": 152
+      }
+    }
+  },
+  "within_day_near_station_2km": {
+    "2026-09-24": {
+      "NORMAL": {
+        "khwaeng_hours": 33,
+        "total_reports": 38,
+        "flood_reports": 2,
+        "flood_ratio_pct": 5.26,
+        "uncertain_reports": 0,
+        "non_flood_reports": 36
+      },
+      "SUSPECT_DATUM": {
+        "khwaeng_hours": 8,
+        "total_reports": 10,
+        "flood_reports": 4,
+        "flood_ratio_pct": 40.0,
+        "uncertain_reports": 0,
+        "non_flood_reports": 6
+      },
+      "WATCH": {
+        "khwaeng_hours": 33,
+        "total_reports": 45,
+        "flood_reports": 8,
+        "flood_ratio_pct": 17.78,
+        "uncertain_reports": 0,
+        "non_flood_reports": 37
+      }
+    },
+    "2026-09-25": {
+      "CRITICAL_OVERFLOW": {
+        "khwaeng_hours": 35,
+        "total_reports": 53,
+        "flood_reports": 40,
+        "flood_ratio_pct": 75.47,
+        "uncertain_reports": 0,
+        "non_flood_reports": 13
+      },
+      "HIGH_ALERT": {
+        "khwaeng_hours": 36,
+        "total_reports": 56,
+        "flood_reports": 38,
+        "flood_ratio_pct": 67.86,
+        "uncertain_reports": 0,
+        "non_flood_reports": 18
+      },
+      "NORMAL": {
+        "khwaeng_hours": 24,
+        "total_reports": 31,
+        "flood_reports": 10,
+        "flood_ratio_pct": 32.26,
+        "uncertain_reports": 1,
+        "non_flood_reports": 20
+      },
+      "SUSPECT_DATUM": {
+        "khwaeng_hours": 11,
+        "total_reports": 15,
+        "flood_reports": 11,
+        "flood_ratio_pct": 73.33,
+        "uncertain_reports": 0,
+        "non_flood_reports": 4
+      },
+      "WATCH": {
+        "khwaeng_hours": 32,
+        "total_reports": 57,
+        "flood_reports": 17,
+        "flood_ratio_pct": 29.82,
+        "uncertain_reports": 0,
+        "non_flood_reports": 40
+      }
+    },
+    "2026-09-26": {
+      "CRITICAL_OVERFLOW": {
+        "khwaeng_hours": 54,
+        "total_reports": 127,
+        "flood_reports": 109,
+        "flood_ratio_pct": 85.83,
+        "uncertain_reports": 2,
+        "non_flood_reports": 16
+      },
+      "HIGH_ALERT": {
+        "khwaeng_hours": 38,
+        "total_reports": 62,
+        "flood_reports": 46,
+        "flood_ratio_pct": 74.19,
+        "uncertain_reports": 1,
+        "non_flood_reports": 15
+      },
+      "NORMAL": {
+        "khwaeng_hours": 14,
+        "total_reports": 17,
+        "flood_reports": 2,
+        "flood_ratio_pct": 11.76,
+        "uncertain_reports": 2,
+        "non_flood_reports": 13
+      },
+      "NO_TELEMETRY": {
+        "khwaeng_hours": 12,
+        "total_reports": 22,
+        "flood_reports": 16,
+        "flood_ratio_pct": 72.73,
+        "uncertain_reports": 0,
+        "non_flood_reports": 6
+      },
+      "SUSPECT_DATUM": {
+        "khwaeng_hours": 11,
+        "total_reports": 19,
+        "flood_reports": 17,
+        "flood_ratio_pct": 89.47,
+        "uncertain_reports": 0,
+        "non_flood_reports": 2
+      },
+      "WATCH": {
+        "khwaeng_hours": 31,
+        "total_reports": 46,
+        "flood_reports": 25,
+        "flood_ratio_pct": 54.35,
+        "uncertain_reports": 1,
+        "non_flood_reports": 20
+      }
+    }
+  },
+  "water_station_distance_stats": {
+    "min_km": 0.44,
+    "median_km": 5.26,
+    "max_km": 20.33,
+    "rows_within_2km": 372,
+    "total_rows": 3972
   },
   "daily_progression": {
     "2026-09-24": {
@@ -61,13 +382,13 @@
       "total_reports": 2673,
       "flood_reports": 1894,
       "flood_ratio_pct": 70.86,
-      "overflow_khwaeng_hours": 322
+      "overflow_khwaeng_hours": 289
     },
     "2026-09-26": {
       "total_reports": 5841,
       "flood_reports": 5014,
       "flood_ratio_pct": 85.84,
-      "overflow_khwaeng_hours": 590
+      "overflow_khwaeng_hours": 572
     }
   },
   "top_10_khwaeng_sep_26": [
@@ -163,16 +484,15 @@
     }
   ],
   "key_findings": [
-    "Under CRITICAL_OVERFLOW (Freeboard <= 0m), flood reports constitute 86.72% of citizen complaints (2,350/2,710).",
-    "Under HIGH_ALERT (0 < Freeboard <= 0.5m), flood reports constitute 84.36% of complaints (2,400/2,845).",
-    "Under WATCH (0.5 < Freeboard <= 1.0m), flood reports constitute 56.03% of complaints.",
-    "Under NORMAL conditions (Freeboard > 1.0m, excluding Station 10 datum mismatch), flood reports drop to 25.47% of complaints.",
-    "Across the 3-day progression: Flood report proportion escalated from 10.27% (Sep 24) -> 70.86% (Sep 25) -> 85.84% (Sep 26)."
+    "Pooled 3-day metrics show flood report proportion rising from 22.67% (NORMAL) -> 54.06% (WATCH) -> 84.23% (HIGH_ALERT) -> 86.92% (CRITICAL_OVERFLOW), while NO_TELEMETRY reaches 88.07%.",
+    "Important Confounding Finding: The 3-day pooled step pattern is heavily confounded by storm date (daily flood ratio jumps from 10.27% on Sep 24 -> 70.86% on Sep 25 -> 85.84% on Sep 26), and NO_TELEMETRY (88.07%) exceeds CRITICAL_OVERFLOW (86.92%) because missing telemetry slots occurred during peak storm hours on Sep 25-26. Therefore, pooled tiers reflect citywide pluvial storm timing rather than canal freeboard alone.",
+    "Restricted to subdistricts near water stations (water_station_dist_km <= 2.0 km, 372 khwaeng-hours), CRITICAL_OVERFLOW has 82.78% flood reports (89 rows), HIGH_ALERT has 71.19% (74 rows), WATCH has 33.78% (96 rows), and NORMAL has 16.28% (71 rows)."
   ],
   "limitations": [
-    "Citizen report timestamps reflect submission time, not the exact onset of inundation.",
-    "Multiple reports often describe the same clogged drain or localized street ponding.",
-    "Public search API returns fewer exposed rows than the advertised advisory total (discrepancy of 40-69 rows/day).",
-    "Station 10 (Khlong Phasi Charoen) exhibits a vertical datum mismatch (waterlevel -6.5m to -1.7m vs bank 1.42m) and is isolated under SUSPECT_DATUM (usable_for_freeboard=false) so it does not bias NORMAL freeboard tiers."
+    "Temporal Confounding (Date/Storm Effect): Daily flood ratio jumps from 10.27% (Sep 24) to 70.86% (Sep 25) and 85.84% (Sep 26), and NO_TELEMETRY reaches 88.07%. Within-day comparisons show that during peak rain on Sep 25-26, flood complaint ratios are high across all citywide tiers due to widespread pluvial street drainage overload; canal freeboard alone does not causally explain the pooled step increase.",
+    "Station Pairing Distance: Across all Bangkok subdistricts, distance to the nearest of the 8 water stations has median 5.26 km and max 20.33 km. Filtering to water_station_dist_km <= 2.0 km retains 372 rows out of 3972 to align with the near-station scope.",
+    "Subdistrict Name Extraction via Regex: Extracting khwaeng/khet from Traffy text address yields 237 distinct (khwaeng, khet) pairs and 51 khet values (vs official 180 khwaengs and 50 khets) due to 'ไม่ระบุ' and spelling variations; post-checkpoint this will switch to ST_Contains spatial join with Issue #3 polygon boundaries.",
+    "Sparse Hourly Grid & Representative Center: khwaeng_hourly contains only khwaeng-hours with >= 1 citizen report (hours with 0 reports are omitted), and khwaeng_centers averages report coordinates across all hours for each (khwaeng, khet).",
+    "Station 10 (Khlong Phasi Charoen) exhibits a vertical datum mismatch (waterlevel -6.15m to -1.72m vs bank 1.42m) and is isolated under SUSPECT_DATUM (usable_for_freeboard=false)."
   ]
 }

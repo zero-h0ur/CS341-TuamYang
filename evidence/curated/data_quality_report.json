@@ -2,8 +2,8 @@
   "total_curated_khwaeng_hourly_rows": 3972,
   "total_traffy_reports_evaluated": 9614,
   "missing_data_audit": {
-    "null_waterlevel_percentage": 6.04,
-    "null_rain_percentage": 10.83,
+    "null_waterlevel_percentage": 6.12,
+    "null_rain_percentage": 11.86,
     "telemetry_gaps_noted": [
       "Station 5 (Khlong Mahasawat): Contains 1,513 valid telemetry points out of 4,320 monthly slots in Sep 2026 (294/432 in Sep 24-26).",
       "Rain Stations 10 (Phasi Charoen), 528802 (Samsen), and 528848 (Samre): Missing daily rainfall on Sep 25.",
@@ -11,7 +11,7 @@
     ]
   },
   "sensor_outliers_audit": {
-    "detected_outlier_count": 319,
+    "detected_outlier_count": 381,
     "waterlevel_datum_mismatch": {
       "station_id": 10,
       "station_name": "คลองภาษีเจริญ เพชรเกษม69",
@@ -43,6 +43,12 @@
     "valid_coordinate_rate_pct": 100.0,
     "khwaeng_extraction_match_pct": 99.07,
     "khet_extraction_match_pct": 89.55,
-    "unmatched_reports_count": 89
+    "unmatched_reports_count": 89,
+    "distinct_khwaeng_khet_pairs": 237,
+    "distinct_khet_count": 51,
+    "official_bkk_khwaeng_count": 180,
+    "official_bkk_khet_count": 50,
+    "address_regex_limitation": "Regex on address text produces 237 (khwaeng, khet) pairs and 51 khet values (vs official 180/50) due to 'ไม่ระบุ' and spelling variants. Post-checkpoint plan: switch to ST_Contains spatial join with Issue #3 subdistrict polygons in reference/.",
+    "grid_design_note": "khwaeng_hourly is a sparse grid containing only hours with >= 1 Traffy report; khwaeng_centers averages coordinates across all hours/reports for each (khwaeng, khet)."
   }
 }

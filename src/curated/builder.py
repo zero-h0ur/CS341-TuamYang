@@ -421,14 +421,23 @@ class CuratedBuilder:
             else:
                 item["non_flood_reports"] += 1
 
-        # 2. Compute representative coordinates for each (khwaeng, khet)
-        khwaeng_centers: Dict[Tuple[str, str], Tuple[float, float]] = {}
+        # 2. Compute representative coordinates for each (khwaeng, khet) across all hours/reports
+        khwaeng_coords: Dict[Tuple[str, str], Dict[str, List[float]]] = defaultdict(
+            lambda: {"lats": [], "lons": []}
+        )
         for (_dt_bkk, _hr_bkk, khwaeng, khet), item in traffy_agg.items():
-            if (khwaeng, khet) not in khwaeng_centers and item["lats"] and item["lons"]:
-                khwaeng_centers[(khwaeng, khet)] = (
-                    sum(item["lats"]) / len(item["lats"]),
-                    sum(item["lons"]) / len(item["lons"]),
-                )
+            if item["lats"] and item["lons"]:
+                khwaeng_coords[(khwaeng, khet)]["lats"].extend(item["lats"])
+                khwaeng_coords[(khwaeng, khet)]["lons"].extend(item["lons"])
+
+        khwaeng_centers: Dict[Tuple[str, str], Tuple[float, float]] = {
+            kk: (
+                sum(coords["lats"]) / len(coords["lats"]),
+                sum(coords["lons"]) / len(coords["lons"]),
+            )
+            for kk, coords in khwaeng_coords.items()
+            if coords["lats"] and coords["lons"]
+        }
 
         # 3. Assemble curated rows
         rows: List[Dict[str, Any]] = []

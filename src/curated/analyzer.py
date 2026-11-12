@@ -10,6 +10,7 @@ Performs comprehensive analysis answering:
 """
 
 from collections import defaultdict
+import statistics
 from typing import Any, Dict, List
 
 
@@ -109,6 +110,34 @@ class CuratedAnalyzer:
             "non_flood_reports": 0,
         })
 
+        near_2km_agg: Dict[str, Dict[str, int]] = defaultdict(lambda: {
+            "khwaeng_hours": 0,
+            "total_reports": 0,
+            "flood_reports": 0,
+            "uncertain_reports": 0,
+            "non_flood_reports": 0,
+        })
+
+        within_day_tier_agg: Dict[str, Dict[str, Dict[str, int]]] = defaultdict(
+            lambda: defaultdict(lambda: {
+                "khwaeng_hours": 0,
+                "total_reports": 0,
+                "flood_reports": 0,
+                "uncertain_reports": 0,
+                "non_flood_reports": 0,
+            })
+        )
+
+        within_day_near_2km_agg: Dict[str, Dict[str, Dict[str, int]]] = defaultdict(
+            lambda: defaultdict(lambda: {
+                "khwaeng_hours": 0,
+                "total_reports": 0,
+                "flood_reports": 0,
+                "uncertain_reports": 0,
+                "non_flood_reports": 0,
+            })
+        )
+
         daily_agg: Dict[str, Dict[str, int]] = defaultdict(lambda: {
             "total_reports": 0,
             "flood_reports": 0,
@@ -123,12 +152,18 @@ class CuratedAnalyzer:
             "water_station_name": "",
         })
 
+        water_dists: List[float] = []
+
         for r in self.rows:
             tier = r["risk_tier"]
+            dt = r["dt"]
             tot = r["total_reports"]
             fl = r["flood_reports"]
             unc = r["uncertain_reports"]
             nf = r["non_flood_reports"]
+            dist_km = r.get("water_station_dist_km")
+            if dist_km is not None:
+                water_dists.append(float(dist_km))
 
             t = tier_agg[tier]
             t["khwaeng_hours"] += 1
@@ -137,14 +172,36 @@ class CuratedAnalyzer:
             t["uncertain_reports"] += unc
             t["non_flood_reports"] += nf
 
-            d = daily_agg[r["dt"]]
+            wdt = within_day_tier_agg[dt][tier]
+            wdt["khwaeng_hours"] += 1
+            wdt["total_reports"] += tot
+            wdt["flood_reports"] += fl
+            wdt["uncertain_reports"] += unc
+            wdt["non_flood_reports"] += nf
+
+            if dist_km is not None and float(dist_km) <= 2.0:
+                n2 = near_2km_agg[tier]
+                n2["khwaeng_hours"] += 1
+                n2["total_reports"] += tot
+                n2["flood_reports"] += fl
+                n2["uncertain_reports"] += unc
+                n2["non_flood_reports"] += nf
+
+                wdn2 = within_day_near_2km_agg[dt][tier]
+                wdn2["khwaeng_hours"] += 1
+                wdn2["total_reports"] += tot
+                wdn2["flood_reports"] += fl
+                wdn2["uncertain_reports"] += unc
+                wdn2["non_flood_reports"] += nf
+
+            d = daily_agg[dt]
             d["total_reports"] += tot
             d["flood_reports"] += fl
             d["uncertain_reports"] += unc
             if r.get("is_overflow"):
                 d["overflow_khwaeng_hours"] += 1
 
-            if r["dt"] == "2026-09-26":
+            if dt == "2026-09-26":
                 k_entry = khwaeng_sep26[(r["khet"], r["khwaeng"])]
                 k_entry["total_reports"] += tot
                 k_entry["flood_reports"] += fl
@@ -154,19 +211,40 @@ class CuratedAnalyzer:
                     if k_entry["min_freeboard_m"] is None or fb < k_entry["min_freeboard_m"]:
                         k_entry["min_freeboard_m"] = fb
 
-        tier_summary = {}
-        for tier, d in sorted(tier_agg.items()):
-            tot = d["total_reports"]
-            fl = d["flood_reports"]
-            ratio = round(fl / tot, 4) if tot > 0 else 0.0
-            tier_summary[tier] = {
-                "khwaeng_hours": d["khwaeng_hours"],
-                "total_reports": tot,
-                "flood_reports": fl,
-                "flood_ratio_pct": round(ratio * 100, 2),
-                "uncertain_reports": d["uncertain_reports"],
-                "non_flood_reports": d["non_flood_reports"],
-            }
+        def _format_tier_map(agg_map: Dict[str, Dict[str, int]]) -> Dict[str, Dict[str, Any]]:
+            out = {}
+            for tier_key, d_val in sorted(agg_map.items()):
+                tot_val = d_val["total_reports"]
+                fl_val = d_val["flood_reports"]
+                ratio = round(fl_val / tot_val, 4) if tot_val > 0 else 0.0
+                out[tier_key] = {
+                    "khwaeng_hours": d_val["khwaeng_hours"],
+                    "total_reports": tot_val,
+                    "flood_reports": fl_val,
+                    "flood_ratio_pct": round(ratio * 100, 2),
+                    "uncertain_reports": d_val["uncertain_reports"],
+                    "non_flood_reports": d_val["non_flood_reports"],
+                }
+            return out
+
+        tier_summary = _format_tier_map(tier_agg)
+        near_2km_summary = _format_tier_map(near_2km_agg)
+        within_day_tier_summary = {
+            dt_key: _format_tier_map(t_map)
+            for dt_key, t_map in sorted(within_day_tier_agg.items())
+        }
+        within_day_near_2km_summary = {
+            dt_key: _format_tier_map(t_map)
+            for dt_key, t_map in sorted(within_day_near_2km_agg.items())
+        }
+
+        distance_stats = {
+            "min_km": round(min(water_dists), 2) if water_dists else None,
+            "median_km": round(statistics.median(water_dists), 2) if water_dists else None,
+            "max_km": round(max(water_dists), 2) if water_dists else None,
+            "rows_within_2km": sum(1 for x in water_dists if x <= 2.0),
+            "total_rows": len(self.rows),
+        }
 
         daily_summary = {}
         for dt, d in sorted(daily_agg.items()):
@@ -198,20 +276,23 @@ class CuratedAnalyzer:
         return {
             "question": "Q2: How does low canal freeboard relate to flood reports in nearby subdistricts?",
             "tier_metrics": tier_summary,
+            "near_station_tier_metrics_2km": near_2km_summary,
+            "within_day_tier_metrics": within_day_tier_summary,
+            "within_day_near_station_2km": within_day_near_2km_summary,
+            "water_station_distance_stats": distance_stats,
             "daily_progression": daily_summary,
             "top_10_khwaeng_sep_26": top_khwaeng_sep26,
             "key_findings": [
-                f"Under CRITICAL_OVERFLOW (Freeboard <= 0m), flood reports constitute {tier_summary.get('CRITICAL_OVERFLOW', {}).get('flood_ratio_pct', 0)}% of citizen complaints ({tier_summary.get('CRITICAL_OVERFLOW', {}).get('flood_reports', 0):,}/{tier_summary.get('CRITICAL_OVERFLOW', {}).get('total_reports', 0):,}).",
-                f"Under HIGH_ALERT (0 < Freeboard <= 0.5m), flood reports constitute {tier_summary.get('HIGH_ALERT', {}).get('flood_ratio_pct', 0)}% of complaints ({tier_summary.get('HIGH_ALERT', {}).get('flood_reports', 0):,}/{tier_summary.get('HIGH_ALERT', {}).get('total_reports', 0):,}).",
-                f"Under WATCH (0.5 < Freeboard <= 1.0m), flood reports constitute {tier_summary.get('WATCH', {}).get('flood_ratio_pct', 0)}% of complaints.",
-                f"Under NORMAL conditions (Freeboard > 1.0m, excluding Station 10 datum mismatch), flood reports drop to {tier_summary.get('NORMAL', {}).get('flood_ratio_pct', 0)}% of complaints.",
-                "Across the 3-day progression: Flood report proportion escalated from 10.27% (Sep 24) -> 70.86% (Sep 25) -> 85.84% (Sep 26).",
+                f"Pooled 3-day metrics show flood report proportion rising from {tier_summary.get('NORMAL', {}).get('flood_ratio_pct', 0)}% (NORMAL) -> {tier_summary.get('WATCH', {}).get('flood_ratio_pct', 0)}% (WATCH) -> {tier_summary.get('HIGH_ALERT', {}).get('flood_ratio_pct', 0)}% (HIGH_ALERT) -> {tier_summary.get('CRITICAL_OVERFLOW', {}).get('flood_ratio_pct', 0)}% (CRITICAL_OVERFLOW), while NO_TELEMETRY reaches {tier_summary.get('NO_TELEMETRY', {}).get('flood_ratio_pct', 0)}%.",
+                f"Important Confounding Finding: The 3-day pooled step pattern is heavily confounded by storm date (daily flood ratio jumps from 10.27% on Sep 24 -> 70.86% on Sep 25 -> 85.84% on Sep 26), and NO_TELEMETRY ({tier_summary.get('NO_TELEMETRY', {}).get('flood_ratio_pct', 0)}%) exceeds CRITICAL_OVERFLOW ({tier_summary.get('CRITICAL_OVERFLOW', {}).get('flood_ratio_pct', 0)}%) because missing telemetry slots occurred during peak storm hours on Sep 25-26. Therefore, pooled tiers reflect citywide pluvial storm timing rather than canal freeboard alone.",
+                f"Restricted to subdistricts near water stations (water_station_dist_km <= 2.0 km, {distance_stats['rows_within_2km']} khwaeng-hours), CRITICAL_OVERFLOW has {near_2km_summary.get('CRITICAL_OVERFLOW', {}).get('flood_ratio_pct', 0)}% flood reports ({near_2km_summary.get('CRITICAL_OVERFLOW', {}).get('khwaeng_hours', 0)} rows), HIGH_ALERT has {near_2km_summary.get('HIGH_ALERT', {}).get('flood_ratio_pct', 0)}% ({near_2km_summary.get('HIGH_ALERT', {}).get('khwaeng_hours', 0)} rows), WATCH has {near_2km_summary.get('WATCH', {}).get('flood_ratio_pct', 0)}% ({near_2km_summary.get('WATCH', {}).get('khwaeng_hours', 0)} rows), and NORMAL has {near_2km_summary.get('NORMAL', {}).get('flood_ratio_pct', 0)}% ({near_2km_summary.get('NORMAL', {}).get('khwaeng_hours', 0)} rows).",
             ],
             "limitations": [
-                "Citizen report timestamps reflect submission time, not the exact onset of inundation.",
-                "Multiple reports often describe the same clogged drain or localized street ponding.",
-                "Public search API returns fewer exposed rows than the advertised advisory total (discrepancy of 40-69 rows/day).",
-                "Station 10 (Khlong Phasi Charoen) exhibits a vertical datum mismatch (waterlevel -6.5m to -1.7m vs bank 1.42m) and is isolated under SUSPECT_DATUM (usable_for_freeboard=false) so it does not bias NORMAL freeboard tiers.",
+                f"Temporal Confounding (Date/Storm Effect): Daily flood ratio jumps from 10.27% (Sep 24) to 70.86% (Sep 25) and 85.84% (Sep 26), and NO_TELEMETRY reaches {tier_summary.get('NO_TELEMETRY', {}).get('flood_ratio_pct', 0)}%. Within-day comparisons show that during peak rain on Sep 25-26, flood complaint ratios are high across all citywide tiers due to widespread pluvial street drainage overload; canal freeboard alone does not causally explain the pooled step increase.",
+                f"Station Pairing Distance: Across all Bangkok subdistricts, distance to the nearest of the 8 water stations has median {distance_stats['median_km']} km and max {distance_stats['max_km']} km. Filtering to water_station_dist_km <= 2.0 km retains {distance_stats['rows_within_2km']} rows out of {distance_stats['total_rows']} to align with the near-station scope.",
+                "Subdistrict Name Extraction via Regex: Extracting khwaeng/khet from Traffy text address yields 237 distinct (khwaeng, khet) pairs and 51 khet values (vs official 180 khwaengs and 50 khets) due to 'ไม่ระบุ' and spelling variations; post-checkpoint this will switch to ST_Contains spatial join with Issue #3 polygon boundaries.",
+                "Sparse Hourly Grid & Representative Center: khwaeng_hourly contains only khwaeng-hours with >= 1 citizen report (hours with 0 reports are omitted), and khwaeng_centers averages report coordinates across all hours for each (khwaeng, khet).",
+                "Station 10 (Khlong Phasi Charoen) exhibits a vertical datum mismatch (waterlevel -6.15m to -1.72m vs bank 1.42m) and is isolated under SUSPECT_DATUM (usable_for_freeboard=false).",
             ],
         }
 
@@ -239,6 +320,9 @@ class CuratedAnalyzer:
 
         khwaeng_match_pct = round((reports_with_khwaeng / total_reports * 100), 2) if total_reports > 0 else 0.0
         khet_match_pct = round((reports_with_khet / total_reports * 100), 2) if total_reports > 0 else 0.0
+
+        distinct_khwaeng_khet_pairs = len({(r["khwaeng"], r["khet"]) for r in self.rows})
+        distinct_khet_count = len({r["khet"] for r in self.rows})
 
         return {
             "total_curated_khwaeng_hourly_rows": total_rows,
@@ -283,5 +367,18 @@ class CuratedAnalyzer:
                 "khwaeng_extraction_match_pct": khwaeng_match_pct,
                 "khet_extraction_match_pct": khet_match_pct,
                 "unmatched_reports_count": total_reports - reports_with_khwaeng,
+                "distinct_khwaeng_khet_pairs": distinct_khwaeng_khet_pairs,
+                "distinct_khet_count": distinct_khet_count,
+                "official_bkk_khwaeng_count": 180,
+                "official_bkk_khet_count": 50,
+                "address_regex_limitation": (
+                    f"Regex on address text produces {distinct_khwaeng_khet_pairs} (khwaeng, khet) pairs "
+                    f"and {distinct_khet_count} khet values (vs official 180/50) due to 'ไม่ระบุ' and spelling variants. "
+                    "Post-checkpoint plan: switch to ST_Contains spatial join with Issue #3 subdistrict polygons in reference/."
+                ),
+                "grid_design_note": (
+                    "khwaeng_hourly is a sparse grid containing only hours with >= 1 Traffy report; "
+                    "khwaeng_centers averages coordinates across all hours/reports for each (khwaeng, khet)."
+                ),
             },
         }
