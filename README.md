@@ -23,7 +23,7 @@ cd CS341-TuamYang
 python -X utf8 -m unittest discover -s tests
 ```
 
-ผลที่ควรได้: `Ran 145 tests ... OK`
+ผลที่ควรได้: `Ran 148 tests ... OK`
 
 **2. รัน pipeline ตรวจข้อมูล (Validation + Orchestration)** ด้วยข้อมูลจริงที่อยู่ใน repo
 
@@ -32,6 +32,15 @@ python -X utf8 scripts/run_pipeline_local.py --inject-pr7-defect
 ```
 
 ผลที่ควรได้: batch ปกติเป็น `Published`, batch ที่ใส่ข้อมูลผิดเป็น `BatchQuarantined` และสคริปต์จะส่งไฟล์เดิมเข้าไปซ้ำให้เอง (หัวข้อ `Replay (idempotency)`) ทุกไฟล์ต้องขึ้น `Skipped`
+
+สคริปต์อ่านไฟล์ทั้งหมดที่มีใน `data/incoming/` บนเครื่อง หากเคยดึง Traffy ย้อนหลังไว้
+ก็จะตรวจทุกวันในชุดนั้นด้วย จึงอาจแสดงผลหลายพันบรรทัดและใช้เวลามากกว่าเครื่องที่เพิ่ง clone
+สถานะ `Published WARN` หมายถึงข้อมูลผ่านและใช้งานต่อได้พร้อมคำเตือน เช่น `source_quality_warnings`
+ที่ส่งต่อข้อจำกัดจาก API ต้นทาง ส่วน `--inject-pr7-defect` เพิ่ม batch ระดับน้ำที่จงใจใส่ค่าตลิ่งผิด
+เพื่อสาธิตการแยกข้อมูลไป `quarantine/`
+
+หากใช้โค้ดรุ่นเก่าแล้วพบ `JSONDecodeError: Unterminated string` ใน `verify_batch`
+ดู [สาเหตุและการแก้กรณีอักขระ Unicode ใน JSONL](docs/orchestration_validation.md#การอ่าน-jsonl-ที่มีอักขระ-unicode-ในข้อความ)
 
 **3. ดึงข้อมูลจริงแล้วสร้างตารางรายแขวง รายชั่วโมง** (ต้องต่ออินเทอร์เน็ต ใช้เวลาประมาณ 3 นาที)
 

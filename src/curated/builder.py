@@ -190,7 +190,7 @@ class CuratedBuilder:
             if not t_dir.exists():
                 continue
             for jsonl_path in sorted(t_dir.glob("*.jsonl")):
-                for line in jsonl_path.read_text(encoding="utf-8").splitlines():
+                for line in jsonl_path.read_text(encoding="utf-8").split("\n"):
                     if not line.strip():
                         continue
                     record = json.loads(line)
@@ -320,7 +320,7 @@ class CuratedBuilder:
             if not t_dir.exists():
                 continue
             for jsonl_path in sorted(t_dir.glob("*.jsonl")):
-                for line in jsonl_path.read_text(encoding="utf-8").splitlines():
+                for line in jsonl_path.read_text(encoding="utf-8").split("\n"):
                     if not line.strip():
                         continue
                     rec = json.loads(line)
@@ -357,7 +357,8 @@ class CuratedBuilder:
             incoming_file = self.incoming_traffy_dir / f"dt={d}" / f"traffy_{d}.json"
 
             if trusted_file.exists():
-                for line in trusted_file.read_text(encoding="utf-8").splitlines():
+                # JSONL uses LF boundaries; Unicode separators belong to the description.
+                for line in trusted_file.read_text(encoding="utf-8").split("\n"):
                     if not line.strip():
                         continue
                     r = json.loads(line)

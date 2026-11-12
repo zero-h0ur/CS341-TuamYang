@@ -16,6 +16,36 @@ from src.curated.builder import CuratedBuilder, extract_khwaeng_khet, haversine_
 
 
 class TestCuratedBuilder(unittest.TestCase):
+    def test_trusted_jsonl_preserves_unicode_separators_in_all_datasets(self):
+        for separator in ("\u0085", "\u2028", "\u2029"):
+            for newline in ("\n", "\r\n"):
+                with self.subTest(separator=ascii(separator), newline=ascii(newline)):
+                    with tempfile.TemporaryDirectory(prefix="curated_unicode_") as tmp:
+                        root = Path(tmp)
+                        text = f"ข้อความ{separator}ทดสอบ"
+                        reports = [
+                            {"ticket_id": "T1", "description": text},
+                            {"ticket_id": "T2", "description": text},
+                        ]
+                        datasets = {
+                            "traffy": reports,
+                            "waterlevel": [{"api_station_id": 8, "waterlevel_datetime": "2026-09-25 15:00",
+                                            "waterlevel_msl": 1.5, "station_name_th": text}],
+                            "rain": [{"api_station_id": 1, "rain_datetime": "2026-09-25 15:00",
+                                      "rain_mm": 2.0, "station_name_th": text}],
+                        }
+                        for dataset, rows in datasets.items():
+                            path = root / "trusted" / dataset / "dt=2026-09-25"
+                            path.mkdir(parents=True)
+                            (path / "traffy_2026-09-25.jsonl").write_bytes(
+                                newline.join(json.dumps(r, ensure_ascii=False) for r in rows).encode("utf-8"))
+                        builder = CuratedBuilder(raw_thaiwater_dir=root / "empty_raw",
+                                                 incoming_traffy_dir=root / "empty_incoming",
+                                                 trusted_dir=root / "trusted", output_dir=root / "curated")
+                        self.assertEqual(builder.load_traffy_reports(["2026-09-25"]), reports)
+                        self.assertEqual(builder.load_waterlevel_hourly(["2026-09-25"])[(8, "2026-09-25", 15)]["max_waterlevel_msl"], 1.5)
+                        self.assertEqual(builder.load_rainfall(["2026-09-25"])[1][(1, "2026-09-25", 15)], 2.0)
+
     def test_haversine_distance(self):
         # Distance between Bang Bua (13.85402, 100.58746) and Asok (13.74325, 100.562164) ~12.6 km
         dist = haversine_km(13.85402, 100.58746, 13.74325, 100.562164)

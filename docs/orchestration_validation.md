@@ -59,10 +59,32 @@ python -X utf8 scripts/run_pipeline_local.py --inject-pr7-defect --evidence evid
 
 ผลลัพธ์อยู่ใน `evidence/orchestration/`. Traffy ทดสอบด้วยข้อมูลสังเคราะห์ใน unit test เพราะ payload จริงมีข้อมูลส่วนบุคคลและไม่ commit
 
+## การอ่าน JSONL ที่มีอักขระ Unicode ในข้อความ
+
+เมื่อใช้ข้อมูล Traffy ย้อนหลังจริง พบว่าไฟล์วันที่ `2023-04-09` มีอักขระ `U+2028`
+อยู่ในข้อความรายงาน โค้ดเดิมใช้ `.splitlines()` จึงตัดข้อความภายใน JSON เป็นสองส่วน
+แล้วล้มด้วย `JSONDecodeError: Unterminated string` ที่ `verify_batch`
+กรณีนี้เป็นบั๊กการแบ่งบรรทัด ไม่ใช่ผลที่ตั้งใจให้เกิดจาก `--inject-pr7-defect`
+
+แก้ให้แบ่ง JSONL ด้วยตัวขึ้นบรรทัด `\n` ในขั้น Verify, การส่งออกตัวอย่างหลักฐาน
+และตัวอ่าน trusted ของ Curated เพื่อเก็บข้อความเดิมครบ รองรับ `U+0085`, `U+2028`, `U+2029`
+รวมทั้งไฟล์ LF / CRLF และไฟล์ที่ไม่มีตัวขึ้นบรรทัดท้ายสุด
+
+ทดสอบสคริปต์กับข้อมูลจริงเฉพาะวันที่ 8–10 เม.ย. 2566 จำนวน 569 / 481 / 600 รายงาน
+ร่วมกับ ThaiWater สาม batch และ batch ที่จงใจใส่ข้อมูลผิด:
+ได้ Published 6, BatchQuarantined 1 และ Replay เป็น Skipped ทั้ง 7 ไฟล์
+Curated อ่านรายงาน Traffy ได้ครบ 1,650 รายการและข้อความตรงกับต้นฉบับ
+หลักฐานที่ไม่มีข้อความรายงานหรือพิกัดอยู่ใน `evidence/orchestration/jsonl_unicode_regression.json`
+การทดสอบนี้ครอบคลุมช่วงที่เคยล้ม ยังไม่ได้รัน pipeline ซ้ำทั้งประวัติหลายปี
+
+หลังอัปเดตโค้ดให้รันคำสั่งเดิมได้ สคริปต์จะสร้าง work directory ใหม่โดยอัตโนมัติ
+หากรอบก่อนล้มในขั้น Verify ให้ใช้ directory ใหม่เช่นกัน เนื่องจาก directory เดิมอาจมี
+`_SUCCESS.json` จากขั้น Publish ก่อนถึง Verify ทำให้รันซ้ำแล้วข้าม batch นั้น
+
 ## ทดสอบ
 
 ```bash
-python -X utf8 -m unittest tests.test_validation -v     # 46 tests, ไม่ต้องใช้ AWS
+python -X utf8 -m unittest tests.test_validation -v     # 48 tests, ไม่ต้องใช้ AWS
 python -X utf8 -m unittest discover -s tests             # ทั้ง repo
 ```
 
