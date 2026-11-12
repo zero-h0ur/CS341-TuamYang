@@ -1,0 +1,57 @@
+{
+  "verified_at_utc": "2026-11-12T16:52:50.706959+00:00",
+  "base_main_commit": "341be4458543f86c450911e4f58c17618681f3ce",
+  "fix_commit": "9c4b206",
+  "scope": "Bounded replay of existing Local data, not a full-history rerun",
+  "network_used": false,
+  "aws_used": false,
+  "demo_exit_code": 0,
+  "traffy_dates": [
+    {
+      "date_bkk": "2023-04-08",
+      "source_rows": 569,
+      "final_state": "Published",
+      "validation_status": "WARN",
+      "trusted_rows": 569,
+      "warnings": [
+        "source_quality_warnings"
+      ]
+    },
+    {
+      "date_bkk": "2023-04-09",
+      "source_rows": 481,
+      "final_state": "Published",
+      "validation_status": "WARN",
+      "trusted_rows": 481,
+      "warnings": [
+        "source_quality_warnings"
+      ]
+    },
+    {
+      "date_bkk": "2023-04-10",
+      "source_rows": 600,
+      "final_state": "Published",
+      "validation_status": "WARN",
+      "trusted_rows": 600,
+      "warnings": [
+        "source_quality_warnings"
+      ]
+    }
+  ],
+  "traffy_rows_read_by_curated": 1650,
+  "descriptions_preserved": true,
+  "source_files_unchanged": true,
+  "final_states": {
+    "Published": 6,
+    "BatchQuarantined": 1
+  },
+  "replay_skipped": 7,
+  "injected_defect_failure": "bank_matches_reference",
+  "evidence_samples_valid_jsonl": true,
+  "unit_tests": {
+    "run": 148,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0
+  }
+}
