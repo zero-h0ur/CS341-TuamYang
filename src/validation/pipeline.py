@@ -246,7 +246,9 @@ def publish_batch(batch: Dict[str, Any], storage: StorageDriver) -> Dict[str, An
 
 def verify_batch(batch: Dict[str, Any], storage: StorageDriver) -> Dict[str, Any]:
     marker = storage.load_json(batch["marker_key"])
-    lines = [ln for ln in get_text(storage, batch["trusted_key"]).splitlines() if ln.strip()]
+    # JSONL records end at LF. U+0085/U+2028/U+2029 can occur inside JSON strings;
+    # splitlines() would cut valid citizen descriptions into invalid fragments.
+    lines = [ln for ln in get_text(storage, batch["trusted_key"]).split("\n") if ln.strip()]
     problems = []
     if marker.get("status") != "SUCCESS":
         problems.append(f"marker status {marker.get('status')}")

@@ -10,6 +10,7 @@ and a synthetic Traffy day (real Traffy payloads are not committed: personal dat
 import copy
 import json
 import shutil
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -376,6 +377,58 @@ class TestPipelineSteps(unittest.TestCase):
         p.write_text("\n".join(p.read_text(encoding="utf-8").splitlines()[:3]) + "\n", encoding="utf-8")
         with self.assertRaises(pipeline.VerificationError):
             pipeline.verify_batch(batch, self.storage)
+
+    def test_traffy_unicode_separators_survive_publish_verify_and_replay(self):
+        key = "incoming/traffy/dt=2026-09-26/traffy_2026-09-26.json"
+        for separator in ("\u0085", "\u2028", "\u2029"):
+            with self.subTest(separator=ascii(separator)):
+                env, manifest = traffy_day(n=3)
+                description = f'น้ำท่วม{separator}ข้อความ "ทดสอบ"\\เส้นทาง\nบรรทัดใหม่'
+                env["data"][0]["description"] = description
+                env["records_sha256"] = manifest["records_sha256"] = records_hash(env["data"])
+                manifest["quality_warnings"] = ["source total exceeds exposed rows"]
+                self.storage.save_json(key, env)
+                self.storage.save_json("checkpoints/traffy/dt=2026-09-26/manifest.json", manifest)
+                result = pipeline.run_local(key, base_dir=self.tmp, force=True)
+                self.assertEqual(result["final_state"], "Published")
+                self.assertEqual(result["validation_status"], WARN)
+                self.assertEqual(result["verified_rows"], 3)
+                path = Path(self.tmp) / result["trusted_key"]
+                text = path.read_text(encoding="utf-8")
+                rows = [json.loads(line) for line in text.split("\n") if line.strip()]
+                self.assertEqual(rows[0]["description"], description)
+                # Both LF and CRLF JSONL are valid, including a missing final newline.
+                pipeline.put_text(self.storage, result["trusted_key"],
+                                  text.rstrip("\n").replace("\n", "\r\n"),
+                                  "application/x-ndjson; charset=utf-8")
+                self.assertEqual(pipeline.verify_batch(result, self.storage)["verified_rows"], 3)
+                self.assertEqual(pipeline.run_local(key, base_dir=self.tmp)["final_state"], "Skipped")
+
+    def test_local_demo_exports_complete_jsonl_records_with_unicode_separators(self):
+        from scripts.run_pipeline_local import DEFECT_KEY
+
+        env, manifest = traffy_day(n=4)
+        for row in env["data"]:
+            row["description"] = "น้ำท่วม\u0085ข้อความ\u2028ทดสอบ\u2029ครบถ้วน"
+        env["records_sha256"] = manifest["records_sha256"] = records_hash(env["data"])
+        manifest["quality_warnings"] = ["source total exceeds exposed rows"]
+        self.storage.save_json("incoming/traffy/dt=2026-09-26/traffy_2026-09-26.json", env)
+        self.storage.save_json("checkpoints/traffy/dt=2026-09-26/manifest.json", manifest)
+        evidence = Path(self.tmp) / "demo-evidence"
+        command = [sys.executable, "-X", "utf8", str(ROOT / "scripts/run_pipeline_local.py"),
+                   "--data-dir", self.tmp, "--work-dir", str(Path(self.tmp) / "demo-work"),
+                   "--inject-pr7-defect", "--evidence", str(evidence)]
+        result = subprocess.run(command, capture_output=True, text=True, encoding="utf-8", check=False)
+        self.assertEqual(result.returncode, 0, result.stderr)
+        summary = load(evidence / "run_summary.json")
+        self.assertTrue(all(r["final_state"] == "Published" for r in summary if r["key"] != DEFECT_KEY))
+        self.assertEqual(next(r for r in summary if r["key"] == DEFECT_KEY)["final_state"], "BatchQuarantined")
+        replay = result.stdout.split("Replay (idempotency):", 1)[1].split("Work dir:", 1)[0]
+        self.assertEqual(replay.count("Skipped"), len(summary))
+        sample = evidence / "trusted/traffy/dt=2026-09-26/traffy_2026-09-26.sample.jsonl"
+        rows = [json.loads(line) for line in sample.read_text(encoding="utf-8").split("\n") if line.strip()]
+        self.assertEqual(len(rows), 3)
+        self.assertEqual([r["description"] for r in rows], [r["description"] for r in env["data"][:3]])
 
     def test_lambda_handler_dispatch(self):
         with unittest.mock.patch.object(pipeline, "make_storage", return_value=self.storage):

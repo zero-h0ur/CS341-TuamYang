@@ -78,7 +78,8 @@ def main() -> int:
         for p in (work / "trusted").rglob("*.jsonl"):
             dest = out / p.relative_to(work)
             dest.parent.mkdir(parents=True, exist_ok=True)
-            lines = p.read_text(encoding="utf-8").splitlines()
+            # Split JSONL records at LF, preserving Unicode separators inside strings.
+            lines = [line for line in p.read_text(encoding="utf-8").split("\n") if line.strip()]
             dest.with_suffix(".sample.jsonl").write_text("\n".join(lines[:3]) + "\n", encoding="utf-8")
         summary = [{k: r.get(k) for k in ("key", "dataset", "batch_id", "final_state", "validation_status",
                                          "row_count", "failures", "warnings", "trusted_key",
