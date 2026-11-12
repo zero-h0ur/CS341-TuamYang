@@ -56,7 +56,7 @@ python -X utf8 scripts/run_curated_pipeline.py
 - [คู่มือตั้งค่า Admin Bootstrap & GitHub OIDC (`ap-southeast-1`)](docs/cicd_setup.md)
 - [Orchestration + Validation Pipeline (Step Functions & กติกาตรวจข้อมูล)](docs/orchestration_validation.md)
 
-## Traffy ingestion - Checkpoint (สมาชิก 2)
+## Traffy ingestion - Checkpoint
 
 ดึงข้อมูล Traffy รายวัน/ย้อนหลัง เก็บข้อมูลจริง ตรวจข้อความน้ำท่วม และส่งข้อมูลให้ทีมทำ spatial join และ Q2 ต่อ
 
