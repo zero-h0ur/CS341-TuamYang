@@ -1,0 +1,361 @@
+{
+  "generated_at_utc": "2026-11-12T13:46:41.731254+00:00",
+  "source_dataset": "https://data.humdata.org/dataset/cod-ab-tha",
+  "source_download_url": "https://data.humdata.org/dataset/d24bdc45-eb4c-4e3d-8b16-44db02667c27/resource/89a09f13-7b83-458a-9531-4f2418613065/download/tha_admin_boundaries.geojson.zip",
+  "source_organization": "Royal Thai Survey Department (RTSD) via OCHA Regional Office for Asia and the Pacific (HDX)",
+  "license": "Creative Commons Attribution for Intergovernmental Organisations (CC BY-IGO)",
+  "radius_km": 1.0,
+  "total_bangkok_wards_loaded": 169,
+  "wards_selected_within_radius_count": 28,
+  "stations_with_zero_wards_in_radius": [],
+  "water_stations_evaluated": 8,
+  "water_stations_pip_inside_count": 7,
+  "station_point_in_polygon_and_radius_checks": [
+    {
+      "api_station_id": 1,
+      "station_name_th": "คลองลาดพร้าว วัดบางบัว",
+      "river_name_th": "คลองบางบัว",
+      "latitude": 13.85402,
+      "longitude": 100.58746,
+      "expected_tumbon_th": "อนุสาวรีย์",
+      "expected_amphoe_th": "บางเขน",
+      "usable_for_freeboard": true,
+      "quality_flag": "NORMAL",
+      "point_in_polygon_matched": true,
+      "containing_wards": [
+        {
+          "khwaeng_code": "TH103002",
+          "name_th": "เสนานิคม",
+          "khet": "จตุจักร"
+        }
+      ],
+      "wards_within_radius_count": 4,
+      "wards_within_radius": [
+        {
+          "khwaeng_code": "TH100502",
+          "name_th": "อนุสาวรีย์",
+          "khet": "บางเขน",
+          "boundary_dist_km": 0.0126
+        },
+        {
+          "khwaeng_code": "TH103001",
+          "name_th": "ลาดยาว",
+          "khet": "จตุจักร",
+          "boundary_dist_km": 0.3156
+        },
+        {
+          "khwaeng_code": "TH103002",
+          "name_th": "เสนานิคม",
+          "khet": "จตุจักร",
+          "boundary_dist_km": 0.0
+        },
+        {
+          "khwaeng_code": "TH104102",
+          "name_th": "ตลาดบางเขน",
+          "khet": "หลักสี่",
+          "boundary_dist_km": 0.5305
+        }
+      ]
+    },
+    {
+      "api_station_id": 3,
+      "station_name_th": "คลองลำปลาทิว ลาดกระบัง",
+      "river_name_th": "คลองลำปลาทิว",
+      "latitude": 13.7407,
+      "longitude": 100.79468,
+      "expected_tumbon_th": "ลาดกระบัง",
+      "expected_amphoe_th": "ลาดกระบัง",
+      "usable_for_freeboard": true,
+      "quality_flag": "NORMAL",
+      "point_in_polygon_matched": true,
+      "containing_wards": [
+        {
+          "khwaeng_code": "TH101104",
+          "name_th": "ลำปลาทิว",
+          "khet": "ลาดกระบัง"
+        }
+      ],
+      "wards_within_radius_count": 2,
+      "wards_within_radius": [
+        {
+          "khwaeng_code": "TH101104",
+          "name_th": "ลำปลาทิว",
+          "khet": "ลาดกระบัง",
+          "boundary_dist_km": 0.0
+        },
+        {
+          "khwaeng_code": "TH101105",
+          "name_th": "ทับยาว",
+          "khet": "ลาดกระบัง",
+          "boundary_dist_km": 0.0192
+        }
+      ]
+    },
+    {
+      "api_station_id": 4,
+      "station_name_th": "สะพานกรุงเทพ",
+      "river_name_th": "แม่น้ำเจ้าพระยา",
+      "latitude": 13.700301,
+      "longitude": 100.49277,
+      "expected_tumbon_th": "ดาวคะนอง",
+      "expected_amphoe_th": "ธนบุรี",
+      "usable_for_freeboard": true,
+      "quality_flag": "NORMAL",
+      "point_in_polygon_matched": true,
+      "containing_wards": [
+        {
+          "khwaeng_code": "TH103101",
+          "name_th": "บางคอแหลม",
+          "khet": "บางคอแหลม"
+        }
+      ],
+      "wards_within_radius_count": 7,
+      "wards_within_radius": [
+        {
+          "khwaeng_code": "TH101504",
+          "name_th": "บุคคโล",
+          "khet": "ธนบุรี",
+          "boundary_dist_km": 0.9063
+        },
+        {
+          "khwaeng_code": "TH101506",
+          "name_th": "ดาวคะนอง",
+          "khet": "ธนบุรี",
+          "boundary_dist_km": 0.0848
+        },
+        {
+          "khwaeng_code": "TH101507",
+          "name_th": "สำเหร่",
+          "khet": "ธนบุรี",
+          "boundary_dist_km": 0.0854
+        },
+        {
+          "khwaeng_code": "TH101803",
+          "name_th": "บางลำภูล่าง",
+          "khet": "คลองสาน",
+          "boundary_dist_km": 0.8312
+        },
+        {
+          "khwaeng_code": "TH102402",
+          "name_th": "บางปะกอก",
+          "khet": "ราษฎร์บูรณะ",
+          "boundary_dist_km": 0.6353
+        },
+        {
+          "khwaeng_code": "TH103101",
+          "name_th": "บางคอแหลม",
+          "khet": "บางคอแหลม",
+          "boundary_dist_km": 0.0
+        },
+        {
+          "khwaeng_code": "TH103102",
+          "name_th": "วัดพระยาไกร",
+          "khet": "บางคอแหลม",
+          "boundary_dist_km": 0.8014
+        }
+      ]
+    },
+    {
+      "api_station_id": 5,
+      "station_name_th": "คลองมหาสวัสดิ บางกรวย-สวนผัก",
+      "river_name_th": "คลองมหาสวัสดิ์",
+      "latitude": 13.79965,
+      "longitude": 100.43863,
+      "expected_tumbon_th": "ตลิ่งชัน",
+      "expected_amphoe_th": "ตลิ่งชัน",
+      "usable_for_freeboard": true,
+      "quality_flag": "NORMAL",
+      "point_in_polygon_matched": false,
+      "containing_wards": [],
+      "wards_within_radius_count": 2,
+      "wards_within_radius": [
+        {
+          "khwaeng_code": "TH101902",
+          "name_th": "ตลิ่งชัน",
+          "khet": "ตลิ่งชัน",
+          "boundary_dist_km": 0.0003
+        },
+        {
+          "khwaeng_code": "TH101903",
+          "name_th": "ฉิมพลี",
+          "khet": "ตลิ่งชัน",
+          "boundary_dist_km": 0.7975
+        }
+      ]
+    },
+    {
+      "api_station_id": 8,
+      "station_name_th": "คลองลาดพร้าว ปากคลอง2สายใต้",
+      "river_name_th": "คลองหกวา",
+      "latitude": 13.93183,
+      "longitude": 100.63952,
+      "expected_tumbon_th": "ลาดพร้าว",
+      "expected_amphoe_th": "ลาดพร้าว",
+      "usable_for_freeboard": true,
+      "quality_flag": "NORMAL",
+      "point_in_polygon_matched": true,
+      "containing_wards": [
+        {
+          "khwaeng_code": "TH104201",
+          "name_th": "สายไหม",
+          "khet": "สายไหม"
+        }
+      ],
+      "wards_within_radius_count": 1,
+      "wards_within_radius": [
+        {
+          "khwaeng_code": "TH104201",
+          "name_th": "สายไหม",
+          "khet": "สายไหม",
+          "boundary_dist_km": 0.0
+        }
+      ]
+    },
+    {
+      "api_station_id": 10,
+      "station_name_th": "คลองภาษีเจริญ เพชรเกษม69",
+      "river_name_th": "คลองภาษีเจริญ",
+      "latitude": 13.69158,
+      "longitude": 100.38127,
+      "expected_tumbon_th": "หลักสอง",
+      "expected_amphoe_th": "บางแค",
+      "usable_for_freeboard": false,
+      "quality_flag": "SUSPECT_DATUM_MISMATCH",
+      "point_in_polygon_matched": true,
+      "containing_wards": [
+        {
+          "khwaeng_code": "TH102302",
+          "name_th": "หนองแขม",
+          "khet": "หนองแขม"
+        }
+      ],
+      "wards_within_radius_count": 2,
+      "wards_within_radius": [
+        {
+          "khwaeng_code": "TH102302",
+          "name_th": "หนองแขม",
+          "khet": "หนองแขม",
+          "boundary_dist_km": 0.0
+        },
+        {
+          "khwaeng_code": "TH104004",
+          "name_th": "หลักสอง",
+          "khet": "บางแค",
+          "boundary_dist_km": 0.0136
+        }
+      ]
+    },
+    {
+      "api_station_id": 2599,
+      "station_name_th": "กรมชลประทานสามเสน",
+      "river_name_th": "แม่น้ำเจ้าพระยา",
+      "latitude": 13.78815,
+      "longitude": 100.509148,
+      "expected_tumbon_th": "ถนนนครไชยศรี",
+      "expected_amphoe_th": "ดุสิต",
+      "usable_for_freeboard": true,
+      "quality_flag": "NORMAL",
+      "point_in_polygon_matched": true,
+      "containing_wards": [
+        {
+          "khwaeng_code": "TH100206",
+          "name_th": "ถนนนครไชยศรี",
+          "khet": "ดุสิต"
+        }
+      ],
+      "wards_within_radius_count": 5,
+      "wards_within_radius": [
+        {
+          "khwaeng_code": "TH100201",
+          "name_th": "ดุสิต",
+          "khet": "ดุสิต",
+          "boundary_dist_km": 0.5807
+        },
+        {
+          "khwaeng_code": "TH100202",
+          "name_th": "วชิรพยาบาล",
+          "khet": "ดุสิต",
+          "boundary_dist_km": 0.3707
+        },
+        {
+          "khwaeng_code": "TH100206",
+          "name_th": "ถนนนครไชยศรี",
+          "khet": "ดุสิต",
+          "boundary_dist_km": 0.0
+        },
+        {
+          "khwaeng_code": "TH102501",
+          "name_th": "บางพลัด",
+          "khet": "บางพลัด",
+          "boundary_dist_km": 0.1271
+        },
+        {
+          "khwaeng_code": "TH102502",
+          "name_th": "บางอ้อ",
+          "khet": "บางพลัด",
+          "boundary_dist_km": 0.1272
+        }
+      ]
+    },
+    {
+      "api_station_id": 852087,
+      "station_name_th": "อโศก",
+      "river_name_th": "คลองแสนแสบ",
+      "latitude": 13.74325,
+      "longitude": 100.562164,
+      "expected_tumbon_th": "คลองเตยเหนือ",
+      "expected_amphoe_th": "วัฒนา",
+      "usable_for_freeboard": true,
+      "quality_flag": "NORMAL",
+      "point_in_polygon_matched": true,
+      "containing_wards": [
+        {
+          "khwaeng_code": "TH103901",
+          "name_th": "คลองเตยเหนือ",
+          "khet": "วัฒนา"
+        }
+      ],
+      "wards_within_radius_count": 5,
+      "wards_within_radius": [
+        {
+          "khwaeng_code": "TH101702",
+          "name_th": "บางกะปิ",
+          "khet": "ห้วยขวาง",
+          "boundary_dist_km": 0.5303
+        },
+        {
+          "khwaeng_code": "TH103301",
+          "name_th": "คลองเตย",
+          "khet": "คลองเตย",
+          "boundary_dist_km": 0.6604
+        },
+        {
+          "khwaeng_code": "TH103704",
+          "name_th": "มักกะสัน",
+          "khet": "ราชเทวี",
+          "boundary_dist_km": 0.5253
+        },
+        {
+          "khwaeng_code": "TH103901",
+          "name_th": "คลองเตยเหนือ",
+          "khet": "วัฒนา",
+          "boundary_dist_km": 0.0
+        },
+        {
+          "khwaeng_code": "TH103902",
+          "name_th": "คลองตันเหนือ",
+          "khet": "วัฒนา",
+          "boundary_dist_km": 0.629
+        }
+      ]
+    }
+  ],
+  "traffy_spatial_join_evaluation": {
+    "evaluated": true,
+    "total_reports": 9614,
+    "st_contains_matched_reports": 9614,
+    "st_contains_match_rate_pct": 100.0,
+    "address_regex_matched_reports": 9525,
+    "address_regex_match_rate_pct": 99.07
+  }
+}
