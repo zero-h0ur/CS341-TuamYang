@@ -177,6 +177,7 @@ class TestCuratedBuilder(unittest.TestCase):
             "paired_water_station_id": 852087,
             "water_station_name": "อโศก",
             "canal_name": "คลองแสนแสบ",
+            "water_station_dist_km": 1.25,
             "max_waterlevel_msl": 2.45,
             "avg_waterlevel_msl": 2.40,
             "min_bank_msl": 2.39,
@@ -199,6 +200,58 @@ class TestCuratedBuilder(unittest.TestCase):
         self.assertEqual(tier_res["total_reports"], 100)
         self.assertEqual(tier_res["flood_reports"], 80)
         self.assertEqual(tier_res["flood_ratio_pct"], 80.0)
+
+        near_res = q2["near_station_tier_metrics_2km"]["CRITICAL_OVERFLOW"]
+        self.assertEqual(near_res["khwaeng_hours"], 1)
+        self.assertEqual(near_res["flood_ratio_pct"], 80.0)
+        self.assertIn("2026-09-25", q2["within_day_tier_metrics"])
+        self.assertEqual(q2["water_station_distance_stats"]["rows_within_2km"], 1)
+
+    def test_khwaeng_centers_averages_across_all_hours(self):
+        with tempfile.TemporaryDirectory(prefix="curated_center_") as tmp:
+            tmp_path = Path(tmp)
+            trusted_dir = tmp_path / "trusted"
+            tf_dir = trusted_dir / "traffy" / "dt=2026-09-25"
+            tf_dir.mkdir(parents=True, exist_ok=True)
+            reports = [
+                {
+                    "ticket_id": "T-101",
+                    "address": "แขวงหัวหมาก เขตบางกะปิ กรุงเทพมหานคร",
+                    "latitude": 13.70000,
+                    "longitude": 100.60000,
+                    "report_date_bkk": "2026-09-25",
+                    "report_hour_bkk": 10,
+                    "is_flood_report": True,
+                    "flood_classification": "flood",
+                },
+                {
+                    "ticket_id": "T-102",
+                    "address": "แขวงหัวหมาก เขตบางกะปิ กรุงเทพมหานคร",
+                    "latitude": 13.80000,
+                    "longitude": 100.70000,
+                    "report_date_bkk": "2026-09-25",
+                    "report_hour_bkk": 11,
+                    "is_flood_report": False,
+                    "flood_classification": "non_flood",
+                },
+            ]
+            (tf_dir / "traffy_2026-09-25.jsonl").write_text(
+                "\n".join(json.dumps(r, ensure_ascii=False) for r in reports) + "\n",
+                encoding="utf-8",
+            )
+            builder = CuratedBuilder(
+                raw_thaiwater_dir=tmp_path / "empty_raw",
+                incoming_traffy_dir=tmp_path / "empty_incoming",
+                trusted_dir=trusted_dir,
+                output_dir=tmp_path / "out",
+            )
+            rows = builder.build_khwaeng_hourly(["2026-09-25"])
+            self.assertEqual(len(rows), 2)
+            # Both hours should use the pooled average across hours 10 and 11: (13.75, 100.65)
+            self.assertAlmostEqual(rows[0]["center_latitude"], 13.75, places=4)
+            self.assertAlmostEqual(rows[0]["center_longitude"], 100.65, places=4)
+            self.assertAlmostEqual(rows[1]["center_latitude"], 13.75, places=4)
+            self.assertAlmostEqual(rows[1]["center_longitude"], 100.65, places=4)
 
     def test_data_quality_report_metrics(self):
         mock_rows = [
@@ -232,6 +285,9 @@ class TestCuratedBuilder(unittest.TestCase):
         self.assertEqual(dq["sensor_outliers_audit"]["detected_outlier_count"], 1)
         self.assertEqual(dq["missing_data_audit"]["null_rain_percentage"], 100.0)
         self.assertEqual(dq["spatial_join_coverage"]["khwaeng_extraction_match_pct"], 100.0)
+        self.assertEqual(dq["spatial_join_coverage"]["distinct_khwaeng_khet_pairs"], 1)
+        self.assertEqual(dq["spatial_join_coverage"]["official_bkk_khwaeng_count"], 180)
+        self.assertEqual(dq["spatial_join_coverage"]["official_bkk_khet_count"], 50)
 
 
 if __name__ == "__main__":
